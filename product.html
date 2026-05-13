@@ -1,6 +1,6 @@
 <div id="content"></div>
 
-<!-- ⭐赚钱按钮（WhatsApp询盘按钮） -->
+<!-- ⭐ WhatsApp 按钮 -->
 <a id="waLink"
    target="_blank"
    style="
@@ -12,29 +12,88 @@
       border-radius:8px;
       text-decoration:none;
       font-weight:bold;">
-   💬 Contact WhatsApp / Get Sample
+   💬 WhatsApp / Get Sample
 </a>
+
+<!-- ⭐ RFQ询盘系统（升级重点） -->
+<div style="
+    margin-top:30px;
+    padding:20px;
+    border:1px solid #333;
+    border-radius:10px;
+    background:#111827;
+    max-width:500px;">
+
+    <h3>Request for Quotation (RFQ)</h3>
+
+    <input id="email" placeholder="Your Email"
+        style="width:100%;padding:10px;margin:6px 0;">
+
+    <input id="qty" placeholder="Quantity (meters)"
+        style="width:100%;padding:10px;margin:6px 0;">
+
+    <textarea id="msg" placeholder="Message"
+        style="width:100%;padding:10px;margin:6px 0;"></textarea>
+
+    <button onclick="sendRFQ()"
+        style="
+            background:#3b82f6;
+            color:white;
+            padding:10px 16px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;">
+        📩 Send RFQ
+    </button>
+
+    <p id="rfqStatus" style="color:#9ca3af;margin-top:10px;"></p>
+</div>
 
 <script>
 const id = new URLSearchParams(location.search).get("id");
 
-// 找到产品
+// 找产品
 const p = products.find(x => x.id == id);
 
-// 防止报错（很重要）
+// 防止报错
 if (!p) {
     document.getElementById("content").innerHTML = "<h2>Product not found</h2>";
 } else {
 
-    // 产品内容显示
+    // 产品展示
     document.getElementById("content").innerHTML = `
         <h2>${p.name}</h2>
         <p>${p.feature}</p>
-        <p><b>${p.gsm}</b> / MOQ <b>${p.moq}</b></p>
+        <p><b>${p.gsm}</b> gsm / MOQ <b>${p.moq}</b></p>
+        <p><b>Application:</b> ${p.application}</p>
     `;
 
-    // ⭐ WhatsApp询盘按钮（自动带产品名）
+    // WhatsApp 自动带产品名
     document.getElementById("waLink").href =
         `https://wa.me/861234567890?text=Hi, I want sample of ${p.name}`;
+}
+
+// ⭐ RFQ发送逻辑（模拟版）
+function sendRFQ(){
+    const email = document.getElementById("email").value;
+    const qty = document.getElementById("qty").value;
+    const msg = document.getElementById("msg").value;
+
+    if(!email || !qty){
+        document.getElementById("rfqStatus").innerText =
+            "Please fill Email and Quantity";
+        return;
+    }
+
+    document.getElementById("rfqStatus").innerText =
+        "RFQ sent successfully! We will contact you soon.";
+
+    // 模拟提交（真实可接邮箱/后端）
+    console.log({
+        product: p.name,
+        email: email,
+        quantity: qty,
+        message: msg
+    });
 }
 </script>
