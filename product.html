@@ -1,30 +1,16 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Product Detail</title>
-</head>
-
-<body>
-
-<h2>Product Detail</h2>
-
-<div id="content"></div>
-
-<a href="products.html">Back</a>
+<a id="waLink" target="_blank">Contact WhatsApp</a>
 
 <script>
-const id = new URLSearchParams(window.location.search).get("id");
+const id = new URLSearchParams(location.search).get("id");
 
-let data = {
-  1: "3L Waterproof Fabric - 20K/20K breathable",
-  2: "Softshell Fabric - fleece backing windproof",
-  3: "TPU Fabric - eco waterproof lamination"
-};
+const p = products.find(x=>x.id==id);
 
-document.getElementById("content").innerHTML =
-data[id] || "Product not found";
+document.getElementById("content").innerHTML = `
+<h2>${p.name}</h2>
+<p>${p.feature}</p>
+<p>${p.gsm} / MOQ ${p.moq}</p>
+`;
+
+document.getElementById("waLink").href =
+`https://wa.me/861234567890?text=I want sample of ${p.name}`;
 </script>
-
-</body>
-</html>
