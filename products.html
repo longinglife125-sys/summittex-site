@@ -2,20 +2,34 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Products - SummitTex</title>
+<title>Products | SummitTex</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h2>Fabric Products</h2>
+<h1>SummitTex Fabrics</h1>
 
-<ul>
-  <li><a href="product.html?id=1">3L Waterproof Fabric</a></li>
-  <li><a href="product.html?id=2">Softshell Fabric</a></li>
-  <li><a href="product.html?id=3">TPU Fabric</a></li>
-</ul>
+<div id="productGrid"></div>
 
-<a href="index.html">Back Home</a>
+<script src="data/products.js"></script>
+
+<script>
+const grid = document.getElementById("productGrid");
+
+products.forEach(p => {
+  grid.innerHTML += `
+    <div class="card">
+      <img src="${p.image}" style="width:100%;height:160px;object-fit:cover;">
+      <h3>${p.name}</h3>
+      <p>${p.category}</p>
+      <p>${p.gsm} | MOQ ${p.moq}</p>
+      <p>${p.feature}</p>
+      <a href="product.html?id=${p.id}">View Details</a>
+    </div>
+  `;
+});
+</script>
 
 </body>
 </html>
