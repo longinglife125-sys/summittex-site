@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Product Detail</title>
+</head>
+
+<body>
+
+<h2>Product Detail</h2>
+
+<div id="content"></div>
+
+<a href="products.html">Back</a>
+
+<script>
+const id = new URLSearchParams(window.location.search).get("id");
+
+let data = {
+  1: "3L Waterproof Fabric - 20K/20K breathable",
+  2: "Softshell Fabric - fleece backing windproof",
+  3: "TPU Fabric - eco waterproof lamination"
+};
+
+document.getElementById("content").innerHTML =
+data[id] || "Product not found";
+</script>
+
+</body>
+</html>
