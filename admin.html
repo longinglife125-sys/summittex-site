@@ -1,251 +1,193 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>V18 Enterprise Admin</title>
 
-/* ===================== */
-/* CONFIG SAFE MODE */
-/* ===================== */
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0b1220;
+    color:white;
+}
+
+#login{
+    max-width:320px;
+    margin:120px auto;
+    background:white;
+    color:black;
+    padding:20px;
+    border-radius:12px;
+}
+
+#panel{
+    display:none;
+    padding:20px;
+}
+
+.box{
+    background:#111827;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:15px;
+}
+
+input,select,textarea{
+    width:100%;
+    padding:10px;
+    margin-top:8px;
+    border-radius:8px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+}
+
+.item{
+    background:white;
+    color:black;
+    padding:10px;
+    border-radius:8px;
+    margin-top:8px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="login">
+<h3>Admin Login</h3>
+<input type="password" id="pass">
+<button onclick="login()">Login</button>
+</div>
+
+<div id="panel">
+
+<div class="box">
+<h3>➕ Product Upload</h3>
+
+<input id="name" placeholder="name">
+
+<select id="category">
+<option>Outdoor Functional Fabrics</option>
+<option>Sports Fabrics</option>
+<option>Recycled Fabrics</option>
+<option>Workwear Fabrics</option>
+<option>Fashion Fabrics</option>
+<option>Others</option>
+</select>
+
+<input id="gsm" placeholder="gsm">
+<input id="moq" placeholder="moq">
+<textarea id="feature" placeholder="feature"></textarea>
+
+<input type="file" id="file">
+
+<button onclick="upload()">UPLOAD</button>
+</div>
+
+<div class="box">
+<h3>📦 Products</h3>
+<button onclick="load()">Refresh</button>
+<div id="list"></div>
+</div>
+
+<div class="box">
+<h3>📩 CRM Inquiries</h3>
+<div id="crm"></div>
+</div>
+
+</div>
+
+<script>
 
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 
-let sb = null;
-
-try {
-    sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    console.log("Supabase init OK");
-} catch (e) {
-    console.error("Supabase init failed", e);
-}
-
-/* ===================== */
-/* DOM */
-/* ===================== */
-
-const loginBox = document.getElementById("login");
-const panelBox = document.getElementById("panel");
-
-const pass = document.getElementById("pass");
-const nameInput = document.getElementById("name");
-const category = document.getElementById("category");
-const gsm = document.getElementById("gsm");
-const moq = document.getElementById("moq");
-const feature = document.getElementById("feature");
-const search = document.getElementById("search");
-const logBox = document.getElementById("log");
-
-/* ===================== */
-/* STATE */
-/* ===================== */
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let products = [];
-let editId = null;
 
-/* ===================== */
-/* LOG */
-/* ===================== */
-
-function log(msg){
-    logBox.innerText += msg + "\n";
-}
-
-/* ===================== */
-/* LOGIN */
-/* ===================== */
-
-function doLogin(){
+function login(){
     if(pass.value === "123456"){
-        loginBox.style.display = "none";
-        panelBox.style.display = "block";
-        log("LOGIN SUCCESS");
+        login.style.display="none";
+        panel.style.display="block";
         load();
-    } else {
-        alert("Wrong password");
+        loadCRM();
+    }else{
+        alert("wrong");
     }
 }
 
-/* ===================== */
-/* LOAD (FIXED + FALLBACK) */
-/* ===================== */
-
+/* PRODUCTS */
 async function load(){
-
-log("Loading products...");
-
-if(!sb){
-    log("Supabase not initialized → using demo data");
-
-    products = [
-        {id:1,name:"Demo Fabric A",category:"Test",gsm:"120",moq:"1000",image:"https://images.unsplash.com/photo-1520975916090-3105956dac38"},
-        {id:2,name:"Demo Fabric B",category:"Test",gsm:"150",moq:"800",image:"https://images.unsplash.com/photo-1517836357463-d25dfeac3438"}
-    ];
-
-    render();
-    return;
-}
-
-try{
-
-let { data, error } = await sb.from("products").select("*");
-
-if(error){
-    log("Load error: " + error.message);
-
-    // fallback
-    products = [];
-    render();
-    return;
-}
-
+let { data } = await sb.from("products").select("*");
 products = data || [];
-log("Loaded: " + products.length);
 
-render();
+let html = "";
+products.forEach(p=>{
+html += `<div class="item">
+<b>${p.name}</b><br>
+${p.category}
+</div>`;
+});
 
-}catch(e){
-    log("Load failed: " + e.message);
+list.innerHTML = html;
 }
 
-}
-
-/* ===================== */
 /* UPLOAD */
-/* ===================== */
-
 async function upload(){
-
-if(!sb){
-    alert("Supabase not ready");
-    return;
-}
 
 let file = document.getElementById("file").files[0];
 let imageUrl = "";
 
-try{
-
 if(file){
-
-    let fileName = Date.now() + "_" + file.name;
-
-    let { error } = await sb.storage.from("images").upload(fileName, file);
-
-    if(!error){
-        imageUrl = SUPABASE_URL + "/storage/v1/object/public/images/" + fileName;
-    } else {
-        log(error.message);
-    }
+let fileName = Date.now() + file.name;
+await sb.storage.from("images").upload(fileName,file);
+imageUrl = SUPABASE_URL+"/storage/v1/object/public/images/"+fileName;
 }
 
-/* INSERT */
-let { error } = await sb.from("products").insert([{
-    name: nameInput.value,
-    category: category.value,
-    gsm: gsm.value,
-    moq: moq.value,
-    feature: feature.value,
-    image: imageUrl,
-    images: imageUrl ? [imageUrl] : []
+await sb.from("products").insert([{
+name:name.value,
+category:category.value,
+gsm:gsm.value,
+moq:moq.value,
+feature:feature.value,
+image:imageUrl
 }]);
 
-if(error){
-    log(error.message);
-} else {
-    log("INSERT OK");
-}
-
-clearForm();
 load();
-
-}catch(e){
-    log(e.message);
 }
 
-}
-
-/* ===================== */
-/* RENDER */
-/* ===================== */
-
-function render(){
-
-let key = search.value?.toLowerCase() || "";
-
-let list = products.filter(p =>
-    (p.name || "").toLowerCase().includes(key)
-);
+/* CRM */
+async function loadCRM(){
+let { data } = await sb.from("inquiries").select("*");
 
 let html = "";
-
-list.forEach(p=>{
-
-html += `
-<div class="item">
-
-<div>
-<b>${p.name || ""}</b><br>
-<small>${p.category || ""}</small>
-</div>
-
-<img src="${p.image || ''}">
-
-<div class="actions">
-<button onclick="edit('${p.id}')">Edit</button>
-<button onclick="del('${p.id}')">Del</button>
-</div>
-
-</div>
-`;
-
+(data||[]).forEach(c=>{
+html += `<div class="item">
+<b>${c.name}</b><br>
+${c.product}<br>
+${c.message}
+</div>`;
 });
 
-document.getElementById("list").innerHTML = html;
-
-}
-
-/* ===================== */
-/* EDIT */
-/* ===================== */
-
-function edit(id){
-
-let p = products.find(x => x.id == id);
-if(!p) return;
-
-nameInput.value = p.name || "";
-category.value = p.category || "";
-gsm.value = p.gsm || "";
-moq.value = p.moq || "";
-feature.value = p.feature || "";
-
-editId = id;
-
-}
-
-/* ===================== */
-/* DELETE */
-/* ===================== */
-
-async function del(id){
-
-if(!sb){
-    alert("Supabase not ready");
-    return;
-}
-
-await sb.from("products").delete().eq("id", id);
-load();
-
-}
-
-/* ===================== */
-/* CLEAR */
-/* ===================== */
-
-function clearForm(){
-nameInput.value = "";
-gsm.value = "";
-moq.value = "";
-feature.value = "";
-document.getElementById("file").value = "";
+crm.innerHTML = html;
 }
 
 </script>
+
+</body>
+</html>
