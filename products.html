@@ -2,127 +2,217 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Products | Functional Fabric Manufacturer</title>
+<title>
+Textile Fabric Products | SummitTex
+</title>
 
 <style>
+
+/* ===================== */
+/* GLOBAL */
+/* ===================== */
 
 body{
     margin:0;
     font-family:Arial;
-    background:#f8fafc;
-    color:#0f172a;
+    background:#f5f7fa;
+    color:#111827;
 }
 
-/* HEADER */
-.header{
+.container{
+    width:92%;
+    max-width:1400px;
+    margin:auto;
+}
+
+/* ===================== */
+/* HERO */
+/* ===================== */
+
+.hero{
+    background:
+    linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45)),
+    url('https://images.unsplash.com/photo-1521572267360-ee0c2909d518?q=80&w=1600&auto=format&fit=crop');
+    background-size:cover;
+    background-position:center;
+    color:white;
+    padding:100px 20px;
     text-align:center;
-    padding:50px 20px 20px;
 }
 
-.header h1{
-    font-size:38px;
-    margin-bottom:10px;
-}
-
-.header p{
-    color:#64748b;
-}
-
-/* FILTERS */
-#filters{
-    text-align:center;
+.hero h1{
+    font-size:52px;
     margin-bottom:15px;
 }
 
-button{
-    margin:5px;
-    padding:10px 14px;
+.hero p{
+    font-size:20px;
+    color:#e5e7eb;
+}
+
+/* ===================== */
+/* FILTER */
+/* ===================== */
+
+.filters{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin:40px 0;
+    justify-content:center;
+}
+
+.filters button{
     border:none;
-    border-radius:8px;
-    background:#e2e8f0;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-button:hover{
-    background:#cbd5e1;
-}
-
-/* SEARCH */
-#search{
-    display:block;
-    margin:10px auto 20px;
-    padding:12px;
-    width:320px;
-    border-radius:10px;
-    border:1px solid #cbd5e1;
-}
-
-/* GRID */
-#grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-    gap:20px;
-    max-width:1200px;
-    margin:20px auto;
-    padding:0 20px;
-}
-
-/* CARD */
-.card{
     background:white;
-    border:1px solid #e2e8f0;
-    border-radius:14px;
-    padding:15px;
-    box-shadow:0 4px 14px rgba(0,0,0,0.05);
-}
-
-.card img{
-    width:100%;
-    height:200px;
-    object-fit:cover;
-    border-radius:10px;
-}
-
-.card h3{
-    margin:10px 0 5px;
-    color:#1e3a8a;
-}
-
-.card p{
-    color:#64748b;
-}
-
-/* PAGINATION */
-.pagination{
-    text-align:center;
-    margin:30px 0;
-}
-
-.page-btn{
-    padding:10px 14px;
-    margin:0 5px;
-    border:none;
-    border-radius:8px;
-    background:#e2e8f0;
+    padding:12px 18px;
+    border-radius:999px;
     cursor:pointer;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    transition:.3s;
 }
 
-.page-btn.active{
+.filters button:hover{
     background:#2563eb;
     color:white;
 }
 
-/* BACK */
-.back{
+/* ===================== */
+/* SEARCH */
+/* ===================== */
+
+.search{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.search input{
+    width:100%;
+    max-width:500px;
+    padding:16px;
+    border:none;
+    border-radius:12px;
+    box-shadow:0 4px 16px rgba(0,0,0,.08);
+    font-size:16px;
+}
+
+/* ===================== */
+/* GRID */
+/* ===================== */
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:28px;
+    padding-bottom:80px;
+}
+
+/* ===================== */
+/* CARD */
+/* ===================== */
+
+.card{
+    background:white;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+}
+
+.card img{
+    width:100%;
+    height:260px;
+    object-fit:cover;
+}
+
+.card-body{
+    padding:22px;
+}
+
+.card h3{
+    margin:0 0 10px;
+}
+
+.category{
     display:inline-block;
-    margin:20px;
+    background:#e0edff;
     color:#2563eb;
+    padding:6px 12px;
+    border-radius:999px;
+    font-size:13px;
+    margin-bottom:12px;
+}
+
+.spec{
+    color:#6b7280;
+    margin-top:6px;
+    font-size:14px;
+}
+
+.btn{
+    display:inline-block;
+    margin-top:18px;
+    background:#2563eb;
+    color:white;
     text-decoration:none;
+    padding:12px 18px;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+/* ===================== */
+/* PAGINATION */
+/* ===================== */
+
+.pagination{
+    text-align:center;
+    padding-bottom:80px;
+}
+
+.pagination button{
+    border:none;
+    padding:12px 18px;
+    margin:5px;
+    border-radius:10px;
+    cursor:pointer;
+    background:white;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+/* ===================== */
+/* WHATSAPP */
+/* ===================== */
+
+.wa{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:#25D366;
+    color:white;
+    padding:14px 18px;
+    border-radius:50px;
+    text-decoration:none;
+    font-weight:bold;
+    z-index:999;
+}
+
+/* ===================== */
+/* MOBILE */
+/* ===================== */
+
+@media(max-width:768px){
+
+.hero h1{
+    font-size:36px;
+}
+
 }
 
 </style>
@@ -131,141 +221,260 @@ button:hover{
 
 <body>
 
-<a class="back" href="index.html">← Back Home</a>
+<!-- HERO -->
 
-<div class="header">
+<div class="hero">
 
-<h1>Functional Fabric Products</h1>
-<p>Waterproof | Softshell | TPU Laminated | Recycled Fabrics</p>
+<h1>Textile Fabric Products</h1>
+
+<p>
+Professional fabrics for apparel, outdoor, sportswear and industrial applications
+</p>
 
 </div>
+
+<div class="container">
 
 <!-- FILTER -->
-<div id="filters">
-    <button onclick="setCategory('All')">All</button>
-    <button onclick="setCategory('Waterproof')">Waterproof</button>
-    <button onclick="setCategory('Softshell')">Softshell</button>
-    <button onclick="setCategory('TPU')">TPU</button>
+
+<div class="filters">
+
+<button onclick="filterProducts('All')">All</button>
+
+<button onclick="filterProducts('Top Selling')">
+Top Selling
+</button>
+
+<button onclick="filterProducts('Functional')">
+Functional
+</button>
+
+<button onclick="filterProducts('Outdoor')">
+Outdoor
+</button>
+
+<button onclick="filterProducts('Swimwear')">
+Swimwear
+</button>
+
+<button onclick="filterProducts('Fashion')">
+Fashion
+</button>
+
+<button onclick="filterProducts('Recycled')">
+Recycled
+</button>
+
+<button onclick="filterProducts('Technical')">
+Technical
+</button>
+
 </div>
 
-<input id="search" placeholder="Search fabrics..." oninput="searchProducts()">
+<!-- SEARCH -->
 
-<!-- GRID -->
-<div id="grid"></div>
+<div class="search">
+<input
+id="search"
+placeholder="Search fabrics..."
+onkeyup="renderProducts()">
+</div>
+
+<!-- PRODUCT GRID -->
+
+<div class="grid" id="grid"></div>
 
 <!-- PAGINATION -->
+
 <div class="pagination" id="pagination"></div>
 
-<!-- DATA -->
-<script src="data/products.js"></script>
+</div>
+
+<!-- WHATSAPP -->
+
+<a
+class="wa"
+href="https://wa.me/8613800000000?text=Hello, I am interested in your textile fabrics"
+target="_blank">
+💬 WhatsApp
+</a>
+
+<!-- SUPABASE -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
+
+/* ===================== */
+/* SUPABASE */
+/* ===================== */
+
+const SUPABASE_URL =
+"https://tpcxaelljrudshchuzia.supabase.co";
+
+const SUPABASE_KEY =
+"你的publishable key";
+
+const sb = supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
 
 /* ===================== */
 /* STATE */
 /* ===================== */
 
+let products = [];
+
+let currentFilter = "All";
+
 let currentPage = 1;
-let pageSize = 6;
-let currentCategory = "All";
-let keyword = "";
+
+const perPage = 8;
 
 /* ===================== */
-/* FILTER LOGIC */
+/* LOAD */
 /* ===================== */
 
-function getFiltered(){
-    let list = products;
+async function loadProducts(){
 
-    if(currentCategory !== "All"){
-        list = list.filter(p => p.category === currentCategory);
-    }
+let { data } =
+await sb.from("products").select("*");
 
-    if(keyword){
-        list = list.filter(p =>
-            p.name.toLowerCase().includes(keyword)
-        );
-    }
+products = data || [];
 
-    return list;
+renderProducts();
+
+}
+
+loadProducts();
+
+/* ===================== */
+/* FILTER */
+/* ===================== */
+
+function filterProducts(type){
+
+currentFilter = type;
+
+currentPage = 1;
+
+renderProducts();
+
 }
 
 /* ===================== */
-/* RENDER PRODUCTS */
+/* RENDER */
 /* ===================== */
 
-function render(){
-    const grid = document.getElementById("grid");
-    const list = getFiltered();
+function renderProducts(){
 
-    const start = (currentPage - 1) * pageSize;
-    const end = start + pageSize;
+let keyword =
+document.getElementById("search")
+.value.toLowerCase();
 
-    const pageItems = list.slice(start, end);
+let filtered = products.filter(p => {
 
-    grid.innerHTML = "";
+let matchCategory =
+currentFilter === "All" ||
+p.category === currentFilter;
 
-    pageItems.forEach(p=>{
-        grid.innerHTML += `
-            <div class="card">
-                <img src="${p.image}">
-                <h3>${p.name}</h3>
-                <p>${p.category} | ${p.gsm}gsm</p>
-                <a href="product.html?id=${p.id}">View Details</a>
-            </div>
-        `;
-    });
+let matchSearch =
+p.name.toLowerCase().includes(keyword);
 
-    renderPagination(list.length);
-}
+return matchCategory && matchSearch;
 
-/* ===================== */
+});
+
 /* PAGINATION */
-/* ===================== */
 
-function renderPagination(total){
-    const pageCount = Math.ceil(total / pageSize);
-    const box = document.getElementById("pagination");
+let start =
+(currentPage - 1) * perPage;
 
-    box.innerHTML = "";
+let end =
+start + perPage;
 
-    for(let i=1;i<=pageCount;i++){
-        box.innerHTML += `
-            <button class="page-btn ${i===currentPage?'active':''}"
-            onclick="goPage(${i})">
-                ${i}
-            </button>
-        `;
-    }
+let pageItems =
+filtered.slice(start, end);
+
+/* GRID */
+
+let html = "";
+
+pageItems.forEach(p=>{
+
+html += `
+
+<div class="card">
+
+<img src="${p.image}">
+
+<div class="card-body">
+
+<span class="category">
+${p.category}
+</span>
+
+<h3>${p.name}</h3>
+
+<div class="spec">
+GSM: ${p.gsm || "-"}
+</div>
+
+<div class="spec">
+MOQ: ${p.moq || "-"}
+</div>
+
+<a
+class="btn"
+href="product.html?id=${p.id}">
+View Details
+</a>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("grid").innerHTML =
+html;
+
+/* PAGE BUTTONS */
+
+let totalPages =
+Math.ceil(filtered.length / perPage);
+
+let pageHtml = "";
+
+for(let i=1;i<=totalPages;i++){
+
+pageHtml += `
+<button onclick="goPage(${i})">
+${i}
+</button>
+`;
+
 }
+
+document.getElementById("pagination")
+.innerHTML = pageHtml;
+
+}
+
+/* ===================== */
+/* PAGE */
+/* ===================== */
 
 function goPage(page){
-    currentPage = page;
-    render();
+
+currentPage = page;
+
+renderProducts();
+
 }
-
-/* ===================== */
-/* CATEGORY */
-/* ===================== */
-
-function setCategory(cat){
-    currentCategory = cat;
-    currentPage = 1;
-    render();
-}
-
-/* ===================== */
-/* SEARCH */
-/* ===================== */
-
-function searchProducts(){
-    keyword = document.getElementById("search").value.toLowerCase();
-    currentPage = 1;
-    render();
-}
-
-/* INIT */
-render();
 
 </script>
 
