@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>SummitTex Product Detail</title>
+<title>Product Detail - SummitTex</title>
 
 <style>
-
 body{
     font-family:Arial;
     background:#0b0f14;
@@ -18,70 +15,71 @@ body{
 }
 
 .container{
-    max-width:1200px;
+    max-width:1100px;
     margin:auto;
 }
 
-.product{
+.back{
+    color:#60a5fa;
+    text-decoration:none;
+    display:inline-block;
+    margin-bottom:20px;
+}
+
+.layout{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:40px;
 }
 
-.product img{
+img{
     width:100%;
-    border-radius:16px;
+    border-radius:14px;
 }
 
-.info h1{
-    font-size:36px;
-    margin-bottom:20px;
-}
-
-.specs{
+.box{
     background:#111827;
     padding:20px;
-    border-radius:12px;
+    border-radius:14px;
     margin-top:20px;
 }
 
-.specs p{
-    margin:10px 0;
+h1{
+    font-size:32px;
 }
 
-.feature-box{
+.rfq{
+    margin-top:30px;
     background:#1f2937;
     padding:20px;
-    border-radius:12px;
-    margin-top:20px;
+    border-radius:14px;
 }
 
-.btn{
-    display:inline-block;
-    margin-top:30px;
-    padding:14px 22px;
-    background:#25D366;
+input, textarea{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:8px;
+    border:none;
+}
+
+button{
+    margin-top:15px;
+    padding:14px;
+    background:#2563eb;
     color:white;
-    text-decoration:none;
+    border:none;
     border-radius:10px;
-    font-weight:bold;
-}
-
-.back{
-    display:inline-block;
-    margin-bottom:30px;
-    color:#60a5fa;
-    text-decoration:none;
+    cursor:pointer;
+    width:100%;
+    font-size:16px;
 }
 
 @media(max-width:768px){
-
-.product{
+.layout{
     grid-template-columns:1fr;
 }
-
 }
-
 </style>
 </head>
 
@@ -89,9 +87,7 @@ body{
 
 <div class="container">
 
-<a class="back" href="products.html">
-← Back to Products
-</a>
+<a class="back" href="products.html">← Back to Products</a>
 
 <div id="content"></div>
 
@@ -101,81 +97,98 @@ body{
 
 <script>
 
-const id =
-new URLSearchParams(location.search).get("id");
+const id = new URLSearchParams(location.search).get("id");
 
-const p =
-products.find(x => x.id == id);
+const p = products.find(x => x.id == id);
 
 if(!p){
-
-document.getElementById("content").innerHTML =
-"<h2>Product Not Found</h2>";
-
-}else{
+    document.getElementById("content").innerHTML =
+    "<h2>Product Not Found</h2>";
+}
+else{
 
 document.getElementById("content").innerHTML = `
 
-<div class="product">
+<div class="layout">
 
 <div>
 <img src="${p.image}">
 </div>
 
-<div class="info">
+<div>
 
 <h1>${p.name}</h1>
 
-<p>
-${p.feature}
-</p>
+<p>${p.feature}</p>
 
-<div class="specs">
-
-<h3>Technical Specifications</h3>
-
+<div class="box">
+<h3>Specifications</h3>
 <p><b>Category:</b> ${p.category}</p>
-
 <p><b>Weight:</b> ${p.gsm} gsm</p>
-
 <p><b>MOQ:</b> ${p.moq}</p>
-
-<p><b>Application:</b> Outdoor Jackets / Sportswear / Hiking</p>
-
-<p><b>Supply Type:</b> OEM & ODM</p>
-
 </div>
 
-<div class="feature-box">
+<div class="box">
+<h3>Application</h3>
+<p>Outdoor / Sportswear / Industrial Use</p>
+</div>
 
-<h3>Key Features</h3>
-
+<div class="box">
+<h3>Why Choose Us</h3>
 <p>
-
-✔ Waterproof<br>
-✔ Breathable<br>
-✔ Durable Performance<br>
-✔ Export Quality<br>
-✔ Outdoor Functional Textile
-
+✔ Factory Direct<br>
+✔ Stable Quality<br>
+✔ Export Experience<br>
+✔ OEM/ODM Support
 </p>
+</div>
 
 </div>
 
-<a
-class="btn"
-target="_blank"
-href="https://wa.me/861234567890?text=Hi, I want sample of ${p.name}">
-
-💬 Contact WhatsApp / Get Sample
-
-</a>
-
 </div>
+
+<div class="rfq">
+
+<h2>Request a Quote (RFQ)</h2>
+
+<input id="name" placeholder="Your Name">
+<input id="email" placeholder="Your Email">
+<input id="qty" placeholder="Quantity (Meters)">
+<textarea id="msg" placeholder="Tell us your requirement..."></textarea>
+
+<button onclick="sendRFQ('${p.name}')">
+Submit RFQ
+</button>
 
 </div>
 
 `;
+
+}
+
+function sendRFQ(productName){
+
+const name = document.getElementById("name").value;
+const email = document.getElementById("email").value;
+const qty = document.getElementById("qty").value;
+const msg = document.getElementById("msg").value;
+
+if(!name || !email){
+    alert("Please fill name and email");
+    return;
+}
+
+alert(
+`RFQ Submitted!
+
+Product: ${productName}
+Name: ${name}
+Email: ${email}
+Quantity: ${qty}
+Message: ${msg}
+
+We will contact you soon.`
+);
 
 }
 
