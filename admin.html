@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<title>V16 Product Admin</title>
+<title>V16 Debug Admin</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
@@ -16,18 +16,16 @@ body{
     color:white;
 }
 
-/* LOGIN */
 #login{
     max-width:300px;
     margin:100px auto;
     background:white;
     color:#111827;
     padding:20px;
-    border-radius:12px;
+    border-radius:10px;
     text-align:center;
 }
 
-/* PANEL */
 #panel{
     display:none;
     padding:20px;
@@ -35,54 +33,46 @@ body{
 
 .box{
     background:#111827;
-    padding:20px;
-    border-radius:12px;
-    margin-bottom:20px;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:15px;
 }
 
-/* INPUT */
-input, select, textarea{
+input,select,textarea{
     width:100%;
     padding:10px;
-    margin-top:10px;
+    margin-top:8px;
     border-radius:8px;
-    border:none;
 }
 
-/* BUTTON */
 button{
     width:100%;
     padding:12px;
-    margin-top:12px;
+    margin-top:10px;
     border:none;
     border-radius:8px;
     background:#2563eb;
     color:white;
-    cursor:pointer;
 }
 
-/* PRODUCT LIST */
+.log{
+    background:black;
+    padding:10px;
+    font-size:12px;
+    height:200px;
+    overflow:auto;
+    border-radius:8px;
+    margin-top:10px;
+    white-space:pre-wrap;
+}
+
 .item{
     background:white;
-    color:#111827;
-    padding:10px;
-    margin-top:10px;
-    border-radius:10px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-img{
-    width:50px;
-    height:50px;
-    object-fit:cover;
+    color:black;
+    padding:8px;
+    margin-top:8px;
     border-radius:8px;
-}
-
-.small{
-    font-size:12px;
-    color:#6b7280;
+    font-size:13px;
 }
 
 </style>
@@ -91,51 +81,49 @@ img{
 
 <body>
 
-<!-- LOGIN -->
 <div id="login">
-<h3>Admin Login</h3>
-<input type="password" id="pass" placeholder="Password">
+<h3>Debug Login</h3>
+<input type="password" id="pass">
 <button onclick="login()">Login</button>
 </div>
 
-<!-- PANEL -->
 <div id="panel">
 
 <div class="box">
 
-<h2>➕ Add Product</h2>
+<h3>Upload Product (DEBUG MODE)</h3>
 
-<input id="name" placeholder="Product Name">
+<input id="name" placeholder="name">
 
 <select id="category">
 <option>Outdoor Functional Fabrics</option>
 <option>Sports & Activewear Fabrics</option>
 <option>Recycled & Sustainable Fabrics</option>
-<option>Stretch Fabrics</option>
-<option>Nylon & Polyester Fabrics</option>
-<option>Jacquard & Textured Fabrics</option>
-<option>Printed Fabrics</option>
-<option>Swimwear Fabrics</option>
-<option>Underwear Fabrics</option>
-<option>Workwear Fabrics</option>
-<option>Fashion Fabrics</option>
 <option>Others</option>
 </select>
 
-<input id="gsm" placeholder="GSM">
-<input id="moq" placeholder="MOQ">
+<input id="gsm" placeholder="gsm">
+<input id="moq" placeholder="moq">
 
-<textarea id="feature" placeholder="Feature"></textarea>
+<textarea id="feature" placeholder="feature"></textarea>
 
 <input type="file" id="file">
 
-<button onclick="uploadProduct()">Upload Product</button>
+<button onclick="upload()">UPLOAD + TRACE</button>
 
 </div>
 
 <div class="box">
 
-<h2>📦 Product List</h2>
+<h3>🔍 LIVE LOG</h3>
+<div class="log" id="log"></div>
+
+</div>
+
+<div class="box">
+
+<h3>📦 DATABASE DATA</h3>
+<button onclick="load()">REFRESH DATA</button>
 <div id="list"></div>
 
 </div>
@@ -149,20 +137,29 @@ const SUPABASE_KEY = "你的publishable key";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const PASSWORD = "123456";
+const logBox = document.getElementById("log");
 
+function log(msg){
+    logBox.innerText += msg + "\n";
+    logBox.scrollTop = logBox.scrollHeight;
+}
+
+/* LOGIN */
 function login(){
-    if(pass.value === PASSWORD){
+    if(pass.value==="123456"){
         login.style.display="none";
         panel.style.display="block";
+        log("Login success");
         load();
     }else{
-        alert("Wrong password");
+        alert("wrong");
     }
 }
 
-/* UPLOAD PRODUCT */
-async function uploadProduct(){
+/* UPLOAD WITH DEBUG */
+async function upload(){
+
+log("Start upload...");
 
 let file = document.getElementById("file").files[0];
 
@@ -170,48 +167,67 @@ let imageUrl = "";
 
 if(file){
 
-let fileName = Date.now() + "_" + file.name;
+log("Uploading image...");
 
-await sb.storage.from("images").upload(fileName, file);
+let fileName = Date.now()+"_"+file.name;
 
-imageUrl = SUPABASE_URL + "/storage/v1/object/public/images/" + fileName;
+let { data, error } = await sb.storage
+.from("images")
+.upload(fileName,file);
+
+if(error){
+    log("❌ Upload error: " + error.message);
+    return;
 }
 
-await sb.from("products").insert([{
-    name: name.value,
-    category: category.value,
-    gsm: gsm.value,
-    moq: moq.value,
-    feature: feature.value,
-    image: imageUrl
+imageUrl = SUPABASE_URL+"/storage/v1/object/public/images/"+fileName;
+
+log("Image uploaded: " + imageUrl);
+}
+
+log("Inserting product...");
+
+let { error: dbError } = await sb.from("products").insert([{
+    name:name.value,
+    category:category.value,
+    gsm:gsm.value,
+    moq:moq.value,
+    feature:feature.value,
+    image:imageUrl
 }]);
 
-alert("Product uploaded!");
+if(dbError){
+    log("❌ DB error: " + dbError.message);
+    return;
+}
+
+log("✅ Product inserted successfully");
 
 load();
 }
 
-/* LOAD */
+/* LOAD DATA */
 async function load(){
 
-let { data } = await sb.from("products").select("*");
+log("Loading products...");
+
+let { data, error } = await sb.from("products").select("*");
+
+if(error){
+    log("❌ Load error: " + error.message);
+    return;
+}
+
+log("Loaded: " + data.length + " items");
 
 let html = "";
 
 data.forEach(p=>{
-
-html += `
-<div class="item">
-    <div style="display:flex;gap:10px;align-items:center;">
-        <img src="${p.image}">
-        <div>
-            <b>${p.name}</b><br>
-            <span class="small">${p.category}</span>
-        </div>
-    </div>
-</div>
-`;
-
+html += `<div class="item">
+<b>${p.name}</b><br>
+${p.category}<br>
+${p.image || "no image"}
+</div>`;
 });
 
 list.innerHTML = html;
