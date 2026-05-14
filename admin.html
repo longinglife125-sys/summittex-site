@@ -1,237 +1,46 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<title>V20 企业外贸后台（稳定中文版）</title>
+// ===== LOGIN SAFE VERSION =====
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+function doLogin() {
+    const input = document.getElementById("adminPass");
+    const loginBox = document.getElementById("loginBox");
+    const panelBox = document.getElementById("panelBox");
 
-<style>
-body{
-    margin:0;
-    font-family:Arial;
-    background:#0b1220;
-    color:white;
-}
+    if (!input || !loginBox || !panelBox) {
+        alert("页面结构错误：loginBox 或 panelBox 未找到");
+        return;
+    }
 
-/* 登录 */
-#loginBox{
-    max-width:320px;
-    margin:120px auto;
-    background:white;
-    color:black;
-    padding:20px;
-    border-radius:12px;
-    text-align:center;
-}
+    const pass = input.value.trim();
 
-#loginBox input{
-    width:100%;
-    padding:10px;
-    margin-top:10px;
-}
+    if (pass === "123456") {
+        loginBox.style.display = "none";
+        panelBox.style.display = "block";
 
-#loginBox button{
-    width:100%;
-    margin-top:10px;
-    padding:10px;
-    background:#2563eb;
-    color:white;
-    border:none;
-    border-radius:8px;
-}
+        if (typeof loadProducts === "function") loadProducts();
+        if (typeof loadCRM === "function") loadCRM();
 
-/* 面板 */
-#panelBox{
-    display:none;
-    padding:20px;
-}
-
-/* 模块 */
-.box{
-    background:#111827;
-    padding:15px;
-    border-radius:10px;
-    margin-bottom:15px;
-}
-
-input,select,textarea{
-    width:100%;
-    padding:10px;
-    margin-top:8px;
-    border-radius:8px;
-    border:none;
-    box-sizing:border-box;
-}
-
-button{
-    width:100%;
-    padding:10px;
-    margin-top:10px;
-    border:none;
-    border-radius:8px;
-    background:#2563eb;
-    color:white;
-    cursor:pointer;
-}
-
-.item{
-    background:white;
-    color:black;
-    padding:10px;
-    border-radius:8px;
-    margin-top:8px;
-}
-</style>
-</head>
-
-<body>
-
-<!-- ================= 登录 ================= -->
-<div id="loginBox">
-    <h3>🔐 中文后台登录</h3>
-    <input type="password" id="adminPass" placeholder="请输入密码">
-    <button id="loginBtn">登录系统</button>
-    <div style="font-size:12px;margin-top:10px;color:gray;">默认密码：123456</div>
-</div>
-
-<!-- ================= 后台 ================= -->
-<div id="panelBox">
-
-    <div class="box">
-        <h3>📦 产品上传</h3>
-
-        <input id="name" placeholder="产品名称">
-        
-        <select id="category">
-            <option>Outdoor Functional Fabrics</option>
-            <option>Sports Fabrics</option>
-            <option>Recycled Fabrics</option>
-            <option>Workwear Fabrics</option>
-            <option>Fashion Fabrics</option>
-        </select>
-
-        <input id="gsm" placeholder="GSM">
-        <input id="moq" placeholder="MOQ">
-        <textarea id="feature" placeholder="产品描述"></textarea>
-
-        <input type="file" id="file">
-
-        <button onclick="upload()">上传产品</button>
-    </div>
-
-    <div class="box">
-        <h3>📦 产品列表</h3>
-        <button onclick="load()">刷新</button>
-        <div id="list"></div>
-    </div>
-
-    <div class="box">
-        <h3>📩 CRM询盘</h3>
-        <button onclick="loadCRM()">刷新CRM</button>
-        <div id="crm"></div>
-    </div>
-
-</div>
-
-<script>
-
-/* ================= Supabase ================= */
-const sb = supabase.createClient(
-    "https://tpcxaelljrudshchuzia.supabase.co",
-    "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt"
-);
-
-/* ================= 登录（绝对稳定版） ================= */
-function doLogin(){
-    const pass = document.getElementById("adminPass").value.trim();
-
-    if(pass === "123456"){
-        document.getElementById("loginBox").style.display="none";
-        document.getElementById("panelBox").style.display="block";
-        load();
-        loadCRM();
-    }else{
+        console.log("LOGIN SUCCESS");
+    } else {
         alert("密码错误");
+        input.value = "";
+        input.focus();
     }
 }
 
-/* 绑定按钮 + 回车 */
+// ===== 强制绑定（防止按钮失效）=====
 window.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("loginBtn");
+    const input = document.getElementById("adminPass");
 
-    document.getElementById("loginBtn")
-        .addEventListener("click", doLogin);
+    if (btn) {
+        btn.addEventListener("click", doLogin);
+    }
 
-    document.getElementById("adminPass")
-        .addEventListener("keydown", e=>{
-            if(e.key==="Enter") doLogin();
+    if (input) {
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") doLogin();
         });
+    }
+
+    if (input) input.focus();
 });
-
-/* ================= 上传产品 ================= */
-async function upload(){
-
-let file = document.getElementById("file").files[0];
-let imageUrl = "";
-
-if(file){
-    let fileName = Date.now()+"_"+file.name;
-
-    await sb.storage.from("images").upload(fileName,file);
-
-    imageUrl =
-    "https://tpcxaelljrudshchuzia.supabase.co/storage/v1/object/public/images/"
-    + fileName;
-}
-
-await sb.from("products").insert([{
-    name:name.value,
-    category:category.value,
-    gsm:gsm.value,
-    moq:moq.value,
-    feature:feature.value,
-    image:imageUrl,
-    images:imageUrl ? [imageUrl] : [],
-    created_at: new Date().toISOString()
-}]);
-
-load();
-}
-
-/* ================= 产品列表 ================= */
-async function load(){
-let { data } = await sb.from("products").select("*");
-
-let html = "";
-(data||[]).forEach(p=>{
-html += `
-<div class="item">
-<b>${p.name}</b><br>
-${p.category}
-</div>`;
-});
-
-list.innerHTML = html;
-}
-
-/* ================= CRM ================= */
-async function loadCRM(){
-let { data } = await sb.from("inquiries").select("*");
-
-let html = "";
-(data||[]).forEach(c=>{
-html += `
-<div class="item">
-<b>${c.name}</b><br>
-${c.product}<br>
-${c.message}
-</div>`;
-});
-
-crm.innerHTML = html;
-}
-
-</script>
-
-</body>
-</html>
