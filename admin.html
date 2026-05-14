@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<title>V4 Admin - SummitTex</title>
+<title>V5 Admin - SummitTex</title>
 
 <style>
 
@@ -25,7 +25,7 @@ body{
     text-align:center;
 }
 
-input, textarea{
+input, textarea, select{
     width:100%;
     padding:10px;
     margin-top:10px;
@@ -55,7 +55,6 @@ button{
     margin-top:20px;
 }
 
-/* PRODUCT ITEM */
 .product{
     background:white;
     color:#0f172a;
@@ -92,21 +91,12 @@ button{
     cursor:pointer;
 }
 
-.edit{
-    background:#f59e0b;
-    color:white;
-}
+.edit{ background:#f59e0b; color:white; }
+.del{ background:#ef4444; color:white; }
 
-.del{
-    background:#ef4444;
-    color:white;
-}
-
-/* ACTION */
 .primary{
     background:#2563eb;
     color:white;
-    width:100%;
 }
 
 </style>
@@ -119,13 +109,13 @@ button{
 <div id="loginBox">
 <h2>Admin Login</h2>
 <input type="password" id="pass" placeholder="Password">
-<button onclick="login()" class="primary">Login</button>
+<button class="primary" onclick="login()">Login</button>
 </div>
 
 <!-- PANEL -->
 <div id="panel">
 
-<h2>V4 Product Admin System</h2>
+<h2>V5 Product Manager (Supabase)</h2>
 
 <div class="box">
 
@@ -133,10 +123,12 @@ button{
 <input id="category" placeholder="Category">
 <input id="gsm" placeholder="GSM">
 <input id="moq" placeholder="MOQ">
-<input id="image" placeholder="Image path">
 <textarea id="feature" placeholder="Feature"></textarea>
 
-<button onclick="addOrUpdate()" class="primary">Save Product</button>
+<!-- IMAGE UPLOAD -->
+<input type="file" id="file">
+
+<button class="primary" onclick="uploadAndSave()">Upload & Save Product</button>
 
 </div>
 
@@ -145,98 +137,100 @@ button{
 <div id="list"></div>
 </div>
 
-<div class="box">
-<h3>Generated products.js</h3>
-<textarea id="output"></textarea>
-<button onclick="copy()" class="primary">Copy Code</button>
 </div>
 
-</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
 
+/* ===================== */
+/* SUPABASE CONFIG */
+/* ===================== */
+
+https://tpcxaelljrudshchuzia.supabase.co/rest/v1/;
+sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt;
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ===================== */
+/* LOGIN */
+/* ===================== */
+
 const PASSWORD = "123456";
 
-let products = JSON.parse(localStorage.getItem("products") || "[]");
-let editId = null;
-
-/* LOGIN */
 function login(){
     if(pass.value === PASSWORD){
-        loginBox.style.display = "none";
-        panel.style.display = "block";
-        render();
+        loginBox.style.display="none";
+        panel.style.display="block";
+        loadProducts();
     }else{
         alert("Wrong password");
     }
 }
 
-/* ADD OR UPDATE */
-function addOrUpdate(){
+/* ===================== */
+/* LOAD PRODUCTS */
+/* ===================== */
 
-const data = {
-    id: editId || Date.now(),
+async function loadProducts(){
+
+let { data } = await sb.from("products").select("*");
+
+render(data);
+}
+
+/* ===================== */
+/* UPLOAD IMAGE + SAVE PRODUCT */
+/* ===================== */
+
+async function uploadAndSave(){
+
+let file = document.getElementById("file").files[0];
+
+let imageUrl = "";
+
+if(file){
+
+let fileName = Date.now() + "_" + file.name;
+
+let { data, error } = await sb.storage
+.from("images")
+.upload(fileName, file);
+
+imageUrl = SUPABASE_URL + "/storage/v1/object/public/images/" + fileName;
+}
+
+await sb.from("products").insert([{
     name: name.value,
     category: category.value,
     gsm: gsm.value,
     moq: moq.value,
-    image: image.value,
-    feature: feature.value
-};
+    feature: feature.value,
+    image: imageUrl
+}]);
 
-if(editId){
-    products = products.map(p => p.id === editId ? data : p);
-    editId = null;
-}else{
-    products.push(data);
-}
+alert("Product saved!");
 
-save();
-render();
+loadProducts();
 clearForm();
 }
 
-/* EDIT */
-function edit(id){
-    const p = products.find(x => x.id === id);
-
-    name.value = p.name;
-    category.value = p.category;
-    gsm.value = p.gsm;
-    moq.value = p.moq;
-    image.value = p.image;
-    feature.value = p.feature;
-
-    editId = id;
-}
-
+/* ===================== */
 /* DELETE */
-function del(id){
-    products = products.filter(p => p.id !== id);
-    save();
-    render();
+/* ===================== */
+
+async function del(id){
+    await sb.from("products").delete().eq("id", id);
+    loadProducts();
 }
 
-/* SAVE */
-function save(){
-    localStorage.setItem("products", JSON.stringify(products));
-}
-
-/* CLEAR */
-function clearForm(){
-    name.value = "";
-    category.value = "";
-    gsm.value = "";
-    moq.value = "";
-    image.value = "";
-    feature.value = "";
-}
-
+/* ===================== */
 /* RENDER */
-function render(){
+/* ===================== */
+
+function render(products){
 
 let html = "";
-let js = "const products = [\n";
 
 products.forEach(p=>{
 
@@ -250,36 +244,27 @@ html += `
         </div>
     </div>
 
-    <div>
-        <button class="btn edit" onclick="edit(${p.id})">Edit</button>
-        <button class="btn del" onclick="del(${p.id})">Del</button>
-    </div>
+    <button class="btn del" onclick="del(${p.id})">Del</button>
 </div>
 `;
 
-js += `{
-id:"${p.id}",
-name:"${p.name}",
-category:"${p.category}",
-gsm:"${p.gsm}",
-moq:"${p.moq}",
-image:"${p.image}",
-feature:"${p.feature}"
-},\n`;
-
 });
 
-js += "];";
-
 list.innerHTML = html;
-output.value = js;
 
 }
 
-/* COPY */
-function copy(){
-    navigator.clipboard.writeText(output.value);
-    alert("Copied!");
+/* ===================== */
+/* CLEAR FORM */
+/* ===================== */
+
+function clearForm(){
+name.value="";
+category.value="";
+gsm.value="";
+moq.value="";
+feature.value="";
+file.value="";
 }
 
 </script>
