@@ -3,7 +3,9 @@
 
 <head>
 <meta charset="UTF-8">
-<title>V5 Admin - SummitTex</title>
+<title>V16 Product Admin</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <style>
 
@@ -15,31 +17,14 @@ body{
 }
 
 /* LOGIN */
-#loginBox{
-    max-width:320px;
+#login{
+    max-width:300px;
     margin:100px auto;
     background:white;
-    color:#0f172a;
-    padding:25px;
-    border-radius:14px;
+    color:#111827;
+    padding:20px;
+    border-radius:12px;
     text-align:center;
-}
-
-input, textarea, select{
-    width:100%;
-    padding:10px;
-    margin-top:10px;
-    border-radius:8px;
-    border:1px solid #ccc;
-}
-
-button{
-    margin-top:10px;
-    padding:10px;
-    width:100%;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
 }
 
 /* PANEL */
@@ -52,27 +37,43 @@ button{
     background:#111827;
     padding:20px;
     border-radius:12px;
-    margin-top:20px;
+    margin-bottom:20px;
 }
 
-.product{
-    background:white;
-    color:#0f172a;
+/* INPUT */
+input, select, textarea{
+    width:100%;
     padding:10px;
-    border-radius:10px;
     margin-top:10px;
+    border-radius:8px;
+    border:none;
+}
+
+/* BUTTON */
+button{
+    width:100%;
+    padding:12px;
+    margin-top:12px;
+    border:none;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+}
+
+/* PRODUCT LIST */
+.item{
+    background:white;
+    color:#111827;
+    padding:10px;
+    margin-top:10px;
+    border-radius:10px;
     display:flex;
     justify-content:space-between;
     align-items:center;
 }
 
-.left{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-.preview{
+img{
     width:50px;
     height:50px;
     object-fit:cover;
@@ -81,22 +82,7 @@ button{
 
 .small{
     font-size:12px;
-    color:#64748b;
-}
-
-.btn{
-    padding:6px 10px;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-}
-
-.edit{ background:#f59e0b; color:white; }
-.del{ background:#ef4444; color:white; }
-
-.primary{
-    background:#2563eb;
-    color:white;
+    color:#6b7280;
 }
 
 </style>
@@ -106,84 +92,77 @@ button{
 <body>
 
 <!-- LOGIN -->
-<div id="loginBox">
-<h2>Admin Login</h2>
+<div id="login">
+<h3>Admin Login</h3>
 <input type="password" id="pass" placeholder="Password">
-<button class="primary" onclick="login()">Login</button>
+<button onclick="login()">Login</button>
 </div>
 
 <!-- PANEL -->
 <div id="panel">
 
-<h2>V5 Product Manager (Supabase)</h2>
-
 <div class="box">
+
+<h2>➕ Add Product</h2>
 
 <input id="name" placeholder="Product Name">
-<input id="category" placeholder="Category">
+
+<select id="category">
+<option>Outdoor Functional Fabrics</option>
+<option>Sports & Activewear Fabrics</option>
+<option>Recycled & Sustainable Fabrics</option>
+<option>Stretch Fabrics</option>
+<option>Nylon & Polyester Fabrics</option>
+<option>Jacquard & Textured Fabrics</option>
+<option>Printed Fabrics</option>
+<option>Swimwear Fabrics</option>
+<option>Underwear Fabrics</option>
+<option>Workwear Fabrics</option>
+<option>Fashion Fabrics</option>
+<option>Others</option>
+</select>
+
 <input id="gsm" placeholder="GSM">
 <input id="moq" placeholder="MOQ">
+
 <textarea id="feature" placeholder="Feature"></textarea>
 
-<!-- IMAGE UPLOAD -->
 <input type="file" id="file">
 
-<button class="primary" onclick="uploadAndSave()">Upload & Save Product</button>
+<button onclick="uploadProduct()">Upload Product</button>
 
 </div>
 
 <div class="box">
-<h3>Product List</h3>
+
+<h2>📦 Product List</h2>
 <div id="list"></div>
-</div>
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</div>
 
 <script>
 
-/* ===================== */
-/* SUPABASE CONFIG */
-/* ===================== */
-
-const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co/rest/v1/";
-const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
+const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
+const SUPABASE_KEY = "你的publishable key";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-/* ===================== */
-/* LOGIN */
-/* ===================== */
 
 const PASSWORD = "123456";
 
 function login(){
     if(pass.value === PASSWORD){
-        loginBox.style.display="none";
+        login.style.display="none";
         panel.style.display="block";
-        loadProducts();
+        load();
     }else{
         alert("Wrong password");
     }
 }
 
-/* ===================== */
-/* LOAD PRODUCTS */
-/* ===================== */
-
-async function loadProducts(){
-
-let { data } = await sb.from("products").select("*");
-
-render(data);
-}
-
-/* ===================== */
-/* UPLOAD IMAGE + SAVE PRODUCT */
-/* ===================== */
-
-async function uploadAndSave(){
+/* UPLOAD PRODUCT */
+async function uploadProduct(){
 
 let file = document.getElementById("file").files[0];
 
@@ -193,9 +172,7 @@ if(file){
 
 let fileName = Date.now() + "_" + file.name;
 
-let { data, error } = await sb.storage
-.from("images")
-.upload(fileName, file);
+await sb.storage.from("images").upload(fileName, file);
 
 imageUrl = SUPABASE_URL + "/storage/v1/object/public/images/" + fileName;
 }
@@ -209,42 +186,29 @@ await sb.from("products").insert([{
     image: imageUrl
 }]);
 
-alert("Product saved!");
+alert("Product uploaded!");
 
-loadProducts();
-clearForm();
+load();
 }
 
-/* ===================== */
-/* DELETE */
-/* ===================== */
+/* LOAD */
+async function load(){
 
-async function del(id){
-    await sb.from("products").delete().eq("id", id);
-    loadProducts();
-}
-
-/* ===================== */
-/* RENDER */
-/* ===================== */
-
-function render(products){
+let { data } = await sb.from("products").select("*");
 
 let html = "";
 
-products.forEach(p=>{
+data.forEach(p=>{
 
 html += `
-<div class="product">
-    <div class="left">
-        <img src="${p.image}" class="preview">
+<div class="item">
+    <div style="display:flex;gap:10px;align-items:center;">
+        <img src="${p.image}">
         <div>
             <b>${p.name}</b><br>
-            <span class="small">${p.category} | ${p.gsm}gsm</span>
+            <span class="small">${p.category}</span>
         </div>
     </div>
-
-    <button class="btn del" onclick="del(${p.id})">Del</button>
 </div>
 `;
 
@@ -252,19 +216,6 @@ html += `
 
 list.innerHTML = html;
 
-}
-
-/* ===================== */
-/* CLEAR FORM */
-/* ===================== */
-
-function clearForm(){
-name.value="";
-category.value="";
-gsm.value="";
-moq.value="";
-feature.value="";
-file.value="";
 }
 
 </script>
