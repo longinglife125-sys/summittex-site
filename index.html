@@ -2,158 +2,219 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SummitTex | Functional Fabric Manufacturer</title>
+<title>
+China Textile Fabric Supplier | Woven & Functional Fabric Manufacturer
+</title>
 
-<meta name="description" content="Professional functional fabric manufacturer in China. Waterproof, softshell, TPU laminated fabrics for outdoor and industrial applications.">
+<meta name="description"
+content="Professional textile fabric supplier in China. Woven fabrics, knitted fabrics, outdoor fabrics and functional textiles for apparel, workwear and industrial applications.">
+
+<meta name="keywords"
+content="textile fabric supplier, woven fabric manufacturer, knitted fabric supplier, outdoor fabric, technical textile">
+
+<meta name="robots" content="index, follow">
 
 <style>
 
 /* ===================== */
-/* GLOBAL OUTDOOR BRAND STYLE */
+/* GLOBAL */
 /* ===================== */
 
 body{
     margin:0;
     font-family:Arial;
-    background:#f8fafc;
-    color:#0f172a;
+    background:#f5f7fa;
+    color:#111827;
+    line-height:1.6;
+}
+
+.container{
+    width:90%;
+    max-width:1200px;
+    margin:auto;
+}
+
+section{
+    padding:80px 0;
+}
+
+h1,h2,h3{
+    margin:0 0 20px;
+}
+
+p{
+    color:#4b5563;
 }
 
 /* ===================== */
-/* HERO SECTION */
+/* HERO */
 /* ===================== */
 
 .hero{
-    position:relative;
-    height:100vh;
-    background-image:url("https://images.unsplash.com/photo-1501785888041-af3ef285b470");
+    height:90vh;
+    background:
+    linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45)),
+    url('https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1600&auto=format&fit=crop');
     background-size:cover;
     background-position:center;
     display:flex;
     align-items:center;
-    justify-content:center;
-    text-align:center;
     color:white;
-}
-
-.hero::before{
-    content:"";
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    background:rgba(15,23,42,0.65);
 }
 
 .hero-content{
-    position:relative;
-    max-width:900px;
-    padding:20px;
+    max-width:700px;
 }
 
 .hero h1{
-    font-size:54px;
-    margin-bottom:15px;
+    font-size:58px;
+    line-height:1.1;
 }
 
 .hero p{
-    font-size:18px;
-    line-height:1.6;
-    color:#e2e8f0;
+    color:#e5e7eb;
+    font-size:20px;
+    margin-top:20px;
 }
-
-/* BUTTONS */
 
 .btn{
     display:inline-block;
-    margin:10px;
-    padding:14px 26px;
-    border-radius:10px;
-    text-decoration:none;
-    font-weight:bold;
-}
-
-.btn-primary{
-    background:#3b82f6;
+    margin-top:30px;
+    padding:14px 28px;
+    background:#2563eb;
     color:white;
-}
-
-.btn-light{
-    background:white;
-    color:#1e3a8a;
+    text-decoration:none;
+    border-radius:10px;
+    font-weight:bold;
+    margin-right:12px;
 }
 
 /* ===================== */
-/* SECTIONS */
+/* ABOUT */
 /* ===================== */
 
-.section{
-    padding:80px 20px;
-    max-width:1200px;
-    margin:auto;
-    text-align:center;
-}
-
-.section h2{
-    font-size:36px;
-    margin-bottom:40px;
-}
-
-/* GRID */
-
-.grid{
+.grid-2{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-    gap:20px;
+    grid-template-columns:1fr 1fr;
+    gap:50px;
+    align-items:center;
 }
 
-/* CARD */
+.about-img{
+    width:100%;
+    border-radius:18px;
+}
+
+/* ===================== */
+/* CATEGORIES */
+/* ===================== */
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:24px;
+    margin-top:40px;
+}
 
 .card{
     background:white;
-    border:1px solid #e2e8f0;
-    border-radius:14px;
-    padding:25px;
-    box-shadow:0 4px 14px rgba(0,0,0,0.05);
-    text-align:left;
+    padding:30px;
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,.06);
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-6px);
 }
 
 .card h3{
-    margin-top:0;
-    color:#1e3a8a;
+    margin-bottom:10px;
 }
 
+/* ===================== */
+/* ADVANTAGES */
+/* ===================== */
+
+.dark{
+    background:#111827;
+    color:white;
+}
+
+.dark p{
+    color:#cbd5e1;
+}
+
+.adv-list{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:20px;
+    margin-top:40px;
+}
+
+.adv{
+    background:#1f2937;
+    padding:25px;
+    border-radius:14px;
+}
+
+/* ===================== */
 /* CTA */
+/* ===================== */
 
 .cta{
-    background:#0f172a;
-    color:white;
-    padding:80px 20px;
     text-align:center;
 }
 
-.cta a{
-    display:inline-block;
-    margin-top:20px;
-    padding:14px 26px;
-    background:#3b82f6;
-    color:white;
-    text-decoration:none;
-    border-radius:10px;
+.cta h2{
+    font-size:42px;
 }
 
+/* ===================== */
 /* FOOTER */
+/* ===================== */
 
 footer{
+    background:#0f172a;
+    color:#94a3b8;
     text-align:center;
-    padding:40px;
-    background:#f1f5f9;
-    color:#64748b;
+    padding:40px 20px;
+}
+
+/* ===================== */
+/* WHATSAPP */
+/* ===================== */
+
+.wa{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:#25D366;
+    color:white;
+    padding:14px 18px;
+    border-radius:50px;
+    text-decoration:none;
+    font-weight:bold;
+    z-index:999;
+}
+
+/* ===================== */
+/* MOBILE */
+/* ===================== */
+
+@media(max-width:768px){
+
+.hero h1{
+    font-size:40px;
+}
+
+.grid-2{
+    grid-template-columns:1fr;
+}
+
 }
 
 </style>
@@ -163,144 +224,172 @@ footer{
 <body>
 
 <!-- HERO -->
-<div class="hero">
 
-<div class="hero-content">
+<section class="hero">
 
-<h1>Functional Fabric Manufacturer</h1>
+<div class="container hero-content">
+
+<h1>
+Professional Textile Fabric Supplier
+</h1>
 
 <p>
-Waterproof | Softshell | TPU Laminated | Recycled Fabrics  
-Professional Outdoor Textile Supplier for Global Brands
+Woven Fabrics • Knitted Fabrics • Outdoor Textiles • Functional Materials
 </p>
 
-<a class="btn btn-primary" href="products.html">View Products</a>
-<a class="btn btn-light" href="contact.html">Contact Us</a>
+<a href="products.html" class="btn">
+Browse Products
+</a>
+
+<a href="factory.html" class="btn">
+Factory Overview
+</a>
 
 </div>
 
-</div>
+</section>
 
-<!-- ABOUT US -->
-<div class="section">
+<!-- ABOUT -->
 
-<h2>About Us</h2>
+<section>
 
-<p style="max-width:850px;margin:auto;color:#475569;line-height:1.8;">
-SummitTex is a professional functional fabric manufacturer specializing in high-performance outdoor textiles.
-We provide waterproof fabrics, softshell fabrics, TPU laminated fabrics and recycled textile solutions for global apparel brands.
+<div class="container grid-2">
+
+<div>
+
+<h2>About SummitTex</h2>
+
+<p>
+SummitTex is a professional textile fabric supplier based in China, providing a wide range of woven, knitted and technical fabrics for apparel, outdoor, workwear and industrial applications.
+</p>
+
+<p>
+We focus on stable quality, flexible production and long-term cooperation with global buyers and garment manufacturers.
 </p>
 
 </div>
 
-<!-- CORE PRODUCTS -->
-<div class="section">
+<div>
 
-<h2>Core Products</h2>
+<img class="about-img"
+src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=1200&auto=format&fit=crop">
 
-<div class="grid">
+</div>
+
+</div>
+
+</section>
+
+<!-- PRODUCT CATEGORY -->
+
+<section>
+
+<div class="container">
+
+<h2>Our Product Categories</h2>
+
+<div class="cards">
 
 <div class="card">
-<h3>Waterproof Fabric</h3>
-<p>High-performance waterproof fabrics for outdoor protection.</p>
-</div>
-
-<div class="card">
-<h3>Softshell Fabric</h3>
-<p>Windproof, breathable and stretch fabrics for sportswear.</p>
-</div>
-
-<div class="card">
-<h3>TPU Laminated Fabric</h3>
-<p>Durable technical fabrics for industrial applications.</p>
-</div>
-
-<div class="card">
-<h3>Recycled Fabric</h3>
-<p>Sustainable eco-friendly textile solutions.</p>
-</div>
-
-</div>
-
-</div>
-
-<!-- WHY CHOOSE US -->
-<div class="section">
-
-<h2>Why Choose Us</h2>
-
-<div class="grid">
-
-<div class="card">
-<h3>Factory Direct</h3>
-<p>Competitive pricing with stable supply chain.</p>
+<h3>Outdoor Fabrics</h3>
+<p>Durable fabrics for jackets, hiking wear and outdoor gear.</p>
 </div>
 
 <div class="card">
+<h3>Functional Textiles</h3>
+<p>Waterproof, breathable and laminated textile materials.</p>
+</div>
+
+<div class="card">
+<h3>Workwear Fabrics</h3>
+<p>Reliable fabrics for uniforms and industrial applications.</p>
+</div>
+
+<div class="card">
+<h3>Fashion Fabrics</h3>
+<p>Modern woven and knitted fabrics for apparel brands.</p>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ADVANTAGES -->
+
+<section class="dark">
+
+<div class="container">
+
+<h2>Why Buyers Work With Us</h2>
+
+<div class="adv-list">
+
+<div class="adv">
+<h3>Stable Quality</h3>
+<p>Strict quality control system for every production batch.</p>
+</div>
+
+<div class="adv">
+<h3>Flexible MOQ</h3>
+<p>Support for both sampling and bulk production orders.</p>
+</div>
+
+<div class="adv">
 <h3>OEM / ODM</h3>
-<p>Custom fabric development and support.</p>
+<p>Customized textile solutions for global brands and buyers.</p>
 </div>
 
-<div class="card">
-<h3>Strict QC System</h3>
-<p>Stable quality for export markets.</p>
-</div>
-
-<div class="card">
-<h3>Global Export</h3>
-<p>Serving EU, USA and international markets.</p>
-</div>
-
-</div>
-
-</div>
-
-<!-- FACTORY CAPABILITY -->
-<div class="section">
-
-<h2>Factory Capability</h2>
-
-<div class="grid">
-
-<div class="card">
-<h3>10,000㎡ Factory</h3>
-<p>Modern textile manufacturing base.</p>
-</div>
-
-<div class="card">
-<h3>Advanced Equipment</h3>
-<p>Coating and lamination production lines.</p>
-</div>
-
-<div class="card">
-<h3>100,000m / Month</h3>
-<p>Stable mass production capacity.</p>
-</div>
-
-<div class="card">
+<div class="adv">
 <h3>Export Experience</h3>
-<p>Serving global textile buyers.</p>
+<p>Professional export service and international communication.</p>
 </div>
 
 </div>
 
 </div>
 
-<!-- CONTACT CTA -->
-<div class="cta">
+</section>
 
-<h2>Need Fabric Samples or Quotation?</h2>
+<!-- CTA -->
 
-<p>Contact us for RFQ, samples and technical datasheets.</p>
+<section class="cta">
 
-<a href="contact.html">Send Inquiry</a>
+<div class="container">
+
+<h2>
+Looking for Reliable Textile Fabrics?
+</h2>
+
+<p>
+Contact SummitTex for samples, quotations and fabric sourcing support.
+</p>
+
+<a href="products.html" class="btn">
+View Products
+</a>
 
 </div>
+
+</section>
 
 <!-- FOOTER -->
+
 <footer>
-© 2026 SummitTex Functional Fabric Manufacturer
+
+© 2026 SummitTex Textile Supplier
+
 </footer>
+
+<!-- WHATSAPP -->
+
+<a
+class="wa"
+href="https://wa.me/8613800000000?text=Hello, I am interested in your textile fabrics"
+target="_blank">
+💬 WhatsApp
+</a>
 
 </body>
 </html>
