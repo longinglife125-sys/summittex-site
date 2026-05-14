@@ -96,12 +96,10 @@ header{
     transition:.4s;
 }
 
-/* hover image */
 .hover-img{
     opacity:0;
 }
 
-/* hover effect */
 .img-box:hover .hover-img{
     opacity:1;
 }
@@ -184,15 +182,26 @@ input{
 
 <script>
 
+/* ===================== */
+/* SUPABASE CONFIG（正确版） */
+/* ===================== */
+
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co/rest/v1/";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+/* ===================== */
+/* STATE */
+/* ===================== */
+
 let products = [];
 let current = "All";
 
-/* 分类 */
+/* ===================== */
+/* CATEGORIES */
+/* ===================== */
+
 const categories = [
 "All",
 "Top Sell",
@@ -210,14 +219,10 @@ const categories = [
 "Others"
 ];
 
-/* INIT */
-load();
-renderFilters();
+/* ===================== */
+/* DEMO DATA（防止空白） */
+/* ===================== */
 
-/* LOAD DATA */
-let products = [];
-
-/* 🟢 先给你测试数据（确保页面一定有东西） */
 const demoProducts = [
 {
 id: 1,
@@ -248,19 +253,36 @@ feature: "Eco-friendly recycled fabric"
 }
 ];
 
-/* 🟢 核心加载函数 */
+/* ===================== */
+/* INIT */
+/* ===================== */
+
+load();
+renderFilters();
+
+/* ===================== */
+/* LOAD DATA */
+/* ===================== */
+
 async function load(){
 
 try{
 
-let { data, error } = await sb.from("products").select("*");
+let { data, error } = await sb
+.from("products")
+.select("*");
 
-/* 👉 如果数据库有数据，用数据库 */
+if(error){
+    console.log("DB error:", error);
+    products = demoProducts;
+    render();
+    return;
+}
+
 if(data && data.length > 0){
     products = data;
-    console.log("Using DB data:", data);
+    console.log("DB loaded:", data);
 }else{
-    /* 👉 如果数据库为空，用假数据 */
     products = demoProducts;
     console.log("Using demo data");
 }
@@ -268,16 +290,17 @@ if(data && data.length > 0){
 render();
 
 }catch(err){
-
-console.log("DB failed, fallback demo");
-products = demoProducts;
-render();
-
+    console.log("Fallback:", err);
+    products = demoProducts;
+    render();
 }
 
 }
 
+/* ===================== */
 /* FILTER UI */
+/* ===================== */
+
 function renderFilters(){
 
 let html = "";
@@ -289,7 +312,10 @@ html += `<div class="filter ${c==="All"?"active":""}" onclick="setFilter(event,'
 document.getElementById("filters").innerHTML = html;
 }
 
+/* ===================== */
 /* FILTER */
+/* ===================== */
+
 function setFilter(e,c){
 
 current = c;
@@ -303,15 +329,24 @@ e.target.classList.add("active");
 render();
 }
 
+/* ===================== */
 /* SEARCH */
+/* ===================== */
+
 document.getElementById("search").addEventListener("input", render);
 
-/* CLICK DETAIL */
+/* ===================== */
+/* DETAIL PAGE */
+/* ===================== */
+
 function goDetail(id){
-    window.location.href = "product.html?id=" + id;
+window.location.href = "product.html?id=" + id;
 }
 
-/* RENDER */
+/* ===================== */
+/* RENDER（核心） */
+/* ===================== */
+
 function render(){
 
 let key = document.getElementById("search").value.toLowerCase();
