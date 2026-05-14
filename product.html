@@ -239,37 +239,60 @@ load();
 
 function render(p){
 
+// 如果没有多图，就用单图
+let images = p.images && p.images.length ? p.images : [p.image];
+
+let thumbs = "";
+
+images.forEach((img, index)=>{
+thumbs += `<img src="${img}" onclick="setMain(${index})" class="thumb">`;
+});
+
 content.innerHTML = `
 
 <div class="layout">
 
-<div>
-<img src="${p.image}">
-</div>
-
+<!-- LEFT IMAGE -->
 <div>
 
-<span class="tag">${p.category}</span>
+    <img id="mainImg" src="${images[0]}" class="main-img">
 
-<h1>${p.name}</h1>
-
-<div class="small">
-GSM: ${p.gsm || "-"} | MOQ: ${p.moq || "-"}
-</div>
-
-<div class="box">
-<h3>Feature</h3>
-<p>${p.feature || "N/A"}</p>
-</div>
-
-<button onclick="openRFQ()">
-Request Quotation
-</button>
+    <div class="thumbs">
+        ${thumbs}
+    </div>
 
 </div>
 
+<!-- RIGHT INFO -->
+<div>
+
+    <span class="tag">${p.category}</span>
+
+    <h1>${p.name}</h1>
+
+    <div class="box">
+        <h3>Specifications</h3>
+        <p><b>GSM:</b> ${p.gsm || "-"}</p>
+        <p><b>MOQ:</b> ${p.moq || "-"}</p>
+    </div>
+
+    <div class="box">
+        <h3>Feature</h3>
+        <p>${p.feature || "N/A"}</p>
+    </div>
+
+    <button onclick="openRFQ()">Request Quotation</button>
+
+    <a class="wa"
+       href="https://wa.me/8613800000000?text=I want price for ${p.name}">
+       WhatsApp Inquiry
+    </a>
+
 </div>
 
+</div>
+
+<!-- RFQ -->
 <div class="rfq" id="rfqBox">
 
 <h2>RFQ Form</h2>
@@ -279,13 +302,13 @@ Request Quotation
 <input id="qty" placeholder="Quantity">
 <textarea id="msg" placeholder="Message"></textarea>
 
-<button onclick="sendRFQ('${p.name}')">
-Send Inquiry
-</button>
+<button onclick="sendRFQ('${p.name}')">Send Inquiry</button>
 
 </div>
 
 `;
+
+window.currentImages = images;
 
 }
 
@@ -339,7 +362,9 @@ function setupWhatsApp(p){
 document.getElementById("wa").href =
 `https://wa.me/8613800000000?text=Hello, I am interested in ${p.name}`;
 }
-
+function setMain(index){
+    document.getElementById("mainImg").src = window.currentImages[index];
+}
 </script>
 
 </body>
