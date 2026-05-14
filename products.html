@@ -25,7 +25,6 @@ body{
 }
 
 /* HEADER */
-
 header{
     background:white;
     padding:18px 0;
@@ -38,7 +37,6 @@ header{
 }
 
 /* FILTERS */
-
 .filters{
     display:flex;
     flex-wrap:wrap;
@@ -61,17 +59,13 @@ header{
 }
 
 /* GRID */
-
 .grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
     gap:20px;
 }
 
-/* ===================== */
-/* PRODUCT CARD（你缺的就在这里） */
-/* ===================== */
-
+/* PRODUCT CARD */
 .product-card{
     background:white;
     border-radius:14px;
@@ -85,8 +79,7 @@ header{
     transform:translateY(-6px);
 }
 
-/* IMAGE BOX */
-
+/* IMAGE */
 .img-box{
     position:relative;
     height:200px;
@@ -103,19 +96,17 @@ header{
     transition:.4s;
 }
 
-/* 主图 */
-.main-img{
-    z-index:1;
-}
-
-/* hover图 */
+/* hover image */
 .hover-img{
     opacity:0;
-    z-index:2;
 }
 
-/* CARD INFO */
+/* hover effect */
+.img-box:hover .hover-img{
+    opacity:1;
+}
 
+/* INFO */
 .info{
     padding:14px;
 }
@@ -130,11 +121,6 @@ header{
     margin-bottom:8px;
 }
 
-h3{
-    margin:6px 0;
-    font-size:16px;
-}
-
 .meta{
     font-size:13px;
     color:#6b7280;
@@ -147,7 +133,6 @@ h3{
 }
 
 /* BUTTON */
-
 button{
     width:100%;
     margin-top:10px;
@@ -164,7 +149,6 @@ button:hover{
 }
 
 /* SEARCH */
-
 input{
     width:100%;
     padding:12px;
@@ -208,7 +192,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let products = [];
 let current = "All";
 
-/* 分类（统一源） */
+/* 分类 */
 const categories = [
 "All",
 "Top Sell",
@@ -227,69 +211,81 @@ const categories = [
 ];
 
 /* INIT */
-
 load();
 renderFilters();
 
+/* LOAD DATA */
 async function load(){
-let { data } = await sb.from("products").select("*");
-products = data || [];
-render();
+    let { data } = await sb.from("products").select("*");
+    products = data || [];
+    render();
 }
 
 /* FILTER UI */
-
 function renderFilters(){
 
 let html = "";
 
 categories.forEach(c=>{
-html += `<div class="filter ${c==="All"?"active":""}" onclick="setFilter('${c}')">${c}</div>`;
+html += `<div class="filter ${c==="All"?"active":""}" onclick="setFilter(event,'${c}')">${c}</div>`;
 });
 
 document.getElementById("filters").innerHTML = html;
 }
 
-/* SET FILTER */
+/* FILTER */
+function setFilter(e,c){
 
-function setFilter(c){
 current = c;
 
 document.querySelectorAll(".filter").forEach(el=>{
 el.classList.remove("active");
 });
 
-event.target.classList.add("active");
+e.target.classList.add("active");
 
 render();
 }
 
 /* SEARCH */
-
 document.getElementById("search").addEventListener("input", render);
 
-/* RENDER */
+/* CLICK DETAIL */
+function goDetail(id){
+    window.location.href = "product.html?id=" + id;
+}
 
+/* RENDER */
 function render(){
+
+let key = document.getElementById("search").value.toLowerCase();
+
+let list = products.filter(p=>{
+
+let matchCat = current === "All" || p.category === current;
+
+let matchSearch =
+    (p.name || "").toLowerCase().includes(key) ||
+    (p.feature || "").toLowerCase().includes(key);
+
+return matchCat && matchSearch;
+});
 
 let html = "";
 
-products.forEach(p=>{
+list.forEach(p=>{
 
-    // 多图兼容（有 images 用 images，没有就用 image）
-    let img = p.image;
-    let hoverImg = (p.images && p.images.length > 1) ? p.images[1] : p.image;
+let img = p.image || "";
+let hoverImg = (p.images && p.images.length > 1) ? p.images[1] : img;
 
-    html += `
-<div class="product-card" onclick="goDetail(${p.id})">
+html += `
+<div class="product-card" onclick="goDetail('${p.id}')">
 
-    <div class="img-box"
-        onmouseover="this.querySelector('.hover').style.opacity=1"
-        onmouseout="this.querySelector('.hover').style.opacity=0">
+    <div class="img-box">
 
         <img src="${img}" class="main-img">
 
-        <img src="${hoverImg}" class="hover-img hover">
+        <img src="${hoverImg}" class="hover-img">
 
     </div>
 
@@ -297,14 +293,14 @@ products.forEach(p=>{
 
         <div class="tag">${p.category || "Fabric"}</div>
 
-        <h3>${p.name}</h3>
+        <h3>${p.name || ""}</h3>
 
         <p class="meta">
             GSM: ${p.gsm || "-"} | MOQ: ${p.moq || "-"}
         </p>
 
         <p class="feature">
-            ${p.feature ? p.feature.substring(0,80) + "..." : ""}
+            ${(p.feature || "").substring(0,80)}
         </p>
 
         <button>View Details</button>
@@ -317,9 +313,6 @@ products.forEach(p=>{
 
 document.getElementById("grid").innerHTML = html;
 
-}
-function openP(id){
-window.location.href = "product.html?id=" + id;
 }
 
 </script>
