@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>V20 企业后台系统 | 修复版</title>
+<title>V20 企业后台系统 | 上传功能已修复</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -42,6 +42,8 @@ input,select,textarea{
     border-radius:8px;
     border:none;
     box-sizing:border-box;
+    background:#1f2a3e;
+    color:white;
 }
 
 button{
@@ -83,7 +85,7 @@ button:hover{
 <div class="box">
 <h3>📤 上传产品</h3>
 
-<input id="name" placeholder="产品名称">
+<input id="name" placeholder="产品名称 *">
 
 <select id="category">
 <option>Outdoor Functional Fabrics</option>
@@ -129,6 +131,16 @@ const supabaseUrl = "https://tpcxaelljrudshchuzia.supabase.co";
 const supabaseKey = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 const sb = supabase.createClient(supabaseUrl, supabaseKey);
 
+// 显示提示信息
+function showMessage(msg, isError = false) {
+    const logDiv = document.getElementById("logMsg");
+    if (logDiv) {
+        logDiv.innerHTML = `<div style="color: ${isError ? '#ff8888' : '#88ff88'}">${new Date().toLocaleTimeString()}: ${msg}</div>`;
+        setTimeout(() => { if(logDiv) logDiv.innerHTML = ""; }, 3000);
+    }
+    console.log(msg);
+}
+
 // ==================== 登录函数 ====================
 function handleLogin() {
     const passInput = document.getElementById("pass");
@@ -136,7 +148,6 @@ function handleLogin() {
     const panelBox = document.getElementById("panelBox");
     
     if (!passInput || !loginBox || !panelBox) {
-        console.error("页面元素未找到");
         alert("页面加载错误，请刷新重试");
         return;
     }
@@ -144,11 +155,9 @@ function handleLogin() {
     const password = passInput.value.trim();
     
     if (password === "123456") {
-        // 登录成功
         loginBox.style.display = "none";
         panelBox.style.display = "block";
         
-        // 加载数据
         loadProducts();
         loadCRM();
         
@@ -195,7 +204,7 @@ async function loadProducts() {
     }
 }
 
-// ==================== 上传产品 ====================
+// ==================== 上传产品（关键修复：字段名必须完全匹配数据库） ====================
 async function uploadProduct() {
     const nameInput = document.getElementById("name");
     const nameValue = nameInput.value.trim();
@@ -209,8 +218,14 @@ async function uploadProduct() {
     const file = document.getElementById("file").files[0];
     let imageUrl = "";
     
+    // 显示上传中状态
+    const uploadBtn = document.getElementById("uploadBtn");
+    const originalBtnText = uploadBtn.innerHTML;
+    uploadBtn.innerHTML = "⏳ 上传中...";
+    uploadBtn.disabled = true;
+    
     try {
-        // 上传图片（如果有）
+        // 1. 上传图片（如果有）
         if (file) {
             const fileName = Date.now() + "_" + file.name.replace(/[^a-zA-Z0-9._-]/g, '');
             const { error: uploadError } = await sb.storage
@@ -219,43 +234,52 @@ async function uploadProduct() {
             
             if (uploadError) {
                 console.error("图片上传错误:", uploadError);
-                alert("图片上传失败，将继续上传产品（无图）");
+                alert("图片上传失败: " + uploadError.message + "\n将继续上传产品（无图）");
             } else {
                 imageUrl = supabaseUrl + "/storage/v1/object/public/images/" + fileName;
             }
         }
         
-        // 插入产品数据
-        const { error: insertError } = await sb.from("products").insert([{
+        // 2. 插入产品数据 - 【关键】字段名必须与 Supabase 表结构完全一致
+        //    根据你的数据库，字段包括：name, category, gsm, moq, feature, image
+        const productData = {
             name: nameValue,
             category: document.getElementById("category").value,
             gsm: document.getElementById("gsm").value || "",
             moq: document.getElementById("moq").value || "",
             feature: document.getElementById("feature").value || "",
             image: imageUrl
-        }]);
+        };
+        
+        console.log("正在插入数据:", productData);
+        
+        const { data, error: insertError } = await sb.from("products").insert([productData]).select();
         
         if (insertError) {
-            alert("上传失败: " + insertError.message);
-            console.error("插入错误:", insertError);
+            console.error("插入错误详情:", insertError);
+            alert("❌ 上传失败: " + insertError.message);
             return;
         }
         
+        console.log("插入成功:", data);
         alert("✅ 产品上传成功！");
         
-        // 清空表单
+        // 3. 清空表单
         nameInput.value = "";
         document.getElementById("gsm").value = "";
         document.getElementById("moq").value = "";
         document.getElementById("feature").value = "";
         document.getElementById("file").value = "";
         
-        // 刷新列表
+        // 4. 刷新列表
         await loadProducts();
         
     } catch (err) {
+        console.error("上传异常:", err);
         alert("上传异常: " + err.message);
-        console.error(err);
+    } finally {
+        uploadBtn.innerHTML = originalBtnText;
+        uploadBtn.disabled = false;
     }
 }
 
@@ -312,22 +336,11 @@ window.addEventListener("DOMContentLoaded", function() {
     const crmBtn = document.getElementById("crmBtn");
     const passInput = document.getElementById("pass");
     
-    // 绑定事件（移除内联onclick，统一用addEventListener）
-    if (loginBtn) {
-        loginBtn.addEventListener("click", handleLogin);
-    }
-    
-    if (uploadBtn) {
-        uploadBtn.addEventListener("click", uploadProduct);
-    }
-    
-    if (refreshBtn) {
-        refreshBtn.addEventListener("click", loadProducts);
-    }
-    
-    if (crmBtn) {
-        crmBtn.addEventListener("click", loadCRM);
-    }
+    // 绑定事件
+    if (loginBtn) loginBtn.addEventListener("click", handleLogin);
+    if (uploadBtn) uploadBtn.addEventListener("click", uploadProduct);
+    if (refreshBtn) refreshBtn.addEventListener("click", loadProducts);
+    if (crmBtn) crmBtn.addEventListener("click", loadCRM);
     
     // 回车键登录
     if (passInput) {
@@ -340,10 +353,10 @@ window.addEventListener("DOMContentLoaded", function() {
         passInput.focus();
     }
     
-    console.log("页面加载完成，登录功能已就绪");
+    console.log("页面加载完成，上传功能已修复");
 });
 
-// 确保全局函数存在（备用，防止某些情况下调用失败）
+// 确保全局函数存在
 window.handleLogin = handleLogin;
 window.loadProducts = loadProducts;
 window.uploadProduct = uploadProduct;
