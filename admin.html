@@ -44,6 +44,16 @@ input,select,textarea{
     box-sizing:border-box;
 }
 
+select{
+    background:white;
+    color:black;
+}
+
+input,textarea{
+    background:white;
+    color:black;
+}
+
 button{
     width:100%;
     padding:12px;
@@ -80,7 +90,24 @@ button{
 <h3>📤 上传产品</h3>
 
 <input id="name" placeholder="产品名称">
-<input id="category" placeholder="分类">
+
+<!-- 分类改为下拉选择框 -->
+<select id="category">
+    <option value="">请选择分类</option>
+    <option>Outdoor Functional Fabrics</option>
+    <option>Sports & Activewear Fabrics</option>
+    <option>Recycled & Sustainable Fabrics</option>
+    <option>Stretch Fabrics</option>
+    <option>Nylon & Polyester Fabrics</option>
+    <option>Jacquard & Textured Fabrics</option>
+    <option>Printed Fabrics</option>
+    <option>Swimwear Fabrics</option>
+    <option>Underwear Fabrics</option>
+    <option>Workwear Fabrics</option>
+    <option>Fashion Fabrics</option>
+    <option>Others</option>
+</select>
+
 <input id="gsm" placeholder="GSM">
 <input id="moq" placeholder="MOQ">
 <textarea id="feature" placeholder="描述"></textarea>
