@@ -54,12 +54,6 @@ h1{
     font-size:14px;
 }
 
-.price{
-    font-size:20px;
-    color:#22c55e;
-    margin-top:10px;
-}
-
 button{
     margin-top:20px;
     padding:14px;
@@ -77,6 +71,7 @@ button{
     background:#1f2937;
     padding:20px;
     border-radius:12px;
+    display:none;
 }
 
 input, textarea{
@@ -85,6 +80,20 @@ input, textarea{
     margin-top:10px;
     border-radius:8px;
     border:none;
+}
+
+/* WhatsApp floating */
+.wa{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:#25D366;
+    color:white;
+    padding:14px 18px;
+    border-radius:50px;
+    text-decoration:none;
+    font-weight:bold;
+    z-index:999;
 }
 
 </style>
@@ -101,19 +110,28 @@ input, textarea{
 
 </div>
 
+<!-- WhatsApp -->
+<a class="wa" id="wa" target="_blank">💬 WhatsApp</a>
+
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <script>
 
 /* ===================== */
-/* SUPABASE */
+/* CONFIG */
 /* ===================== */
 
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
-const SUPABASE_KEY = "你的 publishable key";
+const SUPABASE_KEY = "你的publishable key";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* EmailJS */
+emailjs.init("你的PUBLIC_KEY");
 
 /* ===================== */
 /* GET ID */
@@ -139,6 +157,8 @@ if(!data){
 }
 
 render(data);
+
+setupWhatsApp(data);
 
 }
 
@@ -181,7 +201,7 @@ content.innerHTML = `
 
 </div>
 
-<div class="rfq" id="rfqBox" style="display:none">
+<div class="rfq" id="rfqBox">
 
 <h2>RFQ Form</h2>
 
@@ -199,12 +219,16 @@ content.innerHTML = `
 }
 
 /* ===================== */
-/* RFQ */
+/* RFQ OPEN */
 /* ===================== */
 
 function openRFQ(){
     document.getElementById("rfqBox").style.display = "block";
 }
+
+/* ===================== */
+/* EMAILJS SEND */
+/* ===================== */
 
 function sendRFQ(productName){
 
@@ -218,17 +242,32 @@ if(!name || !email){
     return;
 }
 
-alert(
-`Inquiry Sent!
+emailjs.send(
+    "service_jb1bu3d",
+    "template_sau1q5q",
+    {
+        product: productName,
+        name: name,
+        email: email,
+        qty: qty,
+        message: msg
+    }
+).then(() => {
+    alert("Inquiry sent successfully!");
+}).catch((err) => {
+    console.log(err);
+    alert("Failed to send inquiry");
+});
 
-Product: ${productName}
-Name: ${name}
-Email: ${email}
-Quantity: ${qty}
-Message: ${msg}
-`
-);
+}
 
+/* ===================== */
+/* WHATSAPP */
+/* ===================== */
+
+function setupWhatsApp(p){
+    document.getElementById("wa").href =
+    `https://wa.me/8613800000000?text=Hello, I am interested in ${p.name}`;
 }
 
 </script>
