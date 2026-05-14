@@ -3,29 +3,43 @@
 
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Product Detail - SummitTex</title>
 
 <style>
 
+/* ===================== */
+/* GLOBAL */
+/* ===================== */
+
 body{
     font-family:Arial;
     margin:0;
-    background:#0b0f14;
-    color:white;
-    padding:30px;
+    background:#f5f7fa;
+    color:#111827;
 }
 
 .container{
     max-width:1100px;
     margin:auto;
+    padding:30px;
 }
 
+/* ===================== */
+/* BACK */
+/* ===================== */
+
 .back{
-    color:#60a5fa;
+    color:#2563eb;
     text-decoration:none;
     display:inline-block;
     margin-bottom:20px;
 }
+
+/* ===================== */
+/* LAYOUT */
+/* ===================== */
 
 .layout{
     display:grid;
@@ -33,26 +47,44 @@ body{
     gap:40px;
 }
 
+/* ===================== */
+/* IMAGE */
+/* ===================== */
+
 img{
     width:100%;
-    border-radius:14px;
+    border-radius:16px;
+    box-shadow:0 10px 25px rgba(0,0,0,.1);
 }
+
+/* ===================== */
+/* TEXT */
+/* ===================== */
 
 h1{
-    font-size:32px;
-}
-
-.box{
-    background:#111827;
-    padding:20px;
-    border-radius:12px;
-    margin-top:20px;
+    font-size:34px;
+    margin-bottom:10px;
 }
 
 .small{
-    color:#94a3b8;
-    font-size:14px;
+    color:#6b7280;
 }
+
+/* ===================== */
+/* BOX */
+/* ===================== */
+
+.box{
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    margin-top:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,.06);
+}
+
+/* ===================== */
+/* BUTTON */
+/* ===================== */
 
 button{
     margin-top:20px;
@@ -66,12 +98,21 @@ button{
     cursor:pointer;
 }
 
+button:hover{
+    background:#1d4ed8;
+}
+
+/* ===================== */
+/* RFQ */
+/* ===================== */
+
 .rfq{
     margin-top:30px;
-    background:#1f2937;
+    background:white;
     padding:20px;
-    border-radius:12px;
+    border-radius:14px;
     display:none;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
 }
 
 input, textarea{
@@ -79,10 +120,27 @@ input, textarea{
     padding:12px;
     margin-top:10px;
     border-radius:8px;
-    border:none;
+    border:1px solid #e5e7eb;
 }
 
-/* WhatsApp floating */
+/* ===================== */
+/* TAG */
+/* ===================== */
+
+.tag{
+    display:inline-block;
+    background:#e0edff;
+    color:#2563eb;
+    padding:6px 12px;
+    border-radius:999px;
+    font-size:13px;
+    margin-bottom:10px;
+}
+
+/* ===================== */
+/* WHATSAPP */
+/* ===================== */
+
 .wa{
     position:fixed;
     bottom:20px;
@@ -93,7 +151,16 @@ input, textarea{
     border-radius:50px;
     text-decoration:none;
     font-weight:bold;
-    z-index:999;
+}
+
+/* ===================== */
+/* MOBILE */
+/* ===================== */
+
+@media(max-width:768px){
+.layout{
+    grid-template-columns:1fr;
+}
 }
 
 </style>
@@ -125,22 +192,25 @@ input, textarea{
 /* CONFIG */
 /* ===================== */
 
-const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
-const SUPABASE_KEY = "你的publishable key";
+const SUPABASE_URL =
+"https://tpcxaelljrudshchuzia.supabase.co";
+
+const SUPABASE_KEY =
+"你的publishable key";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-/* EmailJS */
 emailjs.init("你的PUBLIC_KEY");
 
 /* ===================== */
 /* GET ID */
 /* ===================== */
 
-const id = new URLSearchParams(location.search).get("id");
+const id =
+new URLSearchParams(location.search).get("id");
 
 /* ===================== */
-/* LOAD PRODUCT */
+/* LOAD */
 /* ===================== */
 
 async function load(){
@@ -152,12 +222,11 @@ let { data } = await sb
 .single();
 
 if(!data){
-    content.innerHTML = "<h2>Product Not Found</h2>";
-    return;
+content.innerHTML = "<h2>Product Not Found</h2>";
+return;
 }
 
 render(data);
-
 setupWhatsApp(data);
 
 }
@@ -175,27 +244,27 @@ content.innerHTML = `
 <div class="layout">
 
 <div>
-    <img src="${p.image}">
+<img src="${p.image}">
 </div>
 
 <div>
 
-    <h1>${p.name}</h1>
+<span class="tag">${p.category}</span>
 
-    <div class="small">${p.category}</div>
+<h1>${p.name}</h1>
 
-    <div class="box">
-        <h3>Specifications</h3>
-        <p><b>GSM:</b> ${p.gsm}</p>
-        <p><b>MOQ:</b> ${p.moq}</p>
-    </div>
+<div class="small">
+GSM: ${p.gsm || "-"} | MOQ: ${p.moq || "-"}
+</div>
 
-    <div class="box">
-        <h3>Feature</h3>
-        <p>${p.feature || "N/A"}</p>
-    </div>
+<div class="box">
+<h3>Feature</h3>
+<p>${p.feature || "N/A"}</p>
+</div>
 
-    <button onclick="openRFQ()">Request Quotation</button>
+<button onclick="openRFQ()">
+Request Quotation
+</button>
 
 </div>
 
@@ -210,7 +279,9 @@ content.innerHTML = `
 <input id="qty" placeholder="Quantity">
 <textarea id="msg" placeholder="Message"></textarea>
 
-<button onclick="sendRFQ('${p.name}')">Send Inquiry</button>
+<button onclick="sendRFQ('${p.name}')">
+Send Inquiry
+</button>
 
 </div>
 
@@ -219,15 +290,15 @@ content.innerHTML = `
 }
 
 /* ===================== */
-/* RFQ OPEN */
+/* RFQ */
 /* ===================== */
 
 function openRFQ(){
-    document.getElementById("rfqBox").style.display = "block";
+document.getElementById("rfqBox").style.display="block";
 }
 
 /* ===================== */
-/* EMAILJS SEND */
+/* EMAIL SEND */
 /* ===================== */
 
 function sendRFQ(productName){
@@ -238,25 +309,24 @@ const qty = document.getElementById("qty").value;
 const msg = document.getElementById("msg").value;
 
 if(!name || !email){
-    alert("Please fill required fields");
-    return;
+alert("Please fill required fields");
+return;
 }
 
 emailjs.send(
-    "service_jb1bu3d",
-    "template_sau1q5q",
-    {
-        product: productName,
-        name: name,
-        email: email,
-        qty: qty,
-        message: msg
-    }
-).then(() => {
-    alert("Inquiry sent successfully!");
-}).catch((err) => {
-    console.log(err);
-    alert("Failed to send inquiry");
+"service_jb1bu3d",
+"template_sau1q5q",
+{
+product: productName,
+name: name,
+email: email,
+qty: qty,
+message: msg
+}
+).then(()=>{
+alert("Inquiry sent successfully!");
+}).catch(()=>{
+alert("Failed to send inquiry");
 });
 
 }
@@ -266,8 +336,8 @@ emailjs.send(
 /* ===================== */
 
 function setupWhatsApp(p){
-    document.getElementById("wa").href =
-    `https://wa.me/8613800000000?text=Hello, I am interested in ${p.name}`;
+document.getElementById("wa").href =
+`https://wa.me/8613800000000?text=Hello, I am interested in ${p.name}`;
 }
 
 </script>
