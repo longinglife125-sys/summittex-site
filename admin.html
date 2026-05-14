@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<title>V16 Admin FIXED</title>
+<title>V17 Ecommerce Admin</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
@@ -16,6 +16,7 @@ body{
     color:white;
 }
 
+/* LOGIN */
 #login{
     max-width:300px;
     margin:100px auto;
@@ -26,11 +27,13 @@ body{
     text-align:center;
 }
 
+/* PANEL */
 #panel{
     display:none;
     padding:20px;
 }
 
+/* BOX */
 .box{
     background:#111827;
     padding:15px;
@@ -38,13 +41,16 @@ body{
     margin-bottom:15px;
 }
 
+/* INPUT */
 input,select,textarea{
     width:100%;
     padding:10px;
     margin-top:8px;
     border-radius:8px;
+    border:none;
 }
 
+/* BUTTON */
 button{
     width:100%;
     padding:12px;
@@ -56,24 +62,47 @@ button{
     cursor:pointer;
 }
 
+/* PRODUCT LIST */
+.item{
+    background:white;
+    color:black;
+    padding:10px;
+    margin-top:8px;
+    border-radius:8px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.item img{
+    width:60px;
+    height:60px;
+    object-fit:cover;
+    border-radius:8px;
+}
+
+/* ACTION BUTTONS */
+.actions button{
+    width:auto;
+    padding:6px 10px;
+    margin-left:5px;
+    font-size:12px;
+}
+
+/* LOG */
 .log{
     background:black;
     padding:10px;
     font-size:12px;
-    height:200px;
+    height:140px;
     overflow:auto;
     border-radius:8px;
     margin-top:10px;
-    white-space:pre-wrap;
 }
 
-.item{
-    background:white;
-    color:black;
-    padding:8px;
-    margin-top:8px;
-    border-radius:8px;
-    font-size:13px;
+/* SEARCH */
+#search{
+    margin-top:10px;
 }
 
 </style>
@@ -82,50 +111,65 @@ button{
 
 <body>
 
+<!-- LOGIN -->
 <div id="login">
-<h3>Debug Login</h3>
+<h3>Admin Login</h3>
 <input type="password" id="pass">
 <button onclick="login()">Login</button>
 </div>
 
+<!-- PANEL -->
 <div id="panel">
 
 <div class="box">
 
-<h3>Upload Product (FIXED MODE)</h3>
+<h3>➕ Add / Edit Product</h3>
 
-<input id="name" placeholder="name">
+<input id="name" placeholder="Product name">
 
 <select id="category">
 <option>Outdoor Functional Fabrics</option>
 <option>Sports & Activewear Fabrics</option>
 <option>Recycled & Sustainable Fabrics</option>
+<option>Stretch Fabrics</option>
+<option>Nylon & Polyester Fabrics</option>
+<option>Jacquard & Textured Fabrics</option>
+<option>Printed Fabrics</option>
+<option>Swimwear Fabrics</option>
+<option>Underwear Fabrics</option>
+<option>Workwear Fabrics</option>
+<option>Fashion Fabrics</option>
 <option>Others</option>
 </select>
 
 <input id="gsm" placeholder="gsm">
 <input id="moq" placeholder="moq">
-
 <textarea id="feature" placeholder="feature"></textarea>
-
 <input type="file" id="file">
 
-<button onclick="upload()">UPLOAD PRODUCT</button>
+<button onclick="upload()">UPLOAD / UPDATE</button>
 
 </div>
 
 <div class="box">
 
-<h3>🔍 LIVE LOG</h3>
-<div class="log" id="log"></div>
+<h3>🔍 SEARCH</h3>
+<input id="search" placeholder="Search products..." oninput="render()">
 
 </div>
 
 <div class="box">
 
-<h3>📦 DATABASE DATA</h3>
-<button onclick="load()">REFRESH DATA</button>
+<h3>📦 PRODUCTS</h3>
+<button onclick="load()">REFRESH</button>
 <div id="list"></div>
+
+</div>
+
+<div class="box">
+
+<h3>LOG</h3>
+<div class="log" id="log"></div>
 
 </div>
 
@@ -133,126 +177,147 @@ button{
 
 <script>
 
-/* ===================== */
-/* CONFIG */
-/* ===================== */
-
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "你的publishable key";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const logBox = document.getElementById("log");
+let products = [];
+let editId = null;
 
 function log(msg){
-    logBox.innerText += msg + "\n";
-    logBox.scrollTop = logBox.scrollHeight;
+    document.getElementById("log").innerText += msg + "\n";
 }
 
-/* ===================== */
 /* LOGIN */
-/* ===================== */
-
 function login(){
-    if(pass.value==="123456"){
+    if(pass.value === "123456"){
         login.style.display="none";
         panel.style.display="block";
-        log("Login success");
         load();
     }else{
         alert("wrong password");
     }
 }
 
-/* ===================== */
-/* UPLOAD FIXED */
-/* ===================== */
-
+/* UPLOAD OR UPDATE */
 async function upload(){
 
-log("Start upload...");
-
 let file = document.getElementById("file").files[0];
-
 let imageUrl = "";
 
-/* 1. upload image */
 if(file){
+    let fileName = Date.now() + "_" + file.name;
 
-log("Uploading image...");
+    let { error } = await sb.storage.from("images").upload(fileName, file);
 
-let fileName = Date.now() + "_" + file.name;
-
-let { data, error } = await sb.storage
-.from("images")
-.upload(fileName, file);
-
-if(error){
-    log("❌ Upload error: " + error.message);
-    return;
+    if(!error){
+        imageUrl = SUPABASE_URL + "/storage/v1/object/public/images/" + fileName;
+    }
 }
 
-imageUrl = SUPABASE_URL + "/storage/v1/object/public/images/" + fileName;
+/* UPDATE MODE */
+if(editId){
 
-log("Image uploaded OK");
-}
-
-/* 2. insert product (FIXED STRUCTURE) */
-log("Inserting product...");
-
-let { error: dbError } = await sb.from("products").insert([{
+await sb.from("products").update({
     name: name.value,
     category: category.value,
     gsm: gsm.value,
     moq: moq.value,
     feature: feature.value,
+    ...(imageUrl && { image: imageUrl, images: [imageUrl] })
+}).eq("id", editId);
 
-    /* 🔥 FIX: unified structure */
+log("Updated product");
+editId = null;
+
+}else{
+
+/* INSERT MODE */
+await sb.from("products").insert([{
+    name: name.value,
+    category: category.value,
+    gsm: gsm.value,
+    moq: moq.value,
+    feature: feature.value,
     image: imageUrl,
     images: imageUrl ? [imageUrl] : []
 }]);
 
-if(dbError){
-    log("❌ DB error: " + dbError.message);
-    return;
+log("Inserted product");
 }
 
-log("✅ Product inserted successfully");
-
+clearForm();
 load();
 }
 
-/* ===================== */
-/* LOAD PRODUCTS */
-/* ===================== */
-
+/* LOAD */
 async function load(){
-
-log("Loading products...");
-
-let { data, error } = await sb.from("products").select("*");
-
-if(error){
-    log("❌ Load error: " + error.message);
-    return;
+let { data } = await sb.from("products").select("*");
+products = data || [];
+render();
 }
 
-log("Loaded: " + (data?.length || 0) + " items");
+/* RENDER */
+function render(){
+
+let key = search.value?.toLowerCase() || "";
+
+let list = products.filter(p =>
+    (p.name || "").toLowerCase().includes(key)
+);
 
 let html = "";
 
-data.forEach(p=>{
+list.forEach(p=>{
 html += `
 <div class="item">
-<b>${p.name || ""}</b><br>
-${p.category || ""}<br>
-<img src="${p.image || ""}" width="80">
+
+<div>
+<b>${p.name}</b><br>
+<small>${p.category}</small>
+</div>
+
+<img src="${p.image || ''}">
+
+<div class="actions">
+<button onclick="edit('${p.id}')">Edit</button>
+<button onclick="del('${p.id}')">Del</button>
+</div>
+
 </div>
 `;
 });
 
-list.innerHTML = html;
+document.getElementById("list").innerHTML = html;
+}
 
+/* EDIT */
+function edit(id){
+let p = products.find(x => x.id == id);
+
+name.value = p.name;
+category.value = p.category;
+gsm.value = p.gsm;
+moq.value = p.moq;
+feature.value = p.feature;
+
+editId = id;
+}
+
+/* DELETE */
+async function del(id){
+await sb.from("products").delete().eq("id", id);
+load();
+}
+
+/* CLEAR FORM */
+function clearForm(){
+name.value = "";
+gsm.value = "";
+moq.value = "";
+feature.value = "";
+file.value = "";
 }
 
 </script>
