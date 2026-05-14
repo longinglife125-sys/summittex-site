@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Product Detail - SummitTex</title>
 
 <style>
@@ -97,9 +98,15 @@ button{
 
 <script>
 
-const id = new URLSearchParams(location.search).get("id");
+const id =
+new URLSearchParams(location.search).get("id");
 
-const p = products.find(x => x.id == id);
+/*
+🟢 SEO关键：同时支持 id 和 slug
+*/
+const p = products.find(x =>
+    x.id == id || x.slug == id
+);
 
 if(!p){
     document.getElementById("content").innerHTML =
@@ -107,6 +114,10 @@ if(!p){
 }
 else{
 
+// 🟢 动态SEO标题（Google会读）
+document.title = p.name + " | SummitTex";
+
+// 🟢 页面内容
 document.getElementById("content").innerHTML = `
 
 <div class="layout">
@@ -125,21 +136,24 @@ document.getElementById("content").innerHTML = `
 <h3>Specifications</h3>
 <p><b>Category:</b> ${p.category}</p>
 <p><b>Weight:</b> ${p.gsm} gsm</p>
+<p><b>Width:</b> ${p.width}</p>
 <p><b>MOQ:</b> ${p.moq}</p>
+<p><b>Composition:</b> ${p.composition}</p>
 </div>
 
 <div class="box">
 <h3>Application</h3>
-<p>Outdoor / Sportswear / Industrial Use</p>
+<p>${p.application}</p>
 </div>
 
 <div class="box">
 <h3>Why Choose Us</h3>
 <p>
-✔ Factory Direct<br>
-✔ Stable Quality<br>
+✔ Factory Direct Supply<br>
+✔ Stable Quality Control<br>
 ✔ Export Experience<br>
-✔ OEM/ODM Support
+✔ OEM / ODM Support<br>
+✔ Fast Sample Service
 </p>
 </div>
 
@@ -156,7 +170,7 @@ document.getElementById("content").innerHTML = `
 <input id="qty" placeholder="Quantity (Meters)">
 <textarea id="msg" placeholder="Tell us your requirement..."></textarea>
 
-<button onclick="sendRFQ('${p.name}')">
+<button onclick="sendRFQ(p.name)">
 Submit RFQ
 </button>
 
