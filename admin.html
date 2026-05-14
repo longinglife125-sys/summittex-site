@@ -1,183 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-<meta charset="UTF-8">
-<title>V17 Stable Ecommerce Admin</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
-<style>
-
-body{
-    margin:0;
-    font-family:Arial;
-    background:#0f172a;
-    color:white;
-}
-
-/* LOGIN */
-#login{
-    max-width:300px;
-    margin:100px auto;
-    background:white;
-    color:#111827;
-    padding:20px;
-    border-radius:10px;
-    text-align:center;
-}
-
-/* PANEL */
-#panel{
-    display:none;
-    padding:20px;
-}
-
-/* BOX */
-.box{
-    background:#111827;
-    padding:15px;
-    border-radius:10px;
-    margin-bottom:15px;
-}
-
-/* INPUT */
-input,select,textarea{
-    width:100%;
-    padding:10px;
-    margin-top:8px;
-    border-radius:8px;
-    border:none;
-    box-sizing:border-box;
-}
-
-/* BUTTON */
-button{
-    width:100%;
-    padding:12px;
-    margin-top:10px;
-    border:none;
-    border-radius:8px;
-    background:#2563eb;
-    color:white;
-    cursor:pointer;
-}
-
-/* PRODUCT LIST */
-.item{
-    background:white;
-    color:black;
-    padding:10px;
-    margin-top:8px;
-    border-radius:8px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-}
-
-.item img{
-    width:60px;
-    height:60px;
-    object-fit:cover;
-    border-radius:8px;
-}
-
-/* ACTIONS */
-.actions button{
-    width:auto;
-    padding:6px 10px;
-    margin-left:5px;
-    font-size:12px;
-}
-
-/* LOG */
-.log{
-    background:black;
-    padding:10px;
-    font-size:12px;
-    height:140px;
-    overflow:auto;
-    border-radius:8px;
-    margin-top:10px;
-    white-space:pre-wrap;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<!-- LOGIN -->
-<div id="login">
-<h3>Admin Login</h3>
-<input type="password" id="pass">
-<button onclick="doLogin()">Login</button>
-</div>
-
-<!-- PANEL -->
-<div id="panel">
-
-<div class="box">
-<h3>➕ Add / Edit Product</h3>
-
-<input id="name" placeholder="Product name">
-
-<select id="category">
-<option>Outdoor Functional Fabrics</option>
-<option>Sports & Activewear Fabrics</option>
-<option>Recycled & Sustainable Fabrics</option>
-<option>Stretch Fabrics</option>
-<option>Nylon & Polyester Fabrics</option>
-<option>Jacquard & Textured Fabrics</option>
-<option>Printed Fabrics</option>
-<option>Swimwear Fabrics</option>
-<option>Underwear Fabrics</option>
-<option>Workwear Fabrics</option>
-<option>Fashion Fabrics</option>
-<option>Others</option>
-</select>
-
-<input id="gsm" placeholder="gsm">
-<input id="moq" placeholder="moq">
-<textarea id="feature" placeholder="feature"></textarea>
-<input type="file" id="file">
-
-<button onclick="upload()">UPLOAD / UPDATE</button>
-</div>
-
-<div class="box">
-<h3>🔍 SEARCH</h3>
-<input id="search" placeholder="Search products..." oninput="render()">
-</div>
-
-<div class="box">
-<h3>📦 PRODUCTS</h3>
-<button onclick="load()">REFRESH</button>
-<div id="list"></div>
-</div>
-
-<div class="box">
-<h3>LOG</h3>
-<div class="log" id="log"></div>
-</div>
-
-</div>
-
 <script>
 
 /* ===================== */
-/* CONFIG FIXED */
+/* CONFIG SAFE MODE */
 /* ===================== */
 
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let sb = null;
+
+try {
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log("Supabase init OK");
+} catch (e) {
+    console.error("Supabase init failed", e);
+}
 
 /* ===================== */
-/* DOM BINDING FIX */
+/* DOM */
 /* ===================== */
 
 const loginBox = document.getElementById("login");
@@ -190,7 +30,6 @@ const gsm = document.getElementById("gsm");
 const moq = document.getElementById("moq");
 const feature = document.getElementById("feature");
 const search = document.getElementById("search");
-
 const logBox = document.getElementById("log");
 
 /* ===================== */
@@ -206,22 +45,65 @@ let editId = null;
 
 function log(msg){
     logBox.innerText += msg + "\n";
-    logBox.scrollTop = logBox.scrollHeight;
 }
 
 /* ===================== */
-/* LOGIN FIXED */
+/* LOGIN */
 /* ===================== */
 
 function doLogin(){
     if(pass.value === "123456"){
         loginBox.style.display = "none";
         panelBox.style.display = "block";
+        log("LOGIN SUCCESS");
         load();
-        log("Login success");
-    }else{
+    } else {
         alert("Wrong password");
     }
+}
+
+/* ===================== */
+/* LOAD (FIXED + FALLBACK) */
+/* ===================== */
+
+async function load(){
+
+log("Loading products...");
+
+if(!sb){
+    log("Supabase not initialized → using demo data");
+
+    products = [
+        {id:1,name:"Demo Fabric A",category:"Test",gsm:"120",moq:"1000",image:"https://images.unsplash.com/photo-1520975916090-3105956dac38"},
+        {id:2,name:"Demo Fabric B",category:"Test",gsm:"150",moq:"800",image:"https://images.unsplash.com/photo-1517836357463-d25dfeac3438"}
+    ];
+
+    render();
+    return;
+}
+
+try{
+
+let { data, error } = await sb.from("products").select("*");
+
+if(error){
+    log("Load error: " + error.message);
+
+    // fallback
+    products = [];
+    render();
+    return;
+}
+
+products = data || [];
+log("Loaded: " + products.length);
+
+render();
+
+}catch(e){
+    log("Load failed: " + e.message);
+}
+
 }
 
 /* ===================== */
@@ -229,6 +111,11 @@ function doLogin(){
 /* ===================== */
 
 async function upload(){
+
+if(!sb){
+    alert("Supabase not ready");
+    return;
+}
 
 let file = document.getElementById("file").files[0];
 let imageUrl = "";
@@ -239,75 +126,38 @@ if(file){
 
     let fileName = Date.now() + "_" + file.name;
 
-    let { error } = await sb.storage
-        .from("images")
-        .upload(fileName, file);
+    let { error } = await sb.storage.from("images").upload(fileName, file);
 
     if(!error){
         imageUrl = SUPABASE_URL + "/storage/v1/object/public/images/" + fileName;
-    }else{
-        log("Upload error: " + error.message);
+    } else {
+        log(error.message);
     }
 }
 
-/* UPDATE */
-if(editId){
-
-    let { error } = await sb.from("products").update({
-        name: nameInput.value,
-        category: category.value,
-        gsm: gsm.value,
-        moq: moq.value,
-        feature: feature.value,
-        ...(imageUrl && { image: imageUrl, images: [imageUrl] })
-    }).eq("id", editId);
-
-    if(error) log(error.message);
-    else log("Updated product");
-
-    editId = null;
-
-}else{
-
 /* INSERT */
-    let { error } = await sb.from("products").insert([{
-        name: nameInput.value,
-        category: category.value,
-        gsm: gsm.value,
-        moq: moq.value,
-        feature: feature.value,
-        image: imageUrl,
-        images: imageUrl ? [imageUrl] : []
-    }]);
+let { error } = await sb.from("products").insert([{
+    name: nameInput.value,
+    category: category.value,
+    gsm: gsm.value,
+    moq: moq.value,
+    feature: feature.value,
+    image: imageUrl,
+    images: imageUrl ? [imageUrl] : []
+}]);
 
-    if(error) log(error.message);
-    else log("Inserted product");
+if(error){
+    log(error.message);
+} else {
+    log("INSERT OK");
 }
 
 clearForm();
 load();
 
 }catch(e){
-    log("Upload failed: " + e.message);
+    log(e.message);
 }
-
-}
-
-/* ===================== */
-/* LOAD */
-/* ===================== */
-
-async function load(){
-
-let { data, error } = await sb.from("products").select("*");
-
-if(error){
-    log("Load error: " + error.message);
-    return;
-}
-
-products = data || [];
-render();
 
 }
 
@@ -375,12 +225,19 @@ editId = id;
 /* ===================== */
 
 async function del(id){
+
+if(!sb){
+    alert("Supabase not ready");
+    return;
+}
+
 await sb.from("products").delete().eq("id", id);
 load();
+
 }
 
 /* ===================== */
-/* CLEAR FORM */
+/* CLEAR */
 /* ===================== */
 
 function clearForm(){
@@ -392,6 +249,3 @@ document.getElementById("file").value = "";
 }
 
 </script>
-
-</body>
-</html>
