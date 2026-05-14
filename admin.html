@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<title>V17 Ecommerce Admin</title>
+<title>V17 Stable Ecommerce Admin</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
@@ -48,6 +48,7 @@ input,select,textarea{
     margin-top:8px;
     border-radius:8px;
     border:none;
+    box-sizing:border-box;
 }
 
 /* BUTTON */
@@ -72,6 +73,7 @@ button{
     display:flex;
     justify-content:space-between;
     align-items:center;
+    gap:10px;
 }
 
 .item img{
@@ -81,7 +83,7 @@ button{
     border-radius:8px;
 }
 
-/* ACTION BUTTONS */
+/* ACTIONS */
 .actions button{
     width:auto;
     padding:6px 10px;
@@ -98,11 +100,7 @@ button{
     overflow:auto;
     border-radius:8px;
     margin-top:10px;
-}
-
-/* SEARCH */
-#search{
-    margin-top:10px;
+    white-space:pre-wrap;
 }
 
 </style>
@@ -115,14 +113,13 @@ button{
 <div id="login">
 <h3>Admin Login</h3>
 <input type="password" id="pass">
-<button onclick="login()">Login</button>
+<button onclick="doLogin()">Login</button>
 </div>
 
 <!-- PANEL -->
 <div id="panel">
 
 <div class="box">
-
 <h3>➕ Add / Edit Product</h3>
 
 <input id="name" placeholder="Product name">
@@ -148,117 +145,176 @@ button{
 <input type="file" id="file">
 
 <button onclick="upload()">UPLOAD / UPDATE</button>
-
 </div>
 
 <div class="box">
-
 <h3>🔍 SEARCH</h3>
 <input id="search" placeholder="Search products..." oninput="render()">
-
 </div>
 
 <div class="box">
-
 <h3>📦 PRODUCTS</h3>
 <button onclick="load()">REFRESH</button>
 <div id="list"></div>
-
 </div>
 
 <div class="box">
-
 <h3>LOG</h3>
 <div class="log" id="log"></div>
-
 </div>
 
 </div>
 
 <script>
 
+/* ===================== */
+/* CONFIG FIXED */
+/* ===================== */
+
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co/rest/v1/";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+/* ===================== */
+/* DOM BINDING FIX */
+/* ===================== */
+
+const loginBox = document.getElementById("login");
+const panelBox = document.getElementById("panel");
+
+const pass = document.getElementById("pass");
+const nameInput = document.getElementById("name");
+const category = document.getElementById("category");
+const gsm = document.getElementById("gsm");
+const moq = document.getElementById("moq");
+const feature = document.getElementById("feature");
+const search = document.getElementById("search");
+
+const logBox = document.getElementById("log");
+
+/* ===================== */
+/* STATE */
+/* ===================== */
+
 let products = [];
 let editId = null;
 
+/* ===================== */
+/* LOG */
+/* ===================== */
+
 function log(msg){
-    document.getElementById("log").innerText += msg + "\n";
+    logBox.innerText += msg + "\n";
+    logBox.scrollTop = logBox.scrollHeight;
 }
 
-/* LOGIN */
-function login(){
+/* ===================== */
+/* LOGIN FIXED */
+/* ===================== */
+
+function doLogin(){
     if(pass.value === "123456"){
-        login.style.display="none";
-        panel.style.display="block";
+        loginBox.style.display = "none";
+        panelBox.style.display = "block";
         load();
+        log("Login success");
     }else{
-        alert("wrong password");
+        alert("Wrong password");
     }
 }
 
-/* UPLOAD OR UPDATE */
+/* ===================== */
+/* UPLOAD */
+/* ===================== */
+
 async function upload(){
 
 let file = document.getElementById("file").files[0];
 let imageUrl = "";
 
+try{
+
 if(file){
+
     let fileName = Date.now() + "_" + file.name;
 
-    let { error } = await sb.storage.from("images").upload(fileName, file);
+    let { error } = await sb.storage
+        .from("images")
+        .upload(fileName, file);
 
     if(!error){
         imageUrl = SUPABASE_URL + "/storage/v1/object/public/images/" + fileName;
+    }else{
+        log("Upload error: " + error.message);
     }
 }
 
-/* UPDATE MODE */
+/* UPDATE */
 if(editId){
 
-await sb.from("products").update({
-    name: name.value,
-    category: category.value,
-    gsm: gsm.value,
-    moq: moq.value,
-    feature: feature.value,
-    ...(imageUrl && { image: imageUrl, images: [imageUrl] })
-}).eq("id", editId);
+    let { error } = await sb.from("products").update({
+        name: nameInput.value,
+        category: category.value,
+        gsm: gsm.value,
+        moq: moq.value,
+        feature: feature.value,
+        ...(imageUrl && { image: imageUrl, images: [imageUrl] })
+    }).eq("id", editId);
 
-log("Updated product");
-editId = null;
+    if(error) log(error.message);
+    else log("Updated product");
+
+    editId = null;
 
 }else{
 
-/* INSERT MODE */
-await sb.from("products").insert([{
-    name: name.value,
-    category: category.value,
-    gsm: gsm.value,
-    moq: moq.value,
-    feature: feature.value,
-    image: imageUrl,
-    images: imageUrl ? [imageUrl] : []
-}]);
+/* INSERT */
+    let { error } = await sb.from("products").insert([{
+        name: nameInput.value,
+        category: category.value,
+        gsm: gsm.value,
+        moq: moq.value,
+        feature: feature.value,
+        image: imageUrl,
+        images: imageUrl ? [imageUrl] : []
+    }]);
 
-log("Inserted product");
+    if(error) log(error.message);
+    else log("Inserted product");
 }
 
 clearForm();
 load();
+
+}catch(e){
+    log("Upload failed: " + e.message);
 }
 
+}
+
+/* ===================== */
 /* LOAD */
+/* ===================== */
+
 async function load(){
-let { data } = await sb.from("products").select("*");
+
+let { data, error } = await sb.from("products").select("*");
+
+if(error){
+    log("Load error: " + error.message);
+    return;
+}
+
 products = data || [];
 render();
+
 }
 
+/* ===================== */
 /* RENDER */
+/* ===================== */
+
 function render(){
 
 let key = search.value?.toLowerCase() || "";
@@ -270,12 +326,13 @@ let list = products.filter(p =>
 let html = "";
 
 list.forEach(p=>{
+
 html += `
 <div class="item">
 
 <div>
-<b>${p.name}</b><br>
-<small>${p.category}</small>
+<b>${p.name || ""}</b><br>
+<small>${p.category || ""}</small>
 </div>
 
 <img src="${p.image || ''}">
@@ -287,37 +344,51 @@ html += `
 
 </div>
 `;
+
 });
 
 document.getElementById("list").innerHTML = html;
+
 }
 
+/* ===================== */
 /* EDIT */
-function edit(id){
-let p = products.find(x => x.id == id);
+/* ===================== */
 
-name.value = p.name;
-category.value = p.category;
-gsm.value = p.gsm;
-moq.value = p.moq;
-feature.value = p.feature;
+function edit(id){
+
+let p = products.find(x => x.id == id);
+if(!p) return;
+
+nameInput.value = p.name || "";
+category.value = p.category || "";
+gsm.value = p.gsm || "";
+moq.value = p.moq || "";
+feature.value = p.feature || "";
 
 editId = id;
+
 }
 
+/* ===================== */
 /* DELETE */
+/* ===================== */
+
 async function del(id){
 await sb.from("products").delete().eq("id", id);
 load();
 }
 
+/* ===================== */
 /* CLEAR FORM */
+/* ===================== */
+
 function clearForm(){
-name.value = "";
+nameInput.value = "";
 gsm.value = "";
 moq.value = "";
 feature.value = "";
-file.value = "";
+document.getElementById("file").value = "";
 }
 
 </script>
