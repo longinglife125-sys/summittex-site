@@ -6,130 +6,115 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Functional Fabric Manufacturer | Waterproof Softshell TPU Fabrics</title>
-
-<meta name="description" content="Professional functional fabric manufacturer in China. Waterproof, softshell, TPU laminated fabrics for outdoor and performance apparel brands.">
+<title>Functional Fabric Manufacturer | Outdoor Textile Supplier</title>
 
 <style>
 
-/* ===================== */
-/* GLOBAL STYLE (Outdoor Brand) */
-/* ===================== */
-
+/* RESET */
 body{
     margin:0;
     font-family:Arial, sans-serif;
-    background:#f8fafc;
-    color:#0f172a;
-}
-
-/* HERO */
-
-.hero{
-    background:linear-gradient(120deg,#0f172a,#1e3a8a);
     color:white;
-    padding:120px 20px;
-    text-align:center;
 }
 
-.hero h1{
-    font-size:48px;
+/* HERO BACKGROUND IMAGE */
+.hero{
+    position:relative;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+
+    /* 🔥 户外面料背景图（可替换） */
+    background-image:url("https://images.unsplash.com/photo-1501785888041-af3ef285b470");
+    background-size:cover;
+    background-position:center;
+}
+
+/* DARK OVERLAY */
+.hero::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    background:rgba(10,20,30,0.65);
+}
+
+/* HERO CONTENT */
+.hero-content{
+    position:relative;
+    max-width:900px;
+    padding:20px;
+}
+
+h1{
+    font-size:52px;
     margin-bottom:15px;
 }
 
-.hero p{
+p{
     font-size:18px;
-    opacity:0.9;
-    max-width:800px;
-    margin:auto;
     line-height:1.6;
+    color:#e2e8f0;
 }
 
+/* BUTTON */
 .btn{
     display:inline-block;
-    margin:15px 10px;
+    margin-top:20px;
     padding:14px 26px;
     border-radius:10px;
+    background:#3b82f6;
+    color:white;
     text-decoration:none;
     font-weight:bold;
 }
 
-.btn-primary{
-    background:#3b82f6;
-    color:white;
-}
-
-.btn-secondary{
-    background:white;
-    color:#1e3a8a;
-}
-
-/* SECTIONS */
-
+/* SECTION */
 .section{
     padding:80px 20px;
-    max-width:1200px;
+    max-width:1100px;
     margin:auto;
     text-align:center;
-}
-
-.section h2{
-    font-size:34px;
-    margin-bottom:40px;
     color:#0f172a;
 }
-
-/* GRID */
 
 .grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
     gap:20px;
+    margin-top:40px;
 }
-
-/* CARD */
 
 .card{
     background:white;
-    border:1px solid #e2e8f0;
     border-radius:14px;
     padding:25px;
-    box-shadow:0 4px 14px rgba(0,0,0,0.05);
+    box-shadow:0 6px 18px rgba(0,0,0,0.08);
     text-align:left;
 }
 
 .card h3{
-    margin-top:0;
     color:#1e3a8a;
+    margin-top:0;
 }
 
 /* CTA */
-
 .cta{
     background:#0f172a;
     color:white;
     padding:80px 20px;
     text-align:center;
-    margin-top:40px;
 }
-
-.cta a{
-    margin-top:20px;
-    display:inline-block;
-    background:#3b82f6;
-    color:white;
-    padding:14px 26px;
-    border-radius:10px;
-    text-decoration:none;
-}
-
-/* FOOTER */
 
 footer{
     text-align:center;
     padding:40px;
-    color:#64748b;
     background:#f1f5f9;
+    color:#64748b;
 }
 
 </style>
@@ -141,15 +126,18 @@ footer{
 <!-- HERO -->
 <div class="hero">
 
+<div class="hero-content">
+
 <h1>Functional Fabric Manufacturer</h1>
 
 <p>
 Waterproof | Softshell | TPU Laminated | Recycled Fabrics  
-Professional textile supplier for outdoor & performance apparel brands worldwide.
+Professional Outdoor & Performance Textile Supplier
 </p>
 
-<a class="btn btn-primary" href="products.html">View Products</a>
-<a class="btn btn-secondary" href="contact.html">Get Quote</a>
+<a class="btn" href="products.html">View Products</a>
+
+</div>
 
 </div>
 
@@ -158,9 +146,9 @@ Professional textile supplier for outdoor & performance apparel brands worldwide
 
 <h2>About SummitTex</h2>
 
-<p style="max-width:800px;margin:auto;color:#475569;line-height:1.8;">
-We are a professional functional fabric manufacturer focusing on high-performance textiles
-for outdoor jackets, sportswear, workwear, and technical apparel industries.
+<p style="max-width:800px;margin:auto;color:#475569;">
+We are a professional functional fabric manufacturer specializing in outdoor performance textiles,
+including waterproof, softshell, TPU laminated and recycled fabrics for global apparel brands.
 </p>
 
 </div>
@@ -174,17 +162,17 @@ for outdoor jackets, sportswear, workwear, and technical apparel industries.
 
 <div class="card">
 <h3>Waterproof Fabric</h3>
-<p>High waterproof rating fabrics for outdoor protection.</p>
+<p>High-performance waterproof outdoor fabrics.</p>
 </div>
 
 <div class="card">
 <h3>Softshell Fabric</h3>
-<p>Windproof, stretchable fabric for performance wear.</p>
+<p>Windproof & stretch performance textiles.</p>
 </div>
 
 <div class="card">
-<h3>TPU Laminated Fabric</h3>
-<p>Durable technical fabric for industrial applications.</p>
+<h3>TPU Fabric</h3>
+<p>Durable laminated industrial fabrics.</p>
 </div>
 
 <div class="card">
@@ -199,59 +187,28 @@ for outdoor jackets, sportswear, workwear, and technical apparel industries.
 <!-- WHY -->
 <div class="section">
 
-<h2>Why Global Buyers Choose Us</h2>
+<h2>Why Choose Us</h2>
 
 <div class="grid">
 
 <div class="card">
 <h3>Factory Direct</h3>
-<p>Competitive pricing with stable supply chain.</p>
+<p>Competitive pricing from manufacturer.</p>
 </div>
 
 <div class="card">
-<h3>OEM / ODM Support</h3>
-<p>Custom fabric development for brands.</p>
+<h3>OEM / ODM</h3>
+<p>Custom fabric development support.</p>
 </div>
 
 <div class="card">
-<h3>Quality Control</h3>
-<p>Strict inspection for every production batch.</p>
-</div>
-
-<div class="card">
-<h3>Export Experience</h3>
-<p>Serving EU, USA, and global markets.</p>
-</div>
-
-</div>
-
-</div>
-
-<!-- FACTORY -->
-<div class="section">
-
-<h2>Manufacturing Capability</h2>
-
-<div class="grid">
-
-<div class="card">
-<h3>10,000㎡ Factory</h3>
-<p>Modern textile production facility.</p>
-</div>
-
-<div class="card">
-<h3>Advanced Equipment</h3>
-<p>Coating & laminating production lines.</p>
-</div>
-
-<div class="card">
-<h3>100,000m / Month</h3>
-<p>Stable mass production capability.</p>
+<h3>Stable Quality</h3>
+<p>Strict QC system for export orders.</p>
 </div>
 
 <div class="card">
 <h3>Global Export</h3>
-<p>Reliable international supply experience.</p>
+<p>Serving EU, USA and global markets.</p>
 </div>
 
 </div>
@@ -261,11 +218,11 @@ for outdoor jackets, sportswear, workwear, and technical apparel industries.
 <!-- CTA -->
 <div class="cta">
 
-<h2>Need Functional Fabric Samples?</h2>
+<h2>Need Fabric Samples?</h2>
 
-<p>Contact us for quotation, sample or technical data sheet.</p>
+<p>Contact us for quotation and technical datasheet.</p>
 
-<a href="contact.html">Send Inquiry</a>
+<a class="btn" href="contact.html">Send Inquiry</a>
 
 </div>
 
