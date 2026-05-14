@@ -212,37 +212,28 @@ document.getElementById("search").addEventListener("input", render);
 
 function render(){
 
-let key = document.getElementById("search").value.toLowerCase();
-
-let list = products.filter(p=>{
-
-let matchCat = current==="All" || p.category===current;
-let matchSearch = p.name.toLowerCase().includes(key);
-
-return matchCat && matchSearch;
-
-});
-
 let html = "";
 
-list.forEach(p=>{
+products.forEach(p=>{
 
 html += `
-<div class="card" onclick="openP(${p.id})">
+<div class="product-card" onclick="goDetail(${p.id})">
 
-<img src="${p.image}">
+    <img src="${p.image}">
 
-<div class="box">
+    <div class="info">
 
-<div class="tag">${p.category}</div>
+        <div class="tag">${p.category}</div>
 
-<b>${p.name}</b>
+        <h3>${p.name}</h3>
 
-<p style="font-size:13px;color:#6b7280;">
-GSM: ${p.gsm || "-"} | MOQ: ${p.moq || "-"}
-</p>
+        <p class="meta">
+            GSM: ${p.gsm || "-"} | MOQ: ${p.moq || "-"}
+        </p>
 
-</div>
+        <button>View Details</button>
+
+    </div>
 
 </div>
 `;
@@ -250,8 +241,8 @@ GSM: ${p.gsm || "-"} | MOQ: ${p.moq || "-"}
 });
 
 document.getElementById("grid").innerHTML = html;
-}
 
+}
 function openP(id){
 window.location.href = "product.html?id=" + id;
 }
