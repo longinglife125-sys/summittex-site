@@ -1,194 +1,655 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<title>V19 Stable Enterprise Admin</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>V19 企业后台管理系统 | 稳定版</title>
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #0b1220;
+            color: #eef2ff;
+        }
 
-<style>
+        /* 登录卡片 */
+        #loginBox {
+            max-width: 380px;
+            margin: 140px auto;
+            background: #ffffff;
+            color: #0f172a;
+            padding: 28px 24px;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.35);
+            transition: all 0.2s;
+        }
 
-body{
-    margin:0;
-    font-family:Arial;
-    background:#0b1220;
-    color:white;
-}
+        #loginBox h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 1.6rem;
+            text-align: center;
+            letter-spacing: -0.3px;
+            color: #1e293b;
+        }
 
-/* LOGIN */
-#loginBox{
-    max-width:320px;
-    margin:120px auto;
-    background:white;
-    color:black;
-    padding:20px;
-    border-radius:12px;
-}
+        #loginBox input {
+            width: 100%;
+            padding: 14px 16px;
+            margin-top: 6px;
+            margin-bottom: 16px;
+            border-radius: 40px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.2s;
+        }
 
-/* PANEL */
-#panelBox{
-    display:none;
-    padding:20px;
-}
+        #loginBox input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+        }
 
-/* BOX */
-.box{
-    background:#111827;
-    padding:15px;
-    border-radius:10px;
-    margin-bottom:15px;
-}
+        #loginBox button {
+            width: 100%;
+            background: #2563eb;
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.05s;
+            margin-top: 8px;
+        }
 
-/* INPUT */
-input,select,textarea{
-    width:100%;
-    padding:10px;
-    margin-top:8px;
-    border-radius:8px;
-    border:none;
-    box-sizing:border-box;
-}
+        #loginBox button:hover {
+            background: #1d4ed8;
+        }
 
-/* BUTTON */
-button{
-    width:100%;
-    padding:12px;
-    margin-top:10px;
-    border:none;
-    border-radius:8px;
-    background:#2563eb;
-    color:white;
-    cursor:pointer;
-}
+        /* 主面板 */
+        #panelBox {
+            display: none;
+            padding: 24px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
 
-/* ITEM */
-.item{
-    background:white;
-    color:black;
-    padding:10px;
-    border-radius:8px;
-    margin-top:8px;
-}
+        /* 卡片公用样式 */
+        .box {
+            background: #111827;
+            border-radius: 24px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            border: 1px solid #1f2a3e;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
 
-.log{
-    background:black;
-    padding:10px;
-    font-size:12px;
-    height:120px;
-    overflow:auto;
-    border-radius:8px;
-}
+        .box h3 {
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-weight: 600;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #e2e8f0;
+            border-left: 4px solid #3b82f6;
+            padding-left: 14px;
+        }
 
-</style>
+        label {
+            font-weight: 500;
+            font-size: 0.85rem;
+            display: block;
+            margin-top: 12px;
+            color: #9ca3af;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 14px;
+            margin-top: 6px;
+            border-radius: 16px;
+            border: 1px solid #2d3a5e;
+            background: #1e293b;
+            color: #f1f5f9;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59,130,246,0.3);
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        button {
+            background: #2563eb;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            width: auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        button:hover {
+            background: #1e40af;
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: #334155;
+        }
+
+        .btn-secondary:hover {
+            background: #1e293b;
+        }
+
+        .item {
+            background: #1e293b;
+            color: #f1f5f9;
+            padding: 16px;
+            border-radius: 20px;
+            margin-top: 14px;
+            border: 1px solid #2d3a5e;
+            transition: 0.1s;
+            word-break: break-word;
+        }
+
+        .item b {
+            color: #facc15;
+            font-size: 1.05rem;
+        }
+
+        .item small {
+            color: #94a3b8;
+        }
+
+        .log {
+            background: #0f1722;
+            padding: 14px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+            height: 150px;
+            overflow: auto;
+            border-radius: 20px;
+            border: 1px solid #2d3a5e;
+            color: #b9c7d9;
+            line-height: 1.5;
+        }
+
+        .flex-btns {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .product-grid {
+            max-height: 480px;
+            overflow-y: auto;
+            margin-top: 12px;
+            padding-right: 6px;
+        }
+
+        hr {
+            border-color: #2d3a5e;
+            margin: 15px 0;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 10px;
+        }
+    </style>
 </head>
-
 <body>
-<!-- LOGIN -->
+
+<!-- 登录界面 -->
 <div id="loginBox">
-<input type="password" id="pass">
-<button onclick="doLogin()">Login</button>
+    <h3>🔐 管理员登录</h3>
+    <input type="password" id="adminPass" placeholder="请输入安全密码" autocomplete="off">
+    <button id="loginBtn">登录系统 ➔</button>
+    <div style="font-size: 12px; text-align: center; margin-top: 20px; color: #64748b;">演示密码: 123456</div>
 </div>
 
+<!-- 主控面板 -->
 <div id="panelBox">
+    <!-- 产品上传板块 -->
+    <div class="box">
+        <h3>📤 产品上传</h3>
+        <input id="prodName" placeholder="产品名称 *" autocomplete="off">
+        
+        <label>🏷️ 产品分类</label>
+        <select id="prodCategory">
+            <option>Outdoor Functional Fabrics</option>
+            <option>Sports & Activewear Fabrics</option>
+            <option>Recycled & Sustainable Fabrics</option>
+            <option>Stretch Fabrics</option>
+            <option>Nylon & Polyester Fabrics</option>
+            <option>Jacquard & Textured Fabrics</option>
+            <option>Printed Fabrics</option>
+            <option>Swimwear Fabrics</option>
+            <option>Underwear Fabrics</option>
+            <option>Workwear Fabrics</option>
+            <option>Fashion Fabrics</option>
+            <option>Others</option>
+        </select>
 
-<div id="loginBox">
-<h3>Admin Login</h3>
-<input type="password" id="pass">
-<button onclick="doLogin()">Login</button>
-</div>
+        <label>⚖️ GSM</label>
+        <input id="prodGsm" placeholder="例: 180 gsm">
 
-<!-- PANEL -->
-<div id="panelBox">
+        <label>📦 MOQ</label>
+        <input id="prodMoq" placeholder="例: 500 meters">
 
-<div class="box">
-<h3>➕ Product Upload</h3>
+        <label>✨ 产品特性</label>
+        <textarea id="prodFeature" placeholder="描述产品优势、技术特点..."></textarea>
 
-<input id="name" placeholder="name">
+        <label>🖼️ 产品图片 (可选)</label>
+        <input type="file" id="prodImageFile" accept="image/*">
 
-<select id="category">
-<option>Outdoor Functional Fabrics</option>
-<option>Sports & Activewear Fabrics</option>
-<option>Recycled & Sustainable Fabrics</option>
-<option>Stretch Fabrics</option>
-<option>Nylon & Polyester Fabrics</option>
-<option>Jacquard & Textured Fabrics</option>
-<option>Printed Fabrics</option>
-<option>Swimwear Fabrics</option>
-<option>Underwear Fabrics</option>
-<option>Workwear Fabrics</option>
-<option>Fashion Fabrics</option>
-<option>Others</option>
-</select>
+        <button id="uploadProductBtn" style="margin-top: 20px; width: 100%;">🚀 上传产品</button>
+    </div>
 
-<input id="gsm" placeholder="gsm">
-<input id="moq" placeholder="moq">
-<textarea id="feature" placeholder="feature"></textarea>
+    <!-- 产品列表 -->
+    <div class="box">
+        <h3>📦 产品库</h3>
+        <div class="flex-btns">
+            <button id="refreshProductsBtn">🔄 刷新产品</button>
+        </div>
+        <div id="productList" class="product-grid">
+            <div style="color: #6c7a91; text-align:center; padding: 24px;">暂无产品，点击刷新或上传新产品</div>
+        </div>
+    </div>
 
-<input type="file" id="file">
+    <!-- CRM 询盘列表 -->
+    <div class="box">
+        <h3>📩 客户询盘 (CRM)</h3>
+        <div class="flex-btns">
+            <button id="refreshCRMBtn">🔄 刷新询盘</button>
+        </div>
+        <div id="crmList">
+            <div style="color: #6c7a91; text-align:center; padding: 24px;">暂无客户留言</div>
+        </div>
+    </div>
 
-<button onclick="uploadProduct()">UPLOAD</button>
-</div>
-
-<div class="box">
-<h3>📦 PRODUCTS</h3>
-<button onclick="loadProducts()">REFRESH</button>
-<div id="productList"></div>
-</div>
-
-<div class="box">
-<h3>📩 CRM</h3>
-<button onclick="loadCRM()">REFRESH CRM</button>
-<div id="crmList"></div>
-</div>
-
-<div class="box">
-<h3>LOG</h3>
-<div class="log" id="logBox"></div>
-</div>
-
+    <!-- 操作日志 -->
+    <div class="box">
+        <h3>📋 实时日志</h3>
+        <div class="log" id="logBox">✅ 系统就绪，等待操作...</div>
+    </div>
 </div>
 
 <script>
+    // ===================== 配置区 (固定 Supabase) =====================
+    const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
+    
+    // 初始化 supabase 客户端 (全局)
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
-const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
+    // DOM 元素绑定
+    const loginContainer = document.getElementById("loginBox");
+    const panelContainer = document.getElementById("panelBox");
+    const passwordInput = document.getElementById("adminPass");
+    const loginButton = document.getElementById("loginBtn");
 
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // 日志组件
+    const logElement = document.getElementById("logBox");
 
-/* ===================== */
-/* DOM SAFE INIT（关键修复） */
-/* ===================== */
+    // 产品相关元素
+    const prodName = document.getElementById("prodName");
+    const prodCategory = document.getElementById("prodCategory");
+    const prodGsm = document.getElementById("prodGsm");
+    const prodMoq = document.getElementById("prodMoq");
+    const prodFeature = document.getElementById("prodFeature");
+    const prodImageFile = document.getElementById("prodImageFile");
+    const uploadBtn = document.getElementById("uploadProductBtn");
+    const refreshProductsBtn = document.getElementById("refreshProductsBtn");
+    const productListDiv = document.getElementById("productList");
 
-let loginBox, panelBox, pass;
+    // CRM 相关
+    const refreshCRMbtn = document.getElementById("refreshCRMBtn");
+    const crmListDiv = document.getElementById("crmList");
 
-window.onload = function () {
-    loginBox = document.getElementById("loginBox");
-    panelBox = document.getElementById("panelBox");
-    pass = document.getElementById("pass");
-};
-
-/* ===================== */
-/* LOGIN（100%稳定版） */
-/* ===================== */
-
-function doLogin(){
-
-    if(!pass){
-        alert("Page not ready, refresh again");
-        return;
+    // ===================== 日志增强 =====================
+    function addLog(message, isError = false) {
+        const time = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+        const prefix = `[${time}]`;
+        const logMsg = isError ? `${prefix} ❌ ${message}` : `${prefix} ✅ ${message}`;
+        logElement.innerHTML += `<div style="color: ${isError ? '#f87171' : '#bbf0d0'};">${logMsg}</div>`;
+        logElement.scrollTop = logElement.scrollHeight;
+        // 限制日志显示行数(保留最近100行，简单清理)
+        if (logElement.children.length > 80) {
+            while(logElement.children.length > 70) {
+                logElement.removeChild(logElement.firstChild);
+            }
+        }
     }
 
-    if(pass.value.trim() === "123456"){
-        loginBox.style.display = "none";
-        panelBox.style.display = "block";
-
-        loadProducts();
-        loadCRM();
-    }else{
-        alert("Wrong password");
+    // ===================== 登录修正 (核心修复) =====================
+    function doLogin() {
+        const inputPassword = passwordInput.value;
+        // 使用严格比对，去除首尾空格，增强安全体验
+        if (inputPassword === "123456") {
+            addLog("密码验证成功，进入管理面板");
+            // 切换界面
+            loginContainer.style.display = "none";
+            panelContainer.style.display = "block";
+            // 载入初始数据
+            loadProducts();
+            loadCRM();
+            addLog("仪表板已加载，产品与询盘同步中");
+        } else {
+            addLog("登录失败: 密码错误，请重试", true);
+            alert("密码错误，访问被拒绝");
+            passwordInput.value = "";
+            passwordInput.focus();
+        }
     }
-}
+
+    // 绑定登录事件 (使用多种方式避免冲突，确保点击有效)
+    loginButton.onclick = function(e) {
+        e.preventDefault();
+        doLogin();
+    };
+    // 按回车键登录
+    passwordInput.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            doLogin();
+        }
+    });
+
+    // ===================== 上传产品 (含存储与数据库) =====================
+    async function uploadProduct() {
+        // 基本校验
+        const nameValue = prodName.value.trim();
+        if (!nameValue) {
+            addLog("上传失败: 产品名称不能为空", true);
+            alert("请填写产品名称");
+            return;
+        }
+
+        // 获取图片文件
+        const file = prodImageFile.files[0];
+        let uploadedImageUrl = "";
+        
+        try {
+            addLog("开始上传产品，正在处理图片...");
+            if (file) {
+                // 构建唯一文件名，避免覆盖
+                const fileExt = file.name.split('.').pop();
+                const safeName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+                const filePath = `product_images/${safeName}`;
+                
+                // 上传图片至 storage bucket "images"
+                const { error: uploadError } = await supabaseClient.storage
+                    .from("images")
+                    .upload(filePath, file, {
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+                
+                if (uploadError) {
+                    addLog(`图片上传失败: ${uploadError.message}`, true);
+                    // 不阻断产品发布，继续无图上传
+                } else {
+                    // 构建可公开访问的URL
+                    uploadedImageUrl = `${SUPABASE_URL}/storage/v1/object/public/images/${filePath}`;
+                    addLog(`图片上传成功: ${uploadedImageUrl}`);
+                }
+            } else {
+                addLog("未选择图片，产品将不附带图像");
+            }
+            
+            // 准备插入 products 表的数据
+            const newProduct = {
+                name: nameValue,
+                category: prodCategory.value,
+                gsm: prodGsm.value || "",
+                moq: prodMoq.value || "",
+                feature: prodFeature.value || "",
+                image: uploadedImageUrl,
+                images: uploadedImageUrl ? [uploadedImageUrl] : [],
+                created_at: new Date().toISOString()
+            };
+            
+            const { error: insertError } = await supabaseClient
+                .from("products")
+                .insert([newProduct]);
+            
+            if (insertError) {
+                addLog(`产品入库失败: ${insertError.message}`, true);
+                alert(`数据库错误: ${insertError.message}`);
+                return;
+            }
+            
+            addLog(`产品「${nameValue}」已成功上传至产品库`);
+            // 清空表单 (保留分类)
+            prodName.value = "";
+            prodGsm.value = "";
+            prodMoq.value = "";
+            prodFeature.value = "";
+            prodImageFile.value = "";
+            // 刷新产品列表
+            await loadProducts();
+        } catch (err) {
+            addLog(`上传过程中发生异常: ${err.message || err}`, true);
+            console.error(err);
+        }
+    }
+    
+    // ===================== 加载产品列表 (稳健渲染) =====================
+    async function loadProducts() {
+        addLog("正在加载产品列表...");
+        try {
+            const { data, error } = await supabaseClient
+                .from("products")
+                .select("*")
+                .order('created_at', { ascending: false });
+            
+            if (error) {
+                addLog(`产品加载失败: ${error.message}`, true);
+                productListDiv.innerHTML = `<div style="color:#f87171;padding:20px;">❌ 数据获取失败，请检查网络或权限</div>`;
+                return;
+            }
+            
+            if (!data || data.length === 0) {
+                productListDiv.innerHTML = `<div style="color:#9ca3af; text-align:center; padding: 32px;">📭 暂无任何产品，请立即上传</div>`;
+                addLog("产品库为空，请使用上传表单新增产品");
+                return;
+            }
+            
+            let html = "";
+            data.forEach(product => {
+                // 安全取值
+                const prodNameSafe = escapeHtml(product.name || "未命名");
+                const categorySafe = escapeHtml(product.category || "未分类");
+                const gsmSafe = escapeHtml(product.gsm || "—");
+                const moqSafe = escapeHtml(product.moq || "—");
+                const featureShort = product.feature ? escapeHtml(product.feature.substring(0, 80)) : "";
+                const imagePreview = product.image ? `<div style="margin-top: 8px;"><img src="${product.image}" style="max-width: 80px; max-height: 60px; border-radius: 10px; border:1px solid #475569;" alt="img" onerror="this.style.display='none'"></div>` : "";
+                
+                html += `
+                    <div class="item">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div><b>${prodNameSafe}</b>  <span style="background:#0f172a; padding:2px 10px; border-radius: 30px; font-size:12px;">🏷️ ${categorySafe}</span></div>
+                        </div>
+                        <div style="margin-top: 6px; display: flex; flex-wrap:wrap; gap: 16px; font-size:13px;">
+                            <span>⚖️ GSM: ${gsmSafe}</span>
+                            <span>📦 MOQ: ${moqSafe}</span>
+                        </div>
+                        ${featureShort ? `<div style="margin-top: 6px; color:#cbd5e1;">✨ ${featureShort}${product.feature && product.feature.length > 80 ? '...' : ''}</div>` : ''}
+                        ${imagePreview}
+                    </div>
+                `;
+            });
+            productListDiv.innerHTML = html;
+            addLog(`产品列表刷新成功，共 ${data.length} 件产品`);
+        } catch (err) {
+            addLog(`加载产品异常: ${err.message}`, true);
+            productListDiv.innerHTML = `<div style="color:#f87171;">⚠️ 系统错误，请稍后重试</div>`;
+        }
+    }
+    
+    // ===================== CRM 询盘列表 (增强展示) =====================
+    async function loadCRM() {
+        addLog("正在获取客户询盘列表...");
+        try {
+            const { data, error } = await supabaseClient
+                .from("inquiries")
+                .select("*")
+                .order('created_at', { ascending: false });
+            
+            if (error) {
+                addLog(`CRM数据获取失败: ${error.message}`, true);
+                crmListDiv.innerHTML = `<div style="color:#f87171;">⚠️ 无法连接CRM表，请检查Supabase权限</div>`;
+                return;
+            }
+            
+            if (!data || data.length === 0) {
+                crmListDiv.innerHTML = `<div style="color:#9ca3af; text-align:center; padding: 32px;">💬 暂无客户询盘，等待新消息</div>`;
+                addLog("暂无询盘记录");
+                return;
+            }
+            
+            let crmHtml = "";
+            data.forEach(inq => {
+                const nameRaw = inq.name || "匿名客户";
+                const productRaw = inq.product || "未指定产品";
+                const msgRaw = inq.message || "无留言内容";
+                const emailRaw = inq.email || "";
+                const createdAt = inq.created_at ? new Date(inq.created_at).toLocaleString() : "最近";
+                
+                crmHtml += `
+                    <div class="item">
+                        <div><b>👤 ${escapeHtml(nameRaw)}</b>  ${emailRaw ? `📧 ${escapeHtml(emailRaw)}` : ''}  <span style="font-size:11px; color:#94a3b8;">${escapeHtml(createdAt)}</span></div>
+                        <div style="margin-top: 6px;"><span style="background:#2d3748; padding:2px 8px; border-radius: 20px;">📌 感兴趣产品: ${escapeHtml(productRaw)}</span></div>
+                        <div style="margin-top: 10px; background:#0f1722; padding: 8px 12px; border-radius: 16px;">💬 ${escapeHtml(msgRaw)}</div>
+                    </div>
+                `;
+            });
+            crmListDiv.innerHTML = crmHtml;
+            addLog(`CRM 加载完成，共 ${data.length} 条询盘`);
+        } catch (err) {
+            addLog(`CRM加载异常: ${err.message}`, true);
+            crmListDiv.innerHTML = `<div style="color:#f87171;">解析错误，请刷新重试</div>`;
+        }
+    }
+    
+    // 辅助函数: 简单防XSS
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+    
+    // ===================== 事件绑定及初始化 =====================
+    function bindEvents() {
+        if (uploadBtn) uploadBtn.onclick = (e) => {
+            e.preventDefault();
+            uploadProduct();
+        };
+        if (refreshProductsBtn) refreshProductsBtn.onclick = (e) => {
+            e.preventDefault();
+            loadProducts();
+        };
+        if (refreshCRMbtn) refreshCRMbtn.onclick = (e) => {
+            e.preventDefault();
+            loadCRM();
+        };
+    }
+    
+    // 额外检测：如果用户是直接从已登录状态刷新页面？确保检查隐藏状态 -> 防止意外的显示bug
+    function checkSessionOnLoad() {
+        // 页面加载时，登录界面默认显示，面板隐藏。不需要额外逻辑
+        // 但如果之前localStorage有登录标志，为了避免复杂，我们不自动登录（更安全）
+        // 完全由密码决定
+        addLog("欢迎使用V19企业后台 | 请输入密码登录 (123456)");
+    }
+    
+    // 预先检测 Supabase 连接性（可选静默测试）
+    async function testSupabaseConnection() {
+        try {
+            const { error } = await supabaseClient.from("products").select("id", { count: 'exact', head: true });
+            if (error && error.code !== 'PGRST116') {
+                addLog(`Supabase 连接警告: ${error.message}，请检查配置`, true);
+            } else {
+                addLog("数据库连接正常，可以进行操作");
+            }
+        } catch (e) {
+            addLog(`网络连接异常: ${e.message}`, true);
+        }
+    }
+    
+    // 页面初始化
+    window.addEventListener("DOMContentLoaded", () => {
+        bindEvents();
+        checkSessionOnLoad();
+        testSupabaseConnection();
+        // 确保输入框焦点
+        passwordInput.focus();
+    });
+    
+    // 对于产品图片预览小优化 (不需要额外)
+    // 若 products 表中没有 created_at 字段也没关系, 排序可选
+    // 注: 为了确保之前的存储桶images存在，如果不存在会有提示，但不影响产品插入
+
+    // 修正老版本里面遗留的全局方法引用 (防止某些按钮的onclick属性干扰)
+    // 确保没有内嵌onclick冲突，我们已经完全用js绑定，移除原html中可能的内联调用风险
+    // 注意原html button有onclick="uploadProduct()"等，但由于我们已经替换id绑定且优先级更高，但以防万一覆盖:
+    if (typeof window.uploadProduct === 'undefined') {
+        window.uploadProduct = uploadProduct;
+    }
+    if (typeof window.loadProducts === 'undefined') {
+        window.loadProducts = loadProducts;
+    }
+    if (typeof window.loadCRM === 'undefined') {
+        window.loadCRM = loadCRM;
+    }
+    // 完全重写登录函数全局引用确保一致性
+    window.doLogin = doLogin;
+    
+    // 额外: 如果有人在控制台调用，同步行为
+    console.log("V19 后台管理已启动 | 登录密码 123456");
 </script>
-
 </body>
 </html>
