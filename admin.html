@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>V18 Enterprise Admin</title>
+<title>V19 Stable Enterprise Admin</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
@@ -15,7 +15,8 @@ body{
     color:white;
 }
 
-#login{
+/* LOGIN */
+#loginBox{
     max-width:320px;
     margin:120px auto;
     background:white;
@@ -24,11 +25,13 @@ body{
     border-radius:12px;
 }
 
-#panel{
+/* PANEL */
+#panelBox{
     display:none;
     padding:20px;
 }
 
+/* BOX */
 .box{
     background:#111827;
     padding:15px;
@@ -36,13 +39,17 @@ body{
     margin-bottom:15px;
 }
 
+/* INPUT */
 input,select,textarea{
     width:100%;
     padding:10px;
     margin-top:8px;
     border-radius:8px;
+    border:none;
+    box-sizing:border-box;
 }
 
+/* BUTTON */
 button{
     width:100%;
     padding:12px;
@@ -54,6 +61,7 @@ button{
     cursor:pointer;
 }
 
+/* ITEM */
 .item{
     background:white;
     color:black;
@@ -62,18 +70,29 @@ button{
     margin-top:8px;
 }
 
+.log{
+    background:black;
+    padding:10px;
+    font-size:12px;
+    height:120px;
+    overflow:auto;
+    border-radius:8px;
+}
+
 </style>
 </head>
 
 <body>
 
-<div id="login">
+<!-- LOGIN -->
+<div id="loginBox">
 <h3>Admin Login</h3>
 <input type="password" id="pass">
-<button onclick="login()">Login</button>
+<button onclick="doLogin()">Login</button>
 </div>
 
-<div id="panel">
+<!-- PANEL -->
+<div id="panelBox">
 
 <div class="box">
 <h3>➕ Product Upload</h3>
@@ -82,8 +101,14 @@ button{
 
 <select id="category">
 <option>Outdoor Functional Fabrics</option>
-<option>Sports Fabrics</option>
-<option>Recycled Fabrics</option>
+<option>Sports & Activewear Fabrics</option>
+<option>Recycled & Sustainable Fabrics</option>
+<option>Stretch Fabrics</option>
+<option>Nylon & Polyester Fabrics</option>
+<option>Jacquard & Textured Fabrics</option>
+<option>Printed Fabrics</option>
+<option>Swimwear Fabrics</option>
+<option>Underwear Fabrics</option>
 <option>Workwear Fabrics</option>
 <option>Fashion Fabrics</option>
 <option>Others</option>
@@ -95,97 +120,151 @@ button{
 
 <input type="file" id="file">
 
-<button onclick="upload()">UPLOAD</button>
+<button onclick="uploadProduct()">UPLOAD</button>
 </div>
 
 <div class="box">
-<h3>📦 Products</h3>
-<button onclick="load()">Refresh</button>
-<div id="list"></div>
+<h3>📦 PRODUCTS</h3>
+<button onclick="loadProducts()">REFRESH</button>
+<div id="productList"></div>
 </div>
 
 <div class="box">
-<h3>📩 CRM Inquiries</h3>
-<div id="crm"></div>
+<h3>📩 CRM</h3>
+<button onclick="loadCRM()">REFRESH CRM</button>
+<div id="crmList"></div>
+</div>
+
+<div class="box">
+<h3>LOG</h3>
+<div class="log" id="logBox"></div>
 </div>
 
 </div>
 
 <script>
 
+/* ===================== */
+/* CONFIG */
+/* ===================== */
+
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let products = [];
+/* ===================== */
+/* SAFE DOM BINDING */
+/* ===================== */
+
+const loginBox = document.getElementById("loginBox");
+const panelBox = document.getElementById("panelBox");
+
+const pass = document.getElementById("pass");
+const logBox = document.getElementById("logBox");
+
+/* ===================== */
+/* LOG */
+/* ===================== */
+
+function log(msg){
+    logBox.innerHTML += msg + "<br>";
+}
+
+/* ===================== */
+/* LOGIN (FIXED - NO CONFLICT) */
+/* ===================== */
 
 function doLogin(){
-
-    const loginBox = document.getElementById("login");
-    const panelBox = document.getElementById("panel");
-    const pass = document.getElementById("pass");
 
     if(pass.value === "123456"){
         loginBox.style.display = "none";
         panelBox.style.display = "block";
+        loadProducts();
+        loadCRM();
+    }else{
+        alert("Wrong password");
     }
 }
 
-/* PRODUCTS */
-async function load(){
-let { data } = await sb.from("products").select("*");
-products = data || [];
+/* ===================== */
+/* UPLOAD PRODUCT */
+/* ===================== */
 
-let html = "";
-products.forEach(p=>{
-html += `<div class="item">
-<b>${p.name}</b><br>
-${p.category}
-</div>`;
-});
-
-list.innerHTML = html;
-}
-
-/* UPLOAD */
-async function upload(){
+async function uploadProduct(){
 
 let file = document.getElementById("file").files[0];
 let imageUrl = "";
 
 if(file){
-let fileName = Date.now() + file.name;
-await sb.storage.from("images").upload(fileName,file);
-imageUrl = SUPABASE_URL+"/storage/v1/object/public/images/"+fileName;
+    let fileName = Date.now() + "_" + file.name;
+
+    await sb.storage.from("images").upload(fileName, file);
+
+    imageUrl = SUPABASE_URL + "/storage/v1/object/public/images/" + fileName;
 }
 
 await sb.from("products").insert([{
-name:name.value,
-category:category.value,
-gsm:gsm.value,
-moq:moq.value,
-feature:feature.value,
-image:imageUrl
+    name: document.getElementById("name").value,
+    category: document.getElementById("category").value,
+    gsm: document.getElementById("gsm").value,
+    moq: document.getElementById("moq").value,
+    feature: document.getElementById("feature").value,
+    image: imageUrl,
+    images: imageUrl ? [imageUrl] : []
 }]);
 
-load();
+log("Product uploaded");
+loadProducts();
 }
 
-/* CRM */
+/* ===================== */
+/* LOAD PRODUCTS */
+/* ===================== */
+
+async function loadProducts(){
+
+let { data } = await sb.from("products").select("*");
+
+let html = "";
+
+(data || []).forEach(p => {
+
+html += `
+<div class="item">
+<b>${p.name}</b><br>
+${p.category}
+</div>
+`;
+
+});
+
+document.getElementById("productList").innerHTML = html;
+}
+
+/* ===================== */
+/* LOAD CRM */
+/* ===================== */
+
 async function loadCRM(){
+
 let { data } = await sb.from("inquiries").select("*");
 
 let html = "";
-(data||[]).forEach(c=>{
-html += `<div class="item">
+
+(data || []).forEach(c => {
+
+html += `
+<div class="item">
 <b>${c.name}</b><br>
 ${c.product}<br>
 ${c.message}
-</div>`;
+</div>
+`;
+
 });
 
-crm.innerHTML = html;
+document.getElementById("crmList").innerHTML = html;
 }
 
 </script>
