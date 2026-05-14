@@ -120,14 +120,15 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let products = [];
 
-function login(){
+function doLogin(){
+
+    const loginBox = document.getElementById("login");
+    const panelBox = document.getElementById("panel");
+    const pass = document.getElementById("pass");
+
     if(pass.value === "123456"){
-        login.style.display="none";
-        panel.style.display="block";
-        load();
-        loadCRM();
-    }else{
-        alert("wrong");
+        loginBox.style.display = "none";
+        panelBox.style.display = "block";
     }
 }
 
