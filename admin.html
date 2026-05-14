@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>V20 企业后台系统</title>
+<title>V20 企业后台系统 | 修复版</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -23,7 +23,10 @@ body{
     border-radius:16px;
 }
 
-#panelBox{display:none;padding:20px;}
+#panelBox{
+    display:none;
+    padding:20px;
+}
 
 .box{
     background:#111827;
@@ -37,6 +40,8 @@ input,select,textarea{
     padding:10px;
     margin-top:8px;
     border-radius:8px;
+    border:none;
+    box-sizing:border-box;
 }
 
 button{
@@ -48,6 +53,10 @@ button{
     border:none;
     border-radius:10px;
     cursor:pointer;
+}
+
+button:hover{
+    background:#1d4ed8;
 }
 
 .item{
@@ -64,122 +73,281 @@ button{
 
 <div id="loginBox">
 <h3>管理员登录</h3>
-<input type="password" id="pass">
-<button onclick="login()">登录</button>
+<input type="password" id="pass" placeholder="请输入密码">
+<button id="loginBtn">登录</button>
+<div style="font-size:12px; margin-top:15px; text-align:center;">演示密码: 123456</div>
 </div>
 
 <div id="panelBox">
 
 <div class="box">
-<h3>上传产品</h3>
+<h3>📤 上传产品</h3>
 
-<input id="name" placeholder="name">
+<input id="name" placeholder="产品名称">
 
 <select id="category">
-<option>Outdoor</option>
-<option>Sports</option>
-<option>Workwear</option>
+<option>Outdoor Functional Fabrics</option>
+<option>Sports & Activewear Fabrics</option>
+<option>Recycled & Sustainable Fabrics</option>
+<option>Stretch Fabrics</option>
+<option>Nylon & Polyester Fabrics</option>
+<option>Jacquard & Textured Fabrics</option>
+<option>Printed Fabrics</option>
+<option>Swimwear Fabrics</option>
+<option>Underwear Fabrics</option>
+<option>Workwear Fabrics</option>
+<option>Fashion Fabrics</option>
+<option>Others</option>
 </select>
 
-<input id="gsm" placeholder="gsm">
-<input id="moq" placeholder="moq">
-<textarea id="feature" placeholder="feature"></textarea>
+<input id="gsm" placeholder="GSM (例: 180)">
+<input id="moq" placeholder="MOQ (例: 500米)">
+<textarea id="feature" placeholder="产品特性描述"></textarea>
 
 <input type="file" id="file">
 
-<button onclick="upload()">上传</button>
+<button id="uploadBtn">🚀 上传产品</button>
 </div>
 
 <div class="box">
-<h3>产品列表</h3>
-<button onclick="load()">刷新</button>
+<h3>📦 产品列表</h3>
+<button id="refreshBtn">🔄 刷新产品</button>
 <div id="list"></div>
 </div>
 
 <div class="box">
-<h3>CRM</h3>
-<button onclick="loadCRM()">刷新</button>
+<h3>📩 CRM 客户询盘</h3>
+<button id="crmBtn">🔄 刷新询盘</button>
 <div id="crm"></div>
 </div>
 
 </div>
 
 <script>
-
+// Supabase 配置
 const supabaseUrl = "https://tpcxaelljrudshchuzia.supabase.co";
 const supabaseKey = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 const sb = supabase.createClient(supabaseUrl, supabaseKey);
 
-/* LOGIN */
-function login(){
-    if(document.getElementById("pass").value === "123456"){
-        document.getElementById("loginBox").style.display="none";
-        document.getElementById("panelBox").style.display="block";
-        load();
+// ==================== 登录函数 ====================
+function handleLogin() {
+    const passInput = document.getElementById("pass");
+    const loginBox = document.getElementById("loginBox");
+    const panelBox = document.getElementById("panelBox");
+    
+    if (!passInput || !loginBox || !panelBox) {
+        console.error("页面元素未找到");
+        alert("页面加载错误，请刷新重试");
+        return;
+    }
+    
+    const password = passInput.value.trim();
+    
+    if (password === "123456") {
+        // 登录成功
+        loginBox.style.display = "none";
+        panelBox.style.display = "block";
+        
+        // 加载数据
+        loadProducts();
         loadCRM();
-    }else{
-        alert("密码错误");
+        
+        console.log("登录成功");
+    } else {
+        alert("密码错误！\n演示密码: 123456");
+        passInput.value = "";
+        passInput.focus();
     }
 }
 
-/* LOAD */
-async function load(){
-let { data } = await sb.from("products").select("*");
+// ==================== 加载产品列表 ====================
+async function loadProducts() {
+    try {
+        const { data, error } = await sb.from("products").select("*");
+        
+        if (error) {
+            console.error("产品加载错误:", error);
+            document.getElementById("list").innerHTML = `<div class="item" style="color:red;">❌ 加载失败: ${error.message}</div>`;
+            return;
+        }
+        
+        let html = "";
+        if (!data || data.length === 0) {
+            html = '<div class="item" style="color:#666;">📭 暂无产品，请上传</div>';
+        } else {
+            data.forEach(p => {
+                html += `
+                    <div class="item">
+                        <b>${escapeHtml(p.name || "未命名")}</b><br>
+                        📁 ${escapeHtml(p.category || "未分类")}<br>
+                        ⚖️ ${escapeHtml(p.gsm || "")} &nbsp;|&nbsp; 📦 ${escapeHtml(p.moq || "")}<br>
+                        ${p.feature ? `📝 ${escapeHtml(p.feature.substring(0, 80))}${p.feature.length > 80 ? '...' : ''}<br>` : ''}
+                        ${p.image ? `<img src="${p.image}" style="max-width:60px; margin-top:5px; border-radius:6px;" onerror="this.style.display='none'">` : ''}
+                    </div>
+                `;
+            });
+        }
+        
+        document.getElementById("list").innerHTML = html;
+    } catch (err) {
+        console.error("加载异常:", err);
+        document.getElementById("list").innerHTML = `<div class="item" style="color:red;">❌ 系统异常</div>`;
+    }
+}
 
-let html="";
-(data||[]).forEach(p=>{
-html+=`
-<div class="item">
-<b>${p.name}</b><br>
-${p.category}<br>
-${p.gsm || ""} ${p.moq || ""}
-</div>`;
+// ==================== 上传产品 ====================
+async function uploadProduct() {
+    const nameInput = document.getElementById("name");
+    const nameValue = nameInput.value.trim();
+    
+    if (!nameValue) {
+        alert("请填写产品名称");
+        nameInput.focus();
+        return;
+    }
+    
+    const file = document.getElementById("file").files[0];
+    let imageUrl = "";
+    
+    try {
+        // 上传图片（如果有）
+        if (file) {
+            const fileName = Date.now() + "_" + file.name.replace(/[^a-zA-Z0-9._-]/g, '');
+            const { error: uploadError } = await sb.storage
+                .from("images")
+                .upload(fileName, file);
+            
+            if (uploadError) {
+                console.error("图片上传错误:", uploadError);
+                alert("图片上传失败，将继续上传产品（无图）");
+            } else {
+                imageUrl = supabaseUrl + "/storage/v1/object/public/images/" + fileName;
+            }
+        }
+        
+        // 插入产品数据
+        const { error: insertError } = await sb.from("products").insert([{
+            name: nameValue,
+            category: document.getElementById("category").value,
+            gsm: document.getElementById("gsm").value || "",
+            moq: document.getElementById("moq").value || "",
+            feature: document.getElementById("feature").value || "",
+            image: imageUrl
+        }]);
+        
+        if (insertError) {
+            alert("上传失败: " + insertError.message);
+            console.error("插入错误:", insertError);
+            return;
+        }
+        
+        alert("✅ 产品上传成功！");
+        
+        // 清空表单
+        nameInput.value = "";
+        document.getElementById("gsm").value = "";
+        document.getElementById("moq").value = "";
+        document.getElementById("feature").value = "";
+        document.getElementById("file").value = "";
+        
+        // 刷新列表
+        await loadProducts();
+        
+    } catch (err) {
+        alert("上传异常: " + err.message);
+        console.error(err);
+    }
+}
+
+// ==================== 加载 CRM 询盘 ====================
+async function loadCRM() {
+    try {
+        const { data, error } = await sb.from("inquiries").select("*");
+        
+        if (error) {
+            console.error("CRM加载错误:", error);
+            document.getElementById("crm").innerHTML = `<div class="item" style="color:red;">❌ 加载失败: ${error.message}</div>`;
+            return;
+        }
+        
+        let html = "";
+        if (!data || data.length === 0) {
+            html = '<div class="item" style="color:#666;">💬 暂无客户询盘</div>';
+        } else {
+            data.forEach(c => {
+                html += `
+                    <div class="item">
+                        <b>👤 ${escapeHtml(c.name || "匿名")}</b><br>
+                        📌 咨询产品: ${escapeHtml(c.product || "未指定")}<br>
+                        💬 ${escapeHtml(c.message || "")}
+                    </div>
+                `;
+            });
+        }
+        
+        document.getElementById("crm").innerHTML = html;
+    } catch (err) {
+        console.error("CRM异常:", err);
+        document.getElementById("crm").innerHTML = `<div class="item" style="color:red;">❌ 系统异常</div>`;
+    }
+}
+
+// ==================== 辅助函数（防XSS） ====================
+function escapeHtml(str) {
+    if (!str) return "";
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+// ==================== 页面初始化 & 事件绑定 ====================
+window.addEventListener("DOMContentLoaded", function() {
+    // 获取按钮元素
+    const loginBtn = document.getElementById("loginBtn");
+    const uploadBtn = document.getElementById("uploadBtn");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const crmBtn = document.getElementById("crmBtn");
+    const passInput = document.getElementById("pass");
+    
+    // 绑定事件（移除内联onclick，统一用addEventListener）
+    if (loginBtn) {
+        loginBtn.addEventListener("click", handleLogin);
+    }
+    
+    if (uploadBtn) {
+        uploadBtn.addEventListener("click", uploadProduct);
+    }
+    
+    if (refreshBtn) {
+        refreshBtn.addEventListener("click", loadProducts);
+    }
+    
+    if (crmBtn) {
+        crmBtn.addEventListener("click", loadCRM);
+    }
+    
+    // 回车键登录
+    if (passInput) {
+        passInput.addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                handleLogin();
+            }
+        });
+        passInput.focus();
+    }
+    
+    console.log("页面加载完成，登录功能已就绪");
 });
 
-document.getElementById("list").innerHTML=html;
-}
-
-/* UPLOAD */
-async function upload(){
-
-let file=document.getElementById("file").files[0];
-let url="";
-
-if(file){
-let name=Date.now()+"_"+file.name;
-await sb.storage.from("images").upload(name,file);
-url=supabaseUrl+"/storage/v1/object/public/images/"+name;
-}
-
-await sb.from("products").insert([{
-name:document.getElementById("name").value,
-category:document.getElementById("category").value,
-gsm:document.getElementById("gsm").value,
-moq:document.getElementById("moq").value,
-feature:document.getElementById("feature").value,
-image:url
-}]);
-
-load();
-}
-
-/* CRM */
-async function loadCRM(){
-let { data } = await sb.from("inquiries").select("*");
-
-let html="";
-(data||[]).forEach(c=>{
-html+=`
-<div class="item">
-<b>${c.name}</b><br>
-${c.product}<br>
-${c.message}
-</div>`;
-});
-
-document.getElementById("crm").innerHTML=html;
-}
-
+// 确保全局函数存在（备用，防止某些情况下调用失败）
+window.handleLogin = handleLogin;
+window.loadProducts = loadProducts;
+window.uploadProduct = uploadProduct;
+window.loadCRM = loadCRM;
 </script>
 
 </body>
