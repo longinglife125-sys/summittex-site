@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<title>SummitTex V4 Admin</title>
+<title>V4 Admin - SummitTex</title>
 
 <style>
 
@@ -15,7 +15,6 @@ body{
 }
 
 /* LOGIN */
-
 #loginBox{
     max-width:320px;
     margin:100px auto;
@@ -44,7 +43,6 @@ button{
 }
 
 /* PANEL */
-
 #panel{
     display:none;
     padding:20px;
@@ -57,10 +55,11 @@ button{
     margin-top:20px;
 }
 
+/* PRODUCT ITEM */
 .product{
     background:white;
     color:#0f172a;
-    padding:12px;
+    padding:10px;
     border-radius:10px;
     margin-top:10px;
     display:flex;
@@ -68,24 +67,222 @@ button{
     align-items:center;
 }
 
-.preview{
-    width:60px;
-    height:60px;
-    object-fit:cover;
-    border-radius:8px;
-    margin-right:10px;
-}
-
-.flex{
+.left{
     display:flex;
     align-items:center;
+    gap:10px;
+}
+
+.preview{
+    width:50px;
+    height:50px;
+    object-fit:cover;
+    border-radius:8px;
 }
 
 .small{
-    color:#64748b;
     font-size:12px;
+    color:#64748b;
 }
 
-.btn-blue{
+.btn{
+    padding:6px 10px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.edit{
+    background:#f59e0b;
+    color:white;
+}
+
+.del{
+    background:#ef4444;
+    color:white;
+}
+
+/* ACTION */
+.primary{
     background:#2563eb;
-   
+    color:white;
+    width:100%;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="loginBox">
+<h2>Admin Login</h2>
+<input type="password" id="pass" placeholder="Password">
+<button onclick="login()" class="primary">Login</button>
+</div>
+
+<!-- PANEL -->
+<div id="panel">
+
+<h2>V4 Product Admin System</h2>
+
+<div class="box">
+
+<input id="name" placeholder="Product Name">
+<input id="category" placeholder="Category">
+<input id="gsm" placeholder="GSM">
+<input id="moq" placeholder="MOQ">
+<input id="image" placeholder="Image path">
+<textarea id="feature" placeholder="Feature"></textarea>
+
+<button onclick="addOrUpdate()" class="primary">Save Product</button>
+
+</div>
+
+<div class="box">
+<h3>Product List</h3>
+<div id="list"></div>
+</div>
+
+<div class="box">
+<h3>Generated products.js</h3>
+<textarea id="output"></textarea>
+<button onclick="copy()" class="primary">Copy Code</button>
+</div>
+
+</div>
+
+<script>
+
+const PASSWORD = "123456";
+
+let products = JSON.parse(localStorage.getItem("products") || "[]");
+let editId = null;
+
+/* LOGIN */
+function login(){
+    if(pass.value === PASSWORD){
+        loginBox.style.display = "none";
+        panel.style.display = "block";
+        render();
+    }else{
+        alert("Wrong password");
+    }
+}
+
+/* ADD OR UPDATE */
+function addOrUpdate(){
+
+const data = {
+    id: editId || Date.now(),
+    name: name.value,
+    category: category.value,
+    gsm: gsm.value,
+    moq: moq.value,
+    image: image.value,
+    feature: feature.value
+};
+
+if(editId){
+    products = products.map(p => p.id === editId ? data : p);
+    editId = null;
+}else{
+    products.push(data);
+}
+
+save();
+render();
+clearForm();
+}
+
+/* EDIT */
+function edit(id){
+    const p = products.find(x => x.id === id);
+
+    name.value = p.name;
+    category.value = p.category;
+    gsm.value = p.gsm;
+    moq.value = p.moq;
+    image.value = p.image;
+    feature.value = p.feature;
+
+    editId = id;
+}
+
+/* DELETE */
+function del(id){
+    products = products.filter(p => p.id !== id);
+    save();
+    render();
+}
+
+/* SAVE */
+function save(){
+    localStorage.setItem("products", JSON.stringify(products));
+}
+
+/* CLEAR */
+function clearForm(){
+    name.value = "";
+    category.value = "";
+    gsm.value = "";
+    moq.value = "";
+    image.value = "";
+    feature.value = "";
+}
+
+/* RENDER */
+function render(){
+
+let html = "";
+let js = "const products = [\n";
+
+products.forEach(p=>{
+
+html += `
+<div class="product">
+    <div class="left">
+        <img src="${p.image}" class="preview">
+        <div>
+            <b>${p.name}</b><br>
+            <span class="small">${p.category} | ${p.gsm}gsm</span>
+        </div>
+    </div>
+
+    <div>
+        <button class="btn edit" onclick="edit(${p.id})">Edit</button>
+        <button class="btn del" onclick="del(${p.id})">Del</button>
+    </div>
+</div>
+`;
+
+js += `{
+id:"${p.id}",
+name:"${p.name}",
+category:"${p.category}",
+gsm:"${p.gsm}",
+moq:"${p.moq}",
+image:"${p.image}",
+feature:"${p.feature}"
+},\n`;
+
+});
+
+js += "];";
+
+list.innerHTML = html;
+output.value = js;
+
+}
+
+/* COPY */
+function copy(){
+    navigator.clipboard.writeText(output.value);
+    alert("Copied!");
+}
+
+</script>
+
+</body>
+</html>
