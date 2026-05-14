@@ -2,83 +2,81 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Product Detail | Functional Fabric</title>
+<title>Product Detail - SummitTex</title>
 
 <style>
 
 body{
-    margin:0;
     font-family:Arial;
-    background:#f8fafc;
-    color:#0f172a;
+    margin:0;
+    background:#0b0f14;
+    color:white;
+    padding:30px;
 }
 
-/* CONTAINER */
 .container{
     max-width:1100px;
     margin:auto;
-    padding:20px;
 }
 
-/* BACK */
 .back{
-    display:inline-block;
-    margin:20px 0;
-    color:#2563eb;
+    color:#60a5fa;
     text-decoration:none;
+    display:inline-block;
+    margin-bottom:20px;
 }
 
-/* LAYOUT */
 .layout{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:40px;
 }
 
-/* IMAGE */
 img{
     width:100%;
     border-radius:14px;
 }
 
-/* BOX */
-.box{
-    background:white;
-    border:1px solid #e2e8f0;
-    padding:20px;
-    border-radius:14px;
-    margin-top:20px;
-    box-shadow:0 4px 14px rgba(0,0,0,0.05);
-}
-
 h1{
-    font-size:34px;
+    font-size:32px;
 }
 
-/* TABLE */
-table{
-    width:100%;
-    border-collapse:collapse;
+.box{
+    background:#111827;
+    padding:20px;
+    border-radius:12px;
+    margin-top:20px;
+}
+
+.small{
+    color:#94a3b8;
+    font-size:14px;
+}
+
+.price{
+    font-size:20px;
+    color:#22c55e;
     margin-top:10px;
 }
 
-td{
-    padding:10px;
-    border-bottom:1px solid #e2e8f0;
+button{
+    margin-top:20px;
+    padding:14px;
+    width:100%;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
 }
 
-/* RFQ */
 .rfq{
-    margin-top:40px;
-    background:white;
-    padding:25px;
-    border-radius:14px;
-    border:1px solid #e2e8f0;
-    box-shadow:0 4px 14px rgba(0,0,0,0.05);
+    margin-top:30px;
+    background:#1f2937;
+    padding:20px;
+    border-radius:12px;
 }
 
 input, textarea{
@@ -86,30 +84,7 @@ input, textarea{
     padding:12px;
     margin-top:10px;
     border-radius:8px;
-    border:1px solid #e2e8f0;
-}
-
-button{
-    margin-top:15px;
-    padding:14px;
-    background:#2563eb;
-    color:white;
     border:none;
-    border-radius:10px;
-    cursor:pointer;
-    width:100%;
-    font-size:16px;
-}
-
-/* TAG */
-.tag{
-    display:inline-block;
-    background:#e0f2fe;
-    color:#0369a1;
-    padding:6px 10px;
-    border-radius:8px;
-    font-size:12px;
-    margin-right:5px;
 }
 
 </style>
@@ -122,92 +97,113 @@ button{
 
 <a class="back" href="products.html">← Back to Products</a>
 
-<div id="content"></div>
+<div id="content">Loading...</div>
 
 </div>
 
-<script src="data/products.js"></script>
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
 
+/* ===================== */
+/* SUPABASE */
+/* ===================== */
+
+const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
+const SUPABASE_KEY = "你的 publishable key";
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ===================== */
+/* GET ID */
+/* ===================== */
+
 const id = new URLSearchParams(location.search).get("id");
 
-const p = products.find(x => x.id == id);
+/* ===================== */
+/* LOAD PRODUCT */
+/* ===================== */
 
-if(!p){
-    document.getElementById("content").innerHTML = "<h2>Product Not Found</h2>";
-}else{
+async function load(){
 
-document.getElementById("content").innerHTML = `
+let { data } = await sb
+.from("products")
+.select("*")
+.eq("id", id)
+.single();
+
+if(!data){
+    content.innerHTML = "<h2>Product Not Found</h2>";
+    return;
+}
+
+render(data);
+
+}
+
+load();
+
+/* ===================== */
+/* RENDER */
+/* ===================== */
+
+function render(p){
+
+content.innerHTML = `
 
 <div class="layout">
 
-<!-- LEFT -->
 <div>
-<img src="${p.image}">
+    <img src="${p.image}">
 </div>
 
-<!-- RIGHT -->
 <div>
 
-<h1>${p.name}</h1>
+    <h1>${p.name}</h1>
 
-<div>
-<span class="tag">${p.category}</span>
-<span class="tag">Functional Fabric</span>
-</div>
+    <div class="small">${p.category}</div>
 
-<div class="box">
-<h3>Product Overview</h3>
-<p>${p.feature}</p>
-</div>
+    <div class="box">
+        <h3>Specifications</h3>
+        <p><b>GSM:</b> ${p.gsm}</p>
+        <p><b>MOQ:</b> ${p.moq}</p>
+    </div>
 
-<div class="box">
-<h3>Specifications</h3>
+    <div class="box">
+        <h3>Feature</h3>
+        <p>${p.feature || "N/A"}</p>
+    </div>
 
-<table>
-<tr><td>Category</td><td>${p.category}</td></tr>
-<tr><td>Weight (GSM)</td><td>${p.gsm}</td></tr>
-<tr><td>MOQ</td><td>${p.moq}</td></tr>
-<tr><td>Usage</td><td>Outdoor / Sportswear / Workwear</td></tr>
-<tr><td>Supply Type</td><td>Make-to-Order</td></tr>
-</table>
-
-</div>
-
-<div class="box">
-<h3>Application</h3>
-<p>
-✔ Outdoor Jackets<br>
-✔ Hiking Apparel<br>
-✔ Workwear Protection<br>
-✔ Sportswear
-</p>
-</div>
+    <button onclick="openRFQ()">Request Quotation</button>
 
 </div>
 
 </div>
 
-<!-- RFQ -->
-<div class="rfq">
+<div class="rfq" id="rfqBox" style="display:none">
 
-<h2>Request a Quote (RFQ)</h2>
-<p>Tell us your requirement, we will reply within 24 hours.</p>
+<h2>RFQ Form</h2>
 
 <input id="name" placeholder="Your Name">
-<input id="email" placeholder="Your Email">
-<input id="qty" placeholder="Quantity (Meters)">
-<textarea id="msg" placeholder="Tell us your requirement..."></textarea>
+<input id="email" placeholder="Email">
+<input id="qty" placeholder="Quantity">
+<textarea id="msg" placeholder="Message"></textarea>
 
-<button onclick="sendRFQ('${p.name}')">
-Send Inquiry
-</button>
+<button onclick="sendRFQ('${p.name}')">Send Inquiry</button>
 
 </div>
 
 `;
 
+}
+
+/* ===================== */
+/* RFQ */
+/* ===================== */
+
+function openRFQ(){
+    document.getElementById("rfqBox").style.display = "block";
 }
 
 function sendRFQ(productName){
@@ -218,20 +214,19 @@ const qty = document.getElementById("qty").value;
 const msg = document.getElementById("msg").value;
 
 if(!name || !email){
-    alert("Please fill in Name and Email");
+    alert("Please fill required fields");
     return;
 }
 
 alert(
-`RFQ Submitted Successfully!
+`Inquiry Sent!
 
 Product: ${productName}
 Name: ${name}
 Email: ${email}
 Quantity: ${qty}
 Message: ${msg}
-
-We will contact you soon.`
+`
 );
 
 }
