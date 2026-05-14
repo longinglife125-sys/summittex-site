@@ -7,6 +7,9 @@
 
 <title>Product Detail - SummitTex</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
 <style>
 
 /* ===================== */
@@ -26,10 +29,7 @@ body{
     padding:30px;
 }
 
-/* ===================== */
 /* BACK */
-/* ===================== */
-
 .back{
     color:#2563eb;
     text-decoration:none;
@@ -37,43 +37,41 @@ body{
     margin-bottom:20px;
 }
 
-/* ===================== */
 /* LAYOUT */
-/* ===================== */
-
 .layout{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:40px;
 }
 
-/* ===================== */
 /* IMAGE */
-/* ===================== */
-
-img{
+.main-img{
     width:100%;
     border-radius:16px;
     box-shadow:0 10px 25px rgba(0,0,0,.1);
 }
 
-/* ===================== */
-/* TEXT */
-/* ===================== */
-
-h1{
-    font-size:34px;
-    margin-bottom:10px;
+/* THUMB */
+.thumbs{
+    display:flex;
+    gap:10px;
+    margin-top:12px;
 }
 
-.small{
-    color:#6b7280;
+.thumbs img{
+    width:70px;
+    height:70px;
+    object-fit:cover;
+    border-radius:8px;
+    cursor:pointer;
+    border:2px solid transparent;
 }
 
-/* ===================== */
+.thumbs img:hover{
+    border:2px solid #2563eb;
+}
+
 /* BOX */
-/* ===================== */
-
 .box{
     background:white;
     padding:20px;
@@ -82,10 +80,7 @@ h1{
     box-shadow:0 8px 20px rgba(0,0,0,.06);
 }
 
-/* ===================== */
 /* BUTTON */
-/* ===================== */
-
 button{
     margin-top:20px;
     padding:14px;
@@ -102,12 +97,9 @@ button:hover{
     background:#1d4ed8;
 }
 
-/* ===================== */
 /* RFQ */
-/* ===================== */
-
 .rfq{
-    margin-top:30px;
+    margin-top:25px;
     background:white;
     padding:20px;
     border-radius:14px;
@@ -123,10 +115,7 @@ input, textarea{
     border:1px solid #e5e7eb;
 }
 
-/* ===================== */
 /* TAG */
-/* ===================== */
-
 .tag{
     display:inline-block;
     background:#e0edff;
@@ -134,13 +123,9 @@ input, textarea{
     padding:6px 12px;
     border-radius:999px;
     font-size:13px;
-    margin-bottom:10px;
 }
 
-/* ===================== */
 /* WHATSAPP */
-/* ===================== */
-
 .wa{
     position:fixed;
     bottom:20px;
@@ -153,10 +138,7 @@ input, textarea{
     font-weight:bold;
 }
 
-/* ===================== */
 /* MOBILE */
-/* ===================== */
-
 @media(max-width:768px){
 .layout{
     grid-template-columns:1fr;
@@ -180,37 +162,33 @@ input, textarea{
 <!-- WhatsApp -->
 <a class="wa" id="wa" target="_blank">💬 WhatsApp</a>
 
-<!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
-<!-- EmailJS -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-
 <script>
 
 /* ===================== */
-/* CONFIG */
+/* SAFE INIT (关键修复) */
 /* ===================== */
 
-const SUPABASE_URL =
-"https://tpcxaelljrudshchuzia.supabase.co";
-
-const SUPABASE_KEY =
-"你的publishable key";
+const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co/rest/v1/";
+const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-emailjs.init("你的PUBLIC_KEY");
+emailjs.init("YOUR_PUBLIC_KEY");
+
+/* FIX: 避免 content undefined */
+const content = document.getElementById("content");
 
 /* ===================== */
-/* GET ID */
+/* LOAD ID */
 /* ===================== */
 
-const id =
-new URLSearchParams(location.search).get("id");
+const id = new URLSearchParams(location.search).get("id");
+
+let images = [];
+let currentIndex = 0;
 
 /* ===================== */
-/* LOAD */
+/* LOAD PRODUCT */
 /* ===================== */
 
 async function load(){
@@ -222,12 +200,22 @@ let { data } = await sb
 .single();
 
 if(!data){
-content.innerHTML = "<h2>Product Not Found</h2>";
-return;
+    content.innerHTML = "<h2>Product Not Found</h2>";
+    return;
 }
+
+/* 多图兼容 */
+images = data.images && data.images.length ? data.images : [data.image];
 
 render(data);
 setupWhatsApp(data);
+
+/* CRM记录（自动写入） */
+sb.from("inquiries").insert([{
+    product: data.name,
+    product_id: id,
+    created_at: new Date()
+}]);
 
 }
 
@@ -239,77 +227,67 @@ load();
 
 function render(p){
 
-// 如果没有多图，就用单图
-let images = p.images && p.images.length ? p.images : [p.image];
-
-let thumbs = "";
-
-images.forEach((img, index)=>{
-thumbs += `<img src="${img}" onclick="setMain(${index})" class="thumb">`;
-});
-
 content.innerHTML = `
-
 <div class="layout">
 
-<!-- LEFT IMAGE -->
+<!-- LEFT -->
 <div>
 
-    <img id="mainImg" src="${images[0]}" class="main-img">
+    <img id="mainImg" class="main-img" src="${images[0]}">
 
     <div class="thumbs">
-        ${thumbs}
+        ${images.map((img,i)=>`
+            <img src="${img}" onclick="setImage(${i})">
+        `).join("")}
     </div>
 
 </div>
 
-<!-- RIGHT INFO -->
+<!-- RIGHT -->
 <div>
 
-    <span class="tag">${p.category}</span>
+    <span class="tag">${p.category || ""}</span>
 
-    <h1>${p.name}</h1>
+    <h1>${p.name || ""}</h1>
 
     <div class="box">
-        <h3>Specifications</h3>
-        <p><b>GSM:</b> ${p.gsm || "-"}</p>
-        <p><b>MOQ:</b> ${p.moq || "-"}</p>
+        <b>GSM:</b> ${p.gsm || "-"}<br>
+        <b>MOQ:</b> ${p.moq || "-"}
     </div>
 
     <div class="box">
         <h3>Feature</h3>
-        <p>${p.feature || "N/A"}</p>
+        ${p.feature || "N/A"}
     </div>
 
     <button onclick="openRFQ()">Request Quotation</button>
 
-    <a class="wa"
-       href="https://wa.me/8613800000000?text=I want price for ${p.name}">
-       WhatsApp Inquiry
-    </a>
+    <div class="rfq" id="rfqBox">
+
+        <h3>RFQ Form</h3>
+
+        <input id="name" placeholder="Your Name">
+        <input id="email" placeholder="Email">
+        <input id="qty" placeholder="Quantity">
+        <textarea id="msg" placeholder="Message"></textarea>
+
+        <button onclick="sendRFQ('${p.name}')">Send Inquiry</button>
+
+    </div>
 
 </div>
 
 </div>
-
-<!-- RFQ -->
-<div class="rfq" id="rfqBox">
-
-<h2>RFQ Form</h2>
-
-<input id="name" placeholder="Your Name">
-<input id="email" placeholder="Email">
-<input id="qty" placeholder="Quantity">
-<textarea id="msg" placeholder="Message"></textarea>
-
-<button onclick="sendRFQ('${p.name}')">Send Inquiry</button>
-
-</div>
-
 `;
 
-window.currentImages = images;
+}
 
+/* ===================== */
+/* IMAGE SWITCH */
+/* ===================== */
+
+function setImage(i){
+document.getElementById("mainImg").src = images[i];
 }
 
 /* ===================== */
@@ -317,39 +295,39 @@ window.currentImages = images;
 /* ===================== */
 
 function openRFQ(){
-document.getElementById("rfqBox").style.display="block";
+document.getElementById("rfqBox").style.display = "block";
 }
 
 /* ===================== */
 /* EMAIL SEND */
 /* ===================== */
 
-function sendRFQ(productName){
+function sendRFQ(product){
 
-const name = document.getElementById("name").value;
-const email = document.getElementById("email").value;
-const qty = document.getElementById("qty").value;
-const msg = document.getElementById("msg").value;
+let name = document.getElementById("name").value;
+let email = document.getElementById("email").value;
+let qty = document.getElementById("qty").value;
+let msg = document.getElementById("msg").value;
 
 if(!name || !email){
-alert("Please fill required fields");
-return;
+    alert("Please fill required fields");
+    return;
 }
 
 emailjs.send(
-"service_jb1bu3d",
-"template_sau1q5q",
+"YOUR_SERVICE_ID",
+"YOUR_TEMPLATE_ID",
 {
-product: productName,
-name: name,
-email: email,
-qty: qty,
-message: msg
+    product,
+    name,
+    email,
+    qty,
+    message: msg
 }
 ).then(()=>{
-alert("Inquiry sent successfully!");
+    alert("Inquiry sent successfully!");
 }).catch(()=>{
-alert("Failed to send inquiry");
+    alert("Failed to send inquiry");
 });
 
 }
@@ -360,11 +338,9 @@ alert("Failed to send inquiry");
 
 function setupWhatsApp(p){
 document.getElementById("wa").href =
-`https://wa.me/8613800000000?text=Hello, I am interested in ${p.name}`;
+`https://wa.me/8613800000000?text=I want quote for ${p.name}`;
 }
-function setMain(index){
-    document.getElementById("mainImg").src = window.currentImages[index];
-}
+
 </script>
 
 </body>
