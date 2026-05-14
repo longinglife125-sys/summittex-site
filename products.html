@@ -2,134 +2,270 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SummitTex Products</title>
+
+<title>Products | Functional Fabric Manufacturer</title>
 
 <style>
+
 body{
-    font-family:Arial;
-    background:#0b0f14;
-    color:white;
     margin:0;
-    padding:20px;
+    font-family:Arial;
+    background:#f8fafc;
+    color:#0f172a;
 }
 
-h1{
-    margin-bottom:20px;
+/* HEADER */
+.header{
+    text-align:center;
+    padding:50px 20px 20px;
 }
 
+.header h1{
+    font-size:38px;
+    margin-bottom:10px;
+}
+
+.header p{
+    color:#64748b;
+}
+
+/* FILTERS */
 #filters{
-    margin-bottom:20px;
+    text-align:center;
+    margin-bottom:15px;
 }
 
 button{
-    margin-right:10px;
-    padding:10px 16px;
-    background:#1f2937;
-    color:white;
+    margin:5px;
+    padding:10px 14px;
     border:none;
     border-radius:8px;
+    background:#e2e8f0;
     cursor:pointer;
+    font-weight:bold;
 }
 
-input{
-    width:300px;
-    padding:10px;
-    margin-bottom:20px;
-    border-radius:8px;
-    border:none;
+button:hover{
+    background:#cbd5e1;
 }
 
+/* SEARCH */
+#search{
+    display:block;
+    margin:10px auto 20px;
+    padding:12px;
+    width:320px;
+    border-radius:10px;
+    border:1px solid #cbd5e1;
+}
+
+/* GRID */
 #grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
     gap:20px;
+    max-width:1200px;
+    margin:20px auto;
+    padding:0 20px;
 }
 
+/* CARD */
 .card{
-    background:#111827;
-    border-radius:12px;
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:14px;
     padding:15px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.05);
 }
 
 .card img{
     width:100%;
-    height:220px;
+    height:200px;
     object-fit:cover;
     border-radius:10px;
 }
 
 .card h3{
-    margin-top:10px;
+    margin:10px 0 5px;
+    color:#1e3a8a;
 }
 
-.card a{
+.card p{
+    color:#64748b;
+}
+
+/* PAGINATION */
+.pagination{
+    text-align:center;
+    margin:30px 0;
+}
+
+.page-btn{
+    padding:10px 14px;
+    margin:0 5px;
+    border:none;
+    border-radius:8px;
+    background:#e2e8f0;
+    cursor:pointer;
+}
+
+.page-btn.active{
+    background:#2563eb;
+    color:white;
+}
+
+/* BACK */
+.back{
     display:inline-block;
-    margin-top:10px;
-    color:#60a5fa;
+    margin:20px;
+    color:#2563eb;
     text-decoration:none;
 }
+
 </style>
 
 </head>
 
 <body>
 
-<h1>SummitTex Functional Fabrics</h1>
+<a class="back" href="index.html">← Back Home</a>
 
-<div id="filters">
-    <button onclick="filterProducts('All')">All</button>
-    <button onclick="filterProducts('Waterproof')">Waterproof</button>
-    <button onclick="filterProducts('Softshell')">Softshell</button>
-    <button onclick="filterProducts('TPU')">TPU</button>
+<div class="header">
+
+<h1>Functional Fabric Products</h1>
+<p>Waterproof | Softshell | TPU Laminated | Recycled Fabrics</p>
+
 </div>
 
-<input id="search" placeholder="Search fabrics...">
+<!-- FILTER -->
+<div id="filters">
+    <button onclick="setCategory('All')">All</button>
+    <button onclick="setCategory('Waterproof')">Waterproof</button>
+    <button onclick="setCategory('Softshell')">Softshell</button>
+    <button onclick="setCategory('TPU')">TPU</button>
+</div>
 
+<input id="search" placeholder="Search fabrics..." oninput="searchProducts()">
+
+<!-- GRID -->
 <div id="grid"></div>
 
-<!-- 产品数据 -->
+<!-- PAGINATION -->
+<div class="pagination" id="pagination"></div>
+
+<!-- DATA -->
 <script src="data/products.js"></script>
 
-<!-- 正确JS路径 -->
-<script src="js/app.js"></script>
-
 <script>
-// 兜底防报错（如果 app.js 没写完整）
-if(typeof render === "undefined"){
 
-const grid = document.getElementById("grid");
+/* ===================== */
+/* STATE */
+/* ===================== */
 
-function render(list){
+let currentPage = 1;
+let pageSize = 6;
+let currentCategory = "All";
+let keyword = "";
+
+/* ===================== */
+/* FILTER LOGIC */
+/* ===================== */
+
+function getFiltered(){
+    let list = products;
+
+    if(currentCategory !== "All"){
+        list = list.filter(p => p.category === currentCategory);
+    }
+
+    if(keyword){
+        list = list.filter(p =>
+            p.name.toLowerCase().includes(keyword)
+        );
+    }
+
+    return list;
+}
+
+/* ===================== */
+/* RENDER PRODUCTS */
+/* ===================== */
+
+function render(){
+    const grid = document.getElementById("grid");
+    const list = getFiltered();
+
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+
+    const pageItems = list.slice(start, end);
+
     grid.innerHTML = "";
-    list.forEach(p=>{
+
+    pageItems.forEach(p=>{
         grid.innerHTML += `
-        <div class="card">
-            <img src="${p.image}">
-            <h3>${p.name}</h3>
-            <p>${p.category} | ${p.gsm}gsm</p>
-            <a href="product.html?id=${p.id}">View Details</a>
-        </div>
+            <div class="card">
+                <img src="${p.image}">
+                <h3>${p.name}</h3>
+                <p>${p.category} | ${p.gsm}gsm</p>
+                <a href="product.html?id=${p.id}">View Details</a>
+            </div>
         `;
     });
+
+    renderPagination(list.length);
 }
 
-render(products);
+/* ===================== */
+/* PAGINATION */
+/* ===================== */
 
-// 搜索
-document.getElementById("search").addEventListener("input", e=>{
-    const v = e.target.value.toLowerCase();
-    render(products.filter(p=>p.name.toLowerCase().includes(v)));
-});
+function renderPagination(total){
+    const pageCount = Math.ceil(total / pageSize);
+    const box = document.getElementById("pagination");
 
-// filter
-window.filterProducts = function(cat){
-    if(cat==="All") return render(products);
-    render(products.filter(p=>p.category===cat));
-};
+    box.innerHTML = "";
 
+    for(let i=1;i<=pageCount;i++){
+        box.innerHTML += `
+            <button class="page-btn ${i===currentPage?'active':''}"
+            onclick="goPage(${i})">
+                ${i}
+            </button>
+        `;
+    }
 }
+
+function goPage(page){
+    currentPage = page;
+    render();
+}
+
+/* ===================== */
+/* CATEGORY */
+/* ===================== */
+
+function setCategory(cat){
+    currentCategory = cat;
+    currentPage = 1;
+    render();
+}
+
+/* ===================== */
+/* SEARCH */
+/* ===================== */
+
+function searchProducts(){
+    keyword = document.getElementById("search").value.toLowerCase();
+    currentPage = 1;
+    render();
+}
+
+/* INIT */
+render();
 
 </script>
 
