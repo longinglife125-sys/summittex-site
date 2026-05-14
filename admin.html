@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<title>V16 Debug Admin</title>
+<title>V16 Admin FIXED</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
@@ -53,6 +53,7 @@ button{
     border-radius:8px;
     background:#2563eb;
     color:white;
+    cursor:pointer;
 }
 
 .log{
@@ -91,7 +92,7 @@ button{
 
 <div class="box">
 
-<h3>Upload Product (DEBUG MODE)</h3>
+<h3>Upload Product (FIXED MODE)</h3>
 
 <input id="name" placeholder="name">
 
@@ -109,7 +110,7 @@ button{
 
 <input type="file" id="file">
 
-<button onclick="upload()">UPLOAD + TRACE</button>
+<button onclick="upload()">UPLOAD PRODUCT</button>
 
 </div>
 
@@ -132,6 +133,10 @@ button{
 
 <script>
 
+/* ===================== */
+/* CONFIG */
+/* ===================== */
+
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "你的publishable key";
 
@@ -144,7 +149,10 @@ function log(msg){
     logBox.scrollTop = logBox.scrollHeight;
 }
 
+/* ===================== */
 /* LOGIN */
+/* ===================== */
+
 function login(){
     if(pass.value==="123456"){
         login.style.display="none";
@@ -152,11 +160,14 @@ function login(){
         log("Login success");
         load();
     }else{
-        alert("wrong");
+        alert("wrong password");
     }
 }
 
-/* UPLOAD WITH DEBUG */
+/* ===================== */
+/* UPLOAD FIXED */
+/* ===================== */
+
 async function upload(){
 
 log("Start upload...");
@@ -165,35 +176,40 @@ let file = document.getElementById("file").files[0];
 
 let imageUrl = "";
 
+/* 1. upload image */
 if(file){
 
 log("Uploading image...");
 
-let fileName = Date.now()+"_"+file.name;
+let fileName = Date.now() + "_" + file.name;
 
 let { data, error } = await sb.storage
 .from("images")
-.upload(fileName,file);
+.upload(fileName, file);
 
 if(error){
     log("❌ Upload error: " + error.message);
     return;
 }
 
-imageUrl = SUPABASE_URL+"/storage/v1/object/public/images/"+fileName;
+imageUrl = SUPABASE_URL + "/storage/v1/object/public/images/" + fileName;
 
-log("Image uploaded: " + imageUrl);
+log("Image uploaded OK");
 }
 
+/* 2. insert product (FIXED STRUCTURE) */
 log("Inserting product...");
 
 let { error: dbError } = await sb.from("products").insert([{
-    name:name.value,
-    category:category.value,
-    gsm:gsm.value,
-    moq:moq.value,
-    feature:feature.value,
-    image:imageUrl
+    name: name.value,
+    category: category.value,
+    gsm: gsm.value,
+    moq: moq.value,
+    feature: feature.value,
+
+    /* 🔥 FIX: unified structure */
+    image: imageUrl,
+    images: imageUrl ? [imageUrl] : []
 }]);
 
 if(dbError){
@@ -206,7 +222,10 @@ log("✅ Product inserted successfully");
 load();
 }
 
-/* LOAD DATA */
+/* ===================== */
+/* LOAD PRODUCTS */
+/* ===================== */
+
 async function load(){
 
 log("Loading products...");
@@ -218,16 +237,18 @@ if(error){
     return;
 }
 
-log("Loaded: " + data.length + " items");
+log("Loaded: " + (data?.length || 0) + " items");
 
 let html = "";
 
 data.forEach(p=>{
-html += `<div class="item">
-<b>${p.name}</b><br>
-${p.category}<br>
-${p.image || "no image"}
-</div>`;
+html += `
+<div class="item">
+<b>${p.name || ""}</b><br>
+${p.category || ""}<br>
+<img src="${p.image || ""}" width="80">
+</div>
+`;
 });
 
 list.innerHTML = html;
