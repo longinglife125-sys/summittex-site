@@ -1,59 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Product Detail - SummitTex</title>
+<title>Product Detail | Functional Fabric</title>
 
 <style>
+
 body{
-    font-family:Arial;
-    background:#0b0f14;
-    color:white;
     margin:0;
-    padding:40px;
+    font-family:Arial;
+    background:#f8fafc;
+    color:#0f172a;
 }
 
+/* CONTAINER */
 .container{
     max-width:1100px;
     margin:auto;
+    padding:20px;
 }
 
+/* BACK */
 .back{
-    color:#60a5fa;
-    text-decoration:none;
     display:inline-block;
-    margin-bottom:20px;
+    margin:20px 0;
+    color:#2563eb;
+    text-decoration:none;
 }
 
+/* LAYOUT */
 .layout{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:40px;
 }
 
+/* IMAGE */
 img{
     width:100%;
     border-radius:14px;
 }
 
+/* BOX */
 .box{
-    background:#111827;
+    background:white;
+    border:1px solid #e2e8f0;
     padding:20px;
     border-radius:14px;
     margin-top:20px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.05);
 }
 
 h1{
-    font-size:32px;
+    font-size:34px;
 }
 
+/* TABLE */
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+td{
+    padding:10px;
+    border-bottom:1px solid #e2e8f0;
+}
+
+/* RFQ */
 .rfq{
-    margin-top:30px;
-    background:#1f2937;
-    padding:20px;
+    margin-top:40px;
+    background:white;
+    padding:25px;
     border-radius:14px;
+    border:1px solid #e2e8f0;
+    box-shadow:0 4px 14px rgba(0,0,0,0.05);
 }
 
 input, textarea{
@@ -61,7 +86,7 @@ input, textarea{
     padding:12px;
     margin-top:10px;
     border-radius:8px;
-    border:none;
+    border:1px solid #e2e8f0;
 }
 
 button{
@@ -76,12 +101,19 @@ button{
     font-size:16px;
 }
 
-@media(max-width:768px){
-.layout{
-    grid-template-columns:1fr;
+/* TAG */
+.tag{
+    display:inline-block;
+    background:#e0f2fe;
+    color:#0369a1;
+    padding:6px 10px;
+    border-radius:8px;
+    font-size:12px;
+    margin-right:5px;
 }
-}
+
 </style>
+
 </head>
 
 <body>
@@ -98,62 +130,58 @@ button{
 
 <script>
 
-const id =
-new URLSearchParams(location.search).get("id");
+const id = new URLSearchParams(location.search).get("id");
 
-/*
-🟢 SEO关键：同时支持 id 和 slug
-*/
-const p = products.find(x =>
-    x.id == id || x.slug == id
-);
+const p = products.find(x => x.id == id);
 
 if(!p){
-    document.getElementById("content").innerHTML =
-    "<h2>Product Not Found</h2>";
-}
-else{
+    document.getElementById("content").innerHTML = "<h2>Product Not Found</h2>";
+}else{
 
-// 🟢 动态SEO标题（Google会读）
-document.title = p.name + " | SummitTex";
-
-// 🟢 页面内容
 document.getElementById("content").innerHTML = `
 
 <div class="layout">
 
+<!-- LEFT -->
 <div>
 <img src="${p.image}">
 </div>
 
+<!-- RIGHT -->
 <div>
 
 <h1>${p.name}</h1>
 
+<div>
+<span class="tag">${p.category}</span>
+<span class="tag">Functional Fabric</span>
+</div>
+
+<div class="box">
+<h3>Product Overview</h3>
 <p>${p.feature}</p>
+</div>
 
 <div class="box">
 <h3>Specifications</h3>
-<p><b>Category:</b> ${p.category}</p>
-<p><b>Weight:</b> ${p.gsm} gsm</p>
-<p><b>Width:</b> ${p.width}</p>
-<p><b>MOQ:</b> ${p.moq}</p>
-<p><b>Composition:</b> ${p.composition}</p>
+
+<table>
+<tr><td>Category</td><td>${p.category}</td></tr>
+<tr><td>Weight (GSM)</td><td>${p.gsm}</td></tr>
+<tr><td>MOQ</td><td>${p.moq}</td></tr>
+<tr><td>Usage</td><td>Outdoor / Sportswear / Workwear</td></tr>
+<tr><td>Supply Type</td><td>Make-to-Order</td></tr>
+</table>
+
 </div>
 
 <div class="box">
 <h3>Application</h3>
-<p>${p.application}</p>
-</div>
-
-<div class="box">
-<h3>Why Choose Us</h3>
 <p>
-✔ Factory Direct Supply<br>
-✔ Stable Quality Control<br>
-✔ Export Experience<br>
-✔ OEM / ODM Support<br>
-✔ Fast Sample Service
+✔ Outdoor Jackets<br>
+✔ Hiking Apparel<br>
+✔ Workwear Protection<br>
+✔ Sportswear
 </p>
 </div>
 
@@ -161,17 +189,19 @@ document.getElementById("content").innerHTML = `
 
 </div>
 
+<!-- RFQ -->
 <div class="rfq">
 
 <h2>Request a Quote (RFQ)</h2>
+<p>Tell us your requirement, we will reply within 24 hours.</p>
 
 <input id="name" placeholder="Your Name">
 <input id="email" placeholder="Your Email">
 <input id="qty" placeholder="Quantity (Meters)">
 <textarea id="msg" placeholder="Tell us your requirement..."></textarea>
 
-<button onclick="sendRFQ(p.name)">
-Submit RFQ
+<button onclick="sendRFQ('${p.name}')">
+Send Inquiry
 </button>
 
 </div>
@@ -188,12 +218,12 @@ const qty = document.getElementById("qty").value;
 const msg = document.getElementById("msg").value;
 
 if(!name || !email){
-    alert("Please fill name and email");
+    alert("Please fill in Name and Email");
     return;
 }
 
 alert(
-`RFQ Submitted!
+`RFQ Submitted Successfully!
 
 Product: ${productName}
 Name: ${name}
