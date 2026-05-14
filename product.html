@@ -1,99 +1,185 @@
-<div id="content"></div>
+<!DOCTYPE html>
+<html lang="en">
 
-<!-- ⭐ WhatsApp 按钮 -->
-<a id="waLink"
-   target="_blank"
-   style="
-      display:inline-block;
-      margin-top:20px;
-      padding:12px 18px;
-      background:#25D366;
-      color:white;
-      border-radius:8px;
-      text-decoration:none;
-      font-weight:bold;">
-   💬 WhatsApp / Get Sample
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SummitTex Product Detail</title>
+
+<style>
+
+body{
+    font-family:Arial;
+    background:#0b0f14;
+    color:white;
+    margin:0;
+    padding:40px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+.product{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:40px;
+}
+
+.product img{
+    width:100%;
+    border-radius:16px;
+}
+
+.info h1{
+    font-size:36px;
+    margin-bottom:20px;
+}
+
+.specs{
+    background:#111827;
+    padding:20px;
+    border-radius:12px;
+    margin-top:20px;
+}
+
+.specs p{
+    margin:10px 0;
+}
+
+.feature-box{
+    background:#1f2937;
+    padding:20px;
+    border-radius:12px;
+    margin-top:20px;
+}
+
+.btn{
+    display:inline-block;
+    margin-top:30px;
+    padding:14px 22px;
+    background:#25D366;
+    color:white;
+    text-decoration:none;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+.back{
+    display:inline-block;
+    margin-bottom:30px;
+    color:#60a5fa;
+    text-decoration:none;
+}
+
+@media(max-width:768px){
+
+.product{
+    grid-template-columns:1fr;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<a class="back" href="products.html">
+← Back to Products
 </a>
 
-<!-- ⭐ RFQ询盘系统（升级重点） -->
-<div style="
-    margin-top:30px;
-    padding:20px;
-    border:1px solid #333;
-    border-radius:10px;
-    background:#111827;
-    max-width:500px;">
+<div id="content"></div>
 
-    <h3>Request for Quotation (RFQ)</h3>
-
-    <input id="email" placeholder="Your Email"
-        style="width:100%;padding:10px;margin:6px 0;">
-
-    <input id="qty" placeholder="Quantity (meters)"
-        style="width:100%;padding:10px;margin:6px 0;">
-
-    <textarea id="msg" placeholder="Message"
-        style="width:100%;padding:10px;margin:6px 0;"></textarea>
-
-    <button onclick="sendRFQ()"
-        style="
-            background:#3b82f6;
-            color:white;
-            padding:10px 16px;
-            border:none;
-            border-radius:8px;
-            cursor:pointer;">
-        📩 Send RFQ
-    </button>
-
-    <p id="rfqStatus" style="color:#9ca3af;margin-top:10px;"></p>
 </div>
 
+<script src="data/products.js"></script>
+
 <script>
-const id = new URLSearchParams(location.search).get("id");
 
-// 找产品
-const p = products.find(x => x.id == id);
+const id =
+new URLSearchParams(location.search).get("id");
 
-// 防止报错
-if (!p) {
-    document.getElementById("content").innerHTML = "<h2>Product not found</h2>";
-} else {
+const p =
+products.find(x => x.id == id);
 
-    // 产品展示
-    document.getElementById("content").innerHTML = `
-        <h2>${p.name}</h2>
-        <p>${p.feature}</p>
-        <p><b>${p.gsm}</b> gsm / MOQ <b>${p.moq}</b></p>
-        <p><b>Application:</b> ${p.application}</p>
-    `;
+if(!p){
 
-    // WhatsApp 自动带产品名
-    document.getElementById("waLink").href =
-        `https://wa.me/861234567890?text=Hi, I want sample of ${p.name}`;
+document.getElementById("content").innerHTML =
+"<h2>Product Not Found</h2>";
+
+}else{
+
+document.getElementById("content").innerHTML = `
+
+<div class="product">
+
+<div>
+<img src="${p.image}">
+</div>
+
+<div class="info">
+
+<h1>${p.name}</h1>
+
+<p>
+${p.feature}
+</p>
+
+<div class="specs">
+
+<h3>Technical Specifications</h3>
+
+<p><b>Category:</b> ${p.category}</p>
+
+<p><b>Weight:</b> ${p.gsm} gsm</p>
+
+<p><b>MOQ:</b> ${p.moq}</p>
+
+<p><b>Application:</b> Outdoor Jackets / Sportswear / Hiking</p>
+
+<p><b>Supply Type:</b> OEM & ODM</p>
+
+</div>
+
+<div class="feature-box">
+
+<h3>Key Features</h3>
+
+<p>
+
+✔ Waterproof<br>
+✔ Breathable<br>
+✔ Durable Performance<br>
+✔ Export Quality<br>
+✔ Outdoor Functional Textile
+
+</p>
+
+</div>
+
+<a
+class="btn"
+target="_blank"
+href="https://wa.me/861234567890?text=Hi, I want sample of ${p.name}">
+
+💬 Contact WhatsApp / Get Sample
+
+</a>
+
+</div>
+
+</div>
+
+`;
+
 }
 
-// ⭐ RFQ发送逻辑（模拟版）
-function sendRFQ(){
-    const email = document.getElementById("email").value;
-    const qty = document.getElementById("qty").value;
-    const msg = document.getElementById("msg").value;
-
-    if(!email || !qty){
-        document.getElementById("rfqStatus").innerText =
-            "Please fill Email and Quantity";
-        return;
-    }
-
-    document.getElementById("rfqStatus").innerText =
-        "RFQ sent successfully! We will contact you soon.";
-
-    // 模拟提交（真实可接邮箱/后端）
-    console.log({
-        product: p.name,
-        email: email,
-        quantity: qty,
-        message: msg
-    });
-}
 </script>
+
+</body>
+</html>
