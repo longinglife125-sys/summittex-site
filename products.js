@@ -1,81 +1,103 @@
 const products = [
-  {
-    id: 1,
-    name: "3L Waterproof Nylon 20K/20K",
-    category: "Waterproof",
-    gsm: 150,
-    width: "150cm",
-    moq: "1000m",
-    feature: "TPU membrane, breathable, high durability",
-    application: "Outdoor jackets, ski wear",
-    image: "https://images.unsplash.com/photo-1520975922284-9a4d0b9b5f4a"
-  },
-  {
-    id: 2,
-    name: "2.5L PU Rainwear Fabric",
-    category: "Waterproof",
-    gsm: 130,
-    width: "148cm",
-    moq: "1000m",
-    feature: "Lightweight waterproof PU coating",
-    application: "Rain jackets",
-    image: "https://images.unsplash.com/photo-1520975922284-9a4d0b9b5f4a"
-  },
-  {
-    id: 3,
-    name: "4-Way Stretch Softshell",
-    category: "Softshell",
-    gsm: 280,
-    width: "145cm",
-    moq: "800m",
-    feature: "Fleece backing, windproof",
-    application: "Hiking jackets",
-    image: "https://images.unsplash.com/photo-1520975922284-9a4d0b9b5f4a"
-  },
-  {
-    id: 4,
-    name: "TPU Laminated Polyester",
-    category: "TPU",
-    gsm: 180,
-    width: "152cm",
-    moq: "500m",
-    feature: "Eco-friendly TPU film",
-    application: "Bags, rainwear",
-    image: "https://images.unsplash.com/photo-1520975922284-9a4d0b9b5f4a"
-  },
-  {
-    id: 5,
-    name: "GRS Recycled Polyester",
-    category: "Recycled",
-    gsm: 120,
-    width: "155cm",
-    moq: "1000m",
-    feature: "Eco certified fabric",
-    application: "Sportswear",
-    image: "https://images.unsplash.com/photo-1520975922284-9a4d0b9b5f4a"
-  },
 
-  {
-    id: 6,
-    name: "Ripstop Nylon Fabric UV50+",
-    category: "Outdoor",
-    gsm: 90,
-    width: "150cm",
-    moq: "2000m",
-    feature: "Ultra light tear-resistant",
-    application: "Windbreakers",
-    image: "https://images.unsplash.com/photo-1520975922284-9a4d0b9b5f4a"
-  },
+{
+    id:1,
+    name:"75D 3L Waterproof Nylon Fabric",
+    category:"Waterproof",
+    gsm:"150",
+    moq:"1000m",
+    feature:"20K waterproof breathable TPU membrane",
+    image:"https://images.unsplash.com/photo-1521572267360-ee0c2909d518"
+},
 
-  {
-    id: 7,
-    name: "PU Coated Oxford Fabric",
-    category: "Waterproof",
-    gsm: 200,
-    width: "150cm",
-    moq: "1000m",
-    feature: "Heavy duty waterproof",
-    application: "Bags, tents",
-    image: "https://images.unsplash.com/photo-1520975922284-9a4d0b9b5f4a"
-  }
+{
+    id:2,
+    name:"40D Ripstop Outdoor Fabric",
+    category:"Waterproof",
+    gsm:"98",
+    moq:"1200m",
+    feature:"Ultralight ripstop windproof fabric",
+    image:"https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb"
+},
+
+{
+    id:3,
+    name:"Softshell Stretch Fabric",
+    category:"Softshell",
+    gsm:"320",
+    moq:"800m",
+    feature:"4-way stretch outdoor softshell",
+    image:"https://images.unsplash.com/photo-1503342217505-b0a15ec3261c"
+},
+
+{
+    id:4,
+    name:"TPU Laminated Rainwear Fabric",
+    category:"TPU",
+    gsm:"210",
+    moq:"500m",
+    feature:"Eco-friendly TPU laminated fabric",
+    image:"https://images.unsplash.com/photo-1515886657613-9f3515b0c78f"
+},
+
+{
+    id:5,
+    name:"75D Polyester Taslon Fabric",
+    category:"Waterproof",
+    gsm:"135",
+    moq:"1000m",
+    feature:"Outdoor jacket functional fabric",
+    image:"https://images.unsplash.com/photo-1445205170230-053b83016050"
+},
+
+{
+    id:6,
+    name:"4-Way Stretch Sportswear Fabric",
+    category:"Softshell",
+    gsm:"280",
+    moq:"700m",
+    feature:"Breathable activewear fabric",
+    image:"https://images.unsplash.com/photo-1529139574466-a303027c1d8b"
+},
+
+{
+    id:7,
+    name:"Recycled Polyester Fabric",
+    category:"TPU",
+    gsm:"180",
+    moq:"900m",
+    feature:"GRS certified recycled textile",
+    image:"https://images.unsplash.com/photo-1496747611176-843222e1e57c"
+},
+
+{
+    id:8,
+    name:"Outdoor Hiking Fabric",
+    category:"Softshell",
+    gsm:"260",
+    moq:"1000m",
+    feature:"Abrasion resistant outdoor fabric",
+    image:"https://images.unsplash.com/photo-1512436991641-6745cdb1723f"
+},
+
+{
+    id:9,
+    name:"Waterproof Breathable Fabric",
+    category:"Waterproof",
+    gsm:"165",
+    moq:"1100m",
+    feature:"High performance breathable membrane",
+    image:"https://images.unsplash.com/photo-1483985988355-763728e1935b"
+},
+
+{
+    id:10,
+    name:"TPU Outdoor Bag Fabric",
+    category:"TPU",
+    gsm:"240",
+    moq:"600m",
+    feature:"Durable TPU coated fabric",
+    image:"https://images.unsplash.com/photo-1523381210434-271e8be1f52b"
+}
+
 ];
