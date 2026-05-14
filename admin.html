@@ -44,16 +44,6 @@ input,select,textarea{
     box-sizing:border-box;
 }
 
-select{
-    background:white;
-    color:black;
-}
-
-input,textarea{
-    background:white;
-    color:black;
-}
-
 button{
     width:100%;
     padding:12px;
@@ -65,12 +55,22 @@ button{
     cursor:pointer;
 }
 
+button:hover{
+    background:#1d4ed8;
+}
+
 .item{
     background:white;
     color:black;
     padding:10px;
     border-radius:10px;
     margin-top:10px;
+}
+
+img{
+    max-width:80px;
+    border-radius:8px;
+    margin-top:8px;
 }
 </style>
 </head>
@@ -79,21 +79,27 @@ button{
 
 <div id="loginBox">
 <h3>管理员登录</h3>
-<input type="password" id="pass">
+
+<input type="password" id="pass" placeholder="请输入密码">
+
 <button id="loginBtn">登录</button>
-<div style="font-size:12px;margin-top:10px;">密码：123456</div>
+
+<div style="font-size:12px;margin-top:10px;text-align:center;">
+密码：123456
+</div>
 </div>
 
 <div id="panelBox">
 
 <div class="box">
+
 <h3>📤 上传产品</h3>
 
 <input id="name" placeholder="产品名称">
 
-<!-- 分类改为下拉选择框 -->
 <select id="category">
-    <option value="">请选择分类</option>
+    <option value="">请选择产品分类</option>
+
     <option>Outdoor Functional Fabrics</option>
     <option>Sports & Activewear Fabrics</option>
     <option>Recycled & Sustainable Fabrics</option>
@@ -109,135 +115,286 @@ button{
 </select>
 
 <input id="gsm" placeholder="GSM">
+
 <input id="moq" placeholder="MOQ">
-<textarea id="feature" placeholder="描述"></textarea>
+
+<textarea id="feature" placeholder="产品描述"></textarea>
+
 <input type="file" id="file">
 
 <button id="uploadBtn">上传产品</button>
+
 </div>
 
 <div class="box">
+
 <h3>📦 产品列表</h3>
-<button id="refreshBtn">刷新</button>
+
+<button id="refreshBtn">刷新产品</button>
+
 <div id="list"></div>
+
 </div>
 
 <div class="box">
-<h3>📩 CRM</h3>
-<button id="crmBtn">刷新</button>
+
+<h3>📩 CRM 客户询盘</h3>
+
+<button id="crmBtn">刷新询盘</button>
+
 <div id="crm"></div>
+
 </div>
 
 </div>
 
 <script>
 
-/* ===================== SAFE INIT ===================== */
+/* ===================== SUPABASE ===================== */
+
 const { createClient } = supabase;
 
 const sb = createClient(
-  "https://tpcxaelljrudshchuzia.supabase.co",
-  "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt"
+    "https://tpcxaelljrudshchuzia.supabase.co",
+    "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt"
 );
 
-/* ===================== LOGIN ===================== */
+/* ===================== 登录 ===================== */
+
 function login(){
-    const pass = document.getElementById("pass").value;
+
+    const pass = document.getElementById("pass").value.trim();
 
     if(pass === "123456"){
-        document.getElementById("loginBox").style.display="none";
-        document.getElementById("panelBox").style.display="block";
+
+        document.getElementById("loginBox").style.display = "none";
+
+        document.getElementById("panelBox").style.display = "block";
+
         load();
+
         loadCRM();
+
     }else{
+
         alert("密码错误");
+
     }
 }
 
-/* ===================== UPLOAD ===================== */
+/* ===================== 上传产品 ===================== */
+
 async function upload(){
 
 try{
 
-console.log("upload clicked");
+    const productName = document.getElementById("name").value.trim();
 
-const file = document.getElementById("file").files[0];
-let url = "";
+    if(!productName){
 
-if(file){
-    const fileName = Date.now()+"_"+file.name;
+        alert("请填写产品名称");
 
-    const { error } = await sb.storage
-      .from("images")
-      .upload(fileName,file);
-
-    if(!error){
-        url = "https://tpcxaelljrudshchuzia.supabase.co/storage/v1/object/public/images/"+fileName;
+        return;
     }
-}
 
-const { error: dbError } = await sb.from("products").insert([{
-    name: document.getElementById("name").value,
-    category: document.getElementById("category").value,
-    gsm: document.getElementById("gsm").value,
-    moq: document.getElementById("moq").value,
-    feature: document.getElementById("feature").value,
-    image: url
-}]);
+    const file = document.getElementById("file").files[0];
 
-if(dbError){
-    alert(dbError.message);
-}else{
-    alert("上传成功");
-    load();
-}
+    let imageUrl = "";
+
+    /* ===== 上传图片 ===== */
+
+    if(file){
+
+        const fileName = Date.now() + "_" + file.name;
+
+        const { error: uploadError } = await sb.storage
+        .from("images")
+        .upload(fileName, file);
+
+        if(uploadError){
+
+            console.log(uploadError);
+
+            alert("图片上传失败");
+
+        }else{
+
+            imageUrl =
+            "https://tpcxaelljrudshchuzia.supabase.co/storage/v1/object/public/images/" + fileName;
+        }
+    }
+
+    /* ===== 插入数据库 ===== */
+
+    const { error: dbError } = await sb
+    .from("products")
+    .insert([{
+
+        name: productName,
+
+        category: document.getElementById("category").value,
+
+        gsm: document.getElementById("gsm").value,
+
+        moq: document.getElementById("moq").value,
+
+        feature: document.getElementById("feature").value,
+
+        image: imageUrl
+
+    }]);
+
+    if(dbError){
+
+        console.log(dbError);
+
+        alert("上传失败：" + dbError.message);
+
+    }else{
+
+        alert("✅ 产品上传成功");
+
+        /* 清空表单 */
+
+        document.getElementById("name").value = "";
+
+        document.getElementById("category").value = "";
+
+        document.getElementById("gsm").value = "";
+
+        document.getElementById("moq").value = "";
+
+        document.getElementById("feature").value = "";
+
+        document.getElementById("file").value = "";
+
+        load();
+    }
 
 }catch(e){
-    alert("系统错误："+e.message);
+
+    console.log(e);
+
+    alert("系统错误：" + e.message);
 }
 
 }
 
-/* ===================== LOAD ===================== */
+/* ===================== 加载产品 ===================== */
+
 async function load(){
 
-const { data } = await sb.from("products").select("*");
+const { data, error } = await sb
+.from("products")
+.select("*");
+
+if(error){
+
+    console.log(error);
+
+    return;
+}
 
 let html = "";
 
-(data||[]).forEach(p=>{
-html += `<div class="item">
-<b>${p.name}</b><br>
-${p.category}
-</div>`;
-});
+if(!data || data.length === 0){
+
+    html = "<div class='item'>暂无产品</div>";
+
+}else{
+
+    data.forEach(p=>{
+
+        html += `
+        <div class="item">
+
+            <b>${p.name || ""}</b><br><br>
+
+            📁 分类：${p.category || ""}<br>
+
+            ⚖️ GSM：${p.gsm || ""}<br>
+
+            📦 MOQ：${p.moq || ""}<br><br>
+
+            📝 ${p.feature || ""}<br>
+
+            ${
+                p.image
+                ? `<img src="${p.image}" onerror="this.style.display='none'">`
+                : ""
+            }
+
+        </div>
+        `;
+    });
+}
 
 document.getElementById("list").innerHTML = html;
+
 }
 
 /* ===================== CRM ===================== */
+
 async function loadCRM(){
 
-const { data } = await sb.from("inquiries").select("*");
+const { data, error } = await sb
+.from("inquiries")
+.select("*");
+
+if(error){
+
+    console.log(error);
+
+    return;
+}
 
 let html = "";
 
-(data||[]).forEach(c=>{
-html += `<div class="item">
-<b>${c.name}</b><br>
-${c.product}<br>
-${c.message}
-</div>`;
-});
+if(!data || data.length === 0){
 
-document.getElementById("crm").innerHTML = html;
+    html = "<div class='item'>暂无客户询盘</div>";
+
+}else{
+
+    data.forEach(c=>{
+
+        html += `
+        <div class="item">
+
+            <b>${c.name || "匿名客户"}</b><br><br>
+
+            📌 产品：${c.product || ""}<br><br>
+
+            💬 ${c.message || ""}
+
+        </div>
+        `;
+    });
 }
 
-/* ===================== EVENTS ===================== */
+document.getElementById("crm").innerHTML = html;
+
+}
+
+/* ===================== 绑定事件 ===================== */
+
 document.getElementById("loginBtn").onclick = login;
+
 document.getElementById("uploadBtn").onclick = upload;
+
 document.getElementById("refreshBtn").onclick = load;
+
 document.getElementById("crmBtn").onclick = loadCRM;
+
+/* ===== 回车登录 ===== */
+
+document.getElementById("pass").addEventListener("keydown",function(e){
+
+    if(e.key === "Enter"){
+
+        login();
+    }
+});
 
 </script>
 
