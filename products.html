@@ -215,10 +215,66 @@ load();
 renderFilters();
 
 /* LOAD DATA */
+let products = [];
+
+/* 🟢 先给你测试数据（确保页面一定有东西） */
+const demoProducts = [
+{
+id: 1,
+name: "Waterproof Nylon Fabric",
+category: "Outdoor Functional Fabrics",
+gsm: "120",
+moq: "1000",
+image: "https://images.unsplash.com/photo-1520975916090-3105956dac38",
+feature: "Waterproof breathable outdoor fabric"
+},
+{
+id: 2,
+name: "4-Way Stretch Fabric",
+category: "Sports & Activewear Fabrics",
+gsm: "160",
+moq: "800",
+image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438",
+feature: "High elasticity sports fabric"
+},
+{
+id: 3,
+name: "Recycled Polyester Fabric",
+category: "Recycled & Sustainable Fabrics",
+gsm: "140",
+moq: "1000",
+image: "https://images.unsplash.com/photo-1523381294911-8d3cead13475",
+feature: "Eco-friendly recycled fabric"
+}
+];
+
+/* 🟢 核心加载函数 */
 async function load(){
-    let { data } = await sb.from("products").select("*");
-    products = data || [];
-    render();
+
+try{
+
+let { data, error } = await sb.from("products").select("*");
+
+/* 👉 如果数据库有数据，用数据库 */
+if(data && data.length > 0){
+    products = data;
+    console.log("Using DB data:", data);
+}else{
+    /* 👉 如果数据库为空，用假数据 */
+    products = demoProducts;
+    console.log("Using demo data");
+}
+
+render();
+
+}catch(err){
+
+console.log("DB failed, fallback demo");
+products = demoProducts;
+render();
+
+}
+
 }
 
 /* FILTER UI */
