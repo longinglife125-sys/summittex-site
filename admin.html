@@ -21,9 +21,9 @@ button { padding:12px; margin-top:10px; background:#2563eb; color:white; border:
 button:hover { background:#1d4ed8; }
 .item { background:white; color:black; padding:10px; border-radius:10px; margin-top:10px; }
 .item-img { max-width:50px; max-height:50px; border-radius:5px; margin:2px; }
-.edit-btn, .delete-btn { padding:6px 12px; font-size:12px; width:auto; margin-top:0; border-radius:6px; }
-.edit-btn { background:#f59e0b; }
-.delete-btn { background:#dc2626; }
+.edit-btn, .delete-btn { padding:6px 12px; font-size:12px; width:auto; margin-top:0; border-radius:6px; cursor:pointer; }
+.edit-btn { background:#f59e0b; color:white; border:none; }
+.delete-btn { background:#dc2626; color:white; border:none; }
 .upload-box { border:2px dashed #4b5563; border-radius:12px; padding:20px; text-align:center; margin:10px 0; cursor:pointer; background:#1e293b; }
 .upload-box:hover { border-color:#2563eb; background:#334155; }
 .preview-img { width:80px; height:80px; object-fit:cover; border-radius:8px; margin-top:10px; }
@@ -31,6 +31,32 @@ button:hover { background:#1d4ed8; }
 .media-item { background:#1e293b; border-radius:8px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
 .media-img { width:60px; height:60px; object-fit:cover; border-radius:8px; }
 .video-hint { font-size:11px; color:#94a3b8; margin-top:5px; }
+
+/* 模态框样式 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background: #1e293b;
+    border-radius: 16px;
+    padding: 24px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+.modal-content h3 { margin-bottom: 20px; }
+.modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
+.modal-buttons button { flex: 1; margin-top: 0; }
 </style>
 </head>
 
@@ -128,7 +154,6 @@ button:hover { background:#1d4ed8; }
     </div>
     <div class="box">
         <h3>⚙️ 工厂设置</h3>
-        
         <div style="margin-bottom:15px;">
             <label>📹 工厂视频（二选一）</label>
             <div class="upload-box" id="videoUploadBox">📹 点击上传 MP4 视频文件（本地上传）</div>
@@ -136,20 +161,41 @@ button:hover { background:#1d4ed8; }
             <div id="videoPreviewArea"></div>
             <div class="video-hint">或</div>
             <input type="text" id="factoryVideoUrl" placeholder="粘贴 YouTube/Vimeo 链接">
-            <div class="video-hint">💡 支持 YouTube: https://youtu.be/xxxxx 或 https://www.youtube.com/embed/xxxxx</div>
         </div>
-        
         <label>🏭 工厂页面标题</label>
         <input type="text" id="factoryName" placeholder="Our Factory">
-        
         <label>📝 工厂描述</label>
         <textarea id="factoryDesc" placeholder="描述文字" rows="2"></textarea>
-        
         <button id="saveSettingsBtn">保存设置</button>
         <div id="settingsStatus" style="margin-top:10px; font-size:12px; color:#4ade80;"></div>
     </div>
 </div>
 
+</div>
+
+<!-- 编辑产品模态框 - 始终存在 -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <h3>✏️ 编辑产品</h3>
+        <input type="hidden" id="editId">
+        <input type="text" id="editName" placeholder="产品名称">
+        <select id="editCategory">
+            <option>Outdoor Functional Fabrics</option>
+            <option>Sports & Activewear Fabrics</option>
+            <option>Recycled & Sustainable Fabrics</option>
+            <option>Stretch Fabrics</option>
+            <option>Nylon & Polyester Fabrics</option>
+            <option>Others</option>
+        </select>
+        <input type="text" id="editGsm" placeholder="GSM">
+        <input type="text" id="editMoq" placeholder="MOQ">
+        <textarea id="editFeature" placeholder="产品描述" rows="3"></textarea>
+        <input type="text" id="editVideoUrl" placeholder="视频链接">
+        <div class="modal-buttons">
+            <button id="saveEditBtn" style="background:#f59e0b;">保存修改</button>
+            <button id="cancelEditBtn" style="background:#6c757d;">取消</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -191,7 +237,7 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
     };
 });
 
-// ========== 产品管理 ==========
+// ========== 产品上传 ==========
 document.getElementById("uploadBtn").onclick = async function() {
     let name = document.getElementById("name").value;
     if (!name) { alert("请输入产品名称"); return; }
@@ -207,27 +253,36 @@ document.getElementById("uploadBtn").onclick = async function() {
     if (error) alert("失败：" + error.message);
     else { alert("上传成功"); location.reload(); }
 };
+
+// ========== 加载产品列表 ==========
 async function loadProducts() {
     let { data } = await sb.from("products").select("*").order("id", { ascending: false });
     let html = "";
     (data || []).forEach(p => {
-        html += `<div class="item"><b>${p.name}</b><br>📁 ${p.category}<br>⚖️ ${p.gsm || "-"} | 📦 ${p.moq || "-"}<br>${p.image ? `<img src="${p.image}" class="item-img">` : ""}
-        <div style="margin-top:10px;"><button class="edit-btn" onclick='editProduct(${p.id}, "${p.name}", "${p.category || ""}", "${p.gsm || ""}", "${p.moq || ""}", "${(p.feature || "").replace(/'/g, "\\'")}", "${p.video_url || ""}")'>✏️ 编辑</button>
-        <button class="delete-btn" onclick="deleteProduct(${p.id})">🗑️ 删除</button></div></div>`;
+        let safeName = (p.name || "").replace(/'/g, "\\'");
+        let safeCategory = (p.category || "").replace(/'/g, "\\'");
+        let safeGsm = (p.gsm || "").replace(/'/g, "\\'");
+        let safeMoq = (p.moq || "").replace(/'/g, "\\'");
+        let safeFeature = (p.feature || "").replace(/'/g, "\\'");
+        let safeVideoUrl = (p.video_url || "").replace(/'/g, "\\'");
+        
+        html += `<div class="item">
+            <b>${p.name}</b><br>
+            📁 ${p.category}<br>
+            ⚖️ ${p.gsm || "-"} | 📦 ${p.moq || "-"}<br>
+            ${p.image ? `<img src="${p.image}" class="item-img">` : ""}
+            <div style="margin-top:10px;">
+                <button class="edit-btn" onclick='editProduct(${p.id}, "${safeName}", "${safeCategory}", "${safeGsm}", "${safeMoq}", "${safeFeature}", "${safeVideoUrl}")'>✏️ 编辑</button>
+                <button class="delete-btn" onclick="deleteProduct(${p.id})">🗑️ 删除</button>
+            </div>
+        </div>`;
     });
     document.getElementById("productList").innerHTML = html || "<div>暂无产品</div>";
 }
+
+// ========== 编辑产品（打开弹窗） ==========
 function editProduct(id, name, category, gsm, moq, feature, videoUrl) {
-    let modal = document.getElementById("editModal");
-    if (!modal) {
-        let div = document.createElement("div");
-        div.id = "editModal";
-        div.className = "modal";
-        div.innerHTML = `<div class="modal-content"><h3>编辑产品</h3><input type="hidden" id="editId"><input type="text" id="editName" placeholder="产品名称"><select id="editCategory"><option>Outdoor Functional Fabrics</option><option>Sports & Activewear Fabrics</option><option>Recycled & Sustainable Fabrics</option><option>Stretch Fabrics</option><option>Others</option></select><input type="text" id="editGsm" placeholder="GSM"><input type="text" id="editMoq" placeholder="MOQ"><textarea id="editFeature" placeholder="产品描述"></textarea><input type="text" id="editVideoUrl" placeholder="视频链接"><div class="modal-buttons"><button id="saveEditBtn">保存</button><button id="cancelEditBtn">取消</button></div></div>`;
-        document.body.appendChild(div);
-        document.getElementById("saveEditBtn").onclick = saveEdit;
-        document.getElementById("cancelEditBtn").onclick = () => document.getElementById("editModal").style.display = "none";
-    }
+    console.log("编辑产品:", id, name);
     document.getElementById("editId").value = id;
     document.getElementById("editName").value = name;
     document.getElementById("editCategory").value = category;
@@ -237,13 +292,45 @@ function editProduct(id, name, category, gsm, moq, feature, videoUrl) {
     document.getElementById("editVideoUrl").value = videoUrl;
     document.getElementById("editModal").style.display = "flex";
 }
+
+// ========== 保存编辑 ==========
 async function saveEdit() {
     let id = document.getElementById("editId").value;
-    let { error } = await sb.from("products").update({ name: document.getElementById("editName").value, category: document.getElementById("editCategory").value, gsm: document.getElementById("editGsm").value, moq: document.getElementById("editMoq").value, feature: document.getElementById("editFeature").value, video_url: document.getElementById("editVideoUrl").value }).eq("id", id);
-    if (error) alert("失败：" + error.message);
-    else { alert("已更新"); document.getElementById("editModal").style.display = "none"; loadProducts(); }
+    let updateData = {
+        name: document.getElementById("editName").value,
+        category: document.getElementById("editCategory").value,
+        gsm: document.getElementById("editGsm").value,
+        moq: document.getElementById("editMoq").value,
+        feature: document.getElementById("editFeature").value,
+        video_url: document.getElementById("editVideoUrl").value
+    };
+    let { error } = await sb.from("products").update(updateData).eq("id", id);
+    if (error) { alert("编辑失败：" + error.message); }
+    else { alert("✅ 产品已更新"); document.getElementById("editModal").style.display = "none"; loadProducts(); }
 }
-async function deleteProduct(id) { if (confirm("确定删除？")) { await sb.from("products").delete().eq("id", id); loadProducts(); } }
+
+// ========== 删除产品 ==========
+async function deleteProduct(id) {
+    if (confirm("确定删除这个产品吗？")) {
+        let { error } = await sb.from("products").delete().eq("id", id);
+        if (error) alert("删除失败：" + error.message);
+        else { alert("✅ 已删除"); loadProducts(); }
+    }
+}
+
+// ========== 关闭弹窗 ==========
+document.getElementById("cancelEditBtn").onclick = function() {
+    document.getElementById("editModal").style.display = "none";
+};
+document.getElementById("saveEditBtn").onclick = saveEdit;
+
+// 点击弹窗外部关闭
+window.onclick = function(event) {
+    let modal = document.getElementById("editModal");
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+};
 
 // ========== 轮播图管理 ==========
 document.getElementById("slideUploadBox").onclick = () => document.getElementById("slideFile").click();
@@ -315,7 +402,7 @@ async function loadCertificates() {
 }
 async function deleteCertificate(id) { if (confirm("删除这张证书？")) { await sb.from("factory_certificates").delete().eq("id", id); loadCertificates(); } }
 
-// ========== 工厂视频上传（本地上传MP4） ==========
+// ========== 工厂视频上传 ==========
 document.getElementById("videoUploadBox").onclick = () => document.getElementById("videoFileUpload").click();
 document.getElementById("videoFileUpload").onchange = (e) => {
     if (e.target.files[0]) {
@@ -334,7 +421,7 @@ function clearVideoFile() {
     document.getElementById("videoPreviewArea").innerHTML = "";
 }
 
-// ========== 工厂设置加载与保存 ==========
+// ========== 工厂设置 ==========
 async function loadFactorySettings() {
     let { data } = await sb.from("factory_settings").select("*");
     let settings = {};
@@ -346,10 +433,7 @@ async function loadFactorySettings() {
 document.getElementById("saveSettingsBtn").onclick = async function() {
     let statusDiv = document.getElementById("settingsStatus");
     statusDiv.innerHTML = "⏳ 保存中...";
-    
     let videoUrl = document.getElementById("factoryVideoUrl").value.trim();
-    
-    // 如果上传了本地视频文件
     if (currentVideoFile) {
         statusDiv.innerHTML = "⏳ 上传视频中...";
         let fileName = "factory_video/" + Date.now() + "_" + currentVideoFile.name;
@@ -360,22 +444,17 @@ document.getElementById("saveSettingsBtn").onclick = async function() {
         }
         let { data } = sb.storage.from("images").getPublicUrl(fileName);
         videoUrl = data.publicUrl;
-        statusDiv.innerHTML = "✅ 视频上传成功，保存设置中...";
     }
-    
-    // 保存设置
     let updates = [
         { setting_key: "factory_video_url", setting_value: videoUrl },
         { setting_key: "factory_name", setting_value: document.getElementById("factoryName").value },
         { setting_key: "factory_description", setting_value: document.getElementById("factoryDesc").value }
     ];
-    
     let allSuccess = true;
     for (let item of updates) {
         let { error } = await sb.from("factory_settings").upsert(item, { onConflict: "setting_key" });
         if (error) { allSuccess = false; statusDiv.innerHTML = "❌ 保存失败：" + error.message; break; }
     }
-    
     if (allSuccess) {
         statusDiv.innerHTML = "✅ 所有设置已保存！";
         currentVideoFile = null;
