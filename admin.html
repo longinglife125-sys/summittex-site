@@ -42,6 +42,22 @@ input,select,textarea{
     border-radius:8px;
     border:none;
     box-sizing:border-box;
+    background:#1f2a3e;
+    color:white;
+}
+
+input::placeholder, textarea::placeholder {
+    color: #9ca3af;
+}
+
+select {
+    background: #1f2a3e;
+    color: white;
+}
+
+select option {
+    background: #1f2a3e;
+    color: white;
 }
 
 button{
@@ -74,6 +90,12 @@ button:hover{
     margin-top:8px;
     object-fit:cover;
 }
+
+.video-hint {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 5px;
+}
 </style>
 </head>
 
@@ -81,23 +103,17 @@ button:hover{
 
 <div id="loginBox">
 <h3>管理员登录</h3>
-
 <input type="password" id="pass" placeholder="请输入密码">
-
 <button id="loginBtn">登录</button>
-
-<div style="font-size:12px;margin-top:10px;text-align:center;">
-密码：123456
-</div>
+<div style="font-size:12px;margin-top:10px;text-align:center;">密码：123456</div>
 </div>
 
 <div id="panelBox">
 
 <div class="box">
-
 <h3>📤 上传产品</h3>
 
-<input id="name" placeholder="产品名称">
+<input id="name" placeholder="产品名称 *">
 
 <select id="category">
     <option value="">请选择产品分类</option>
@@ -115,43 +131,33 @@ button:hover{
     <option>Others</option>
 </select>
 
-<input id="gsm" placeholder="GSM">
-
-<input id="moq" placeholder="MOQ">
-
+<input id="gsm" placeholder="GSM (例: 180)">
+<input id="moq" placeholder="MOQ (例: 1000 meters)">
 <textarea id="feature" placeholder="产品描述"></textarea>
 
+<!-- 新增：视频链接输入框 -->
+<input id="videoUrl" placeholder="视频链接 (YouTube/Vimeo，选填)">
+<div class="video-hint">💡 支持 YouTube 链接如: https://youtu.be/xxxxx 或 https://www.youtube.com/watch?v=xxxxx</div>
+
 <input type="file" id="file">
-
 <button id="uploadBtn">上传产品</button>
-
 </div>
 
 <div class="box">
-
 <h3>📦 产品列表</h3>
-
 <button id="refreshBtn">刷新产品</button>
-
 <div id="list"></div>
-
 </div>
 
 <div class="box">
-
 <h3>📩 CRM 客户询盘</h3>
-
 <button id="crmBtn">刷新询盘</button>
-
 <div id="crm"></div>
-
 </div>
 
 </div>
 
 <script>
-
-/* ===================== SUPABASE ===================== */
 
 const { createClient } = supabase;
 
@@ -160,221 +166,147 @@ const sb = createClient(
     "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt"
 );
 
-/* ===================== 登录 ===================== */
-
-function login(){
-
+function login() {
     const pass = document.getElementById("pass").value.trim();
-
-    if(pass === "123456"){
-
+    if (pass === "123456") {
         document.getElementById("loginBox").style.display = "none";
-
         document.getElementById("panelBox").style.display = "block";
-
         load();
-
         loadCRM();
-
-    }else{
-
+    } else {
         alert("密码错误");
-
     }
 }
 
-/* ===================== 上传产品 ===================== */
+async function upload() {
+    try {
+        const productName = document.getElementById("name").value.trim();
+        if (!productName) {
+            alert("请填写产品名称");
+            return;
+        }
 
-async function upload(){
+        const file = document.getElementById("file").files[0];
+        let imageUrl = "";
 
-try{
+        if (file) {
+            const fileName = Date.now() + "_" + file.name;
+            const { error: uploadError } = await sb.storage
+                .from("images")
+                .upload(fileName, file);
+            if (uploadError) {
+                console.log("图片上传错误:", uploadError);
+                alert("图片上传失败：" + uploadError.message);
+            } else {
+                const { data: publicUrlData } = sb.storage
+                    .from("images")
+                    .getPublicUrl(fileName);
+                imageUrl = publicUrlData.publicUrl;
+                console.log("图片URL:", imageUrl);
+            }
+        }
 
-    const productName = document.getElementById("name").value.trim();
+        // 获取视频链接
+        const videoUrl = document.getElementById("videoUrl").value.trim();
 
-    if(!productName){
+        const productData = {
+            name: productName,
+            category: document.getElementById("category").value,
+            gsm: document.getElementById("gsm").value,
+            moq: document.getElementById("moq").value,
+            feature: document.getElementById("feature").value,
+            image: imageUrl,
+            video_url: videoUrl || null
+        };
 
-        alert("请填写产品名称");
+        console.log("保存产品:", productData);
 
+        const { error: dbError } = await sb
+            .from("products")
+            .insert([productData]);
+
+        if (dbError) {
+            console.log("数据库错误:", dbError);
+            alert("上传失败：" + dbError.message);
+        } else {
+            alert("✅ 产品上传成功" + (imageUrl ? "（含图片）" : "（无图片）") + (videoUrl ? "（含视频）" : ""));
+            
+            // 清空表单
+            document.getElementById("name").value = "";
+            document.getElementById("gsm").value = "";
+            document.getElementById("moq").value = "";
+            document.getElementById("feature").value = "";
+            document.getElementById("videoUrl").value = "";
+            document.getElementById("file").value = "";
+            const categorySelect = document.getElementById("category");
+            if (categorySelect) categorySelect.value = "";
+            
+            load();
+        }
+    } catch (e) {
+        console.log("系统异常:", e);
+        alert("系统错误：" + e.message);
+    }
+}
+
+async function load() {
+    const { data, error } = await sb
+        .from("products")
+        .select("*");
+    if (error) {
+        console.log("加载错误:", error);
+        alert("加载产品失败：" + error.message);
         return;
     }
 
-    const file = document.getElementById("file").files[0];
-
-    let imageUrl = "";
-
-    /* ===== 上传图片 ===== */
-
-    if(file){
-
-        const fileName = Date.now() + "_" + file.name;
-
-        const { error: uploadError } = await sb.storage
-        .from("images")
-        .upload(fileName, file);
-
-        if(uploadError){
-
-            console.log("图片上传错误:", uploadError);
-
-            alert("图片上传失败：" + uploadError.message);
-
-        }else{
-
-            // 使用 getPublicUrl 方法获取标准公开URL
-            const { data: publicUrlData } = sb.storage
-                .from("images")
-                .getPublicUrl(fileName);
-            
-            imageUrl = publicUrlData.publicUrl;
-            
-            console.log("图片URL生成成功:", imageUrl);
-        }
+    let html = "";
+    if (!data || data.length === 0) {
+        html = "<div class='item'>暂无产品</div>";
+    } else {
+        data.forEach(p => {
+            html += `
+            <div class="item">
+                <b>${escapeHtml(p.name || "")}</b><br><br>
+                📁 分类：${escapeHtml(p.category || "")}<br>
+                ⚖️ GSM：${escapeHtml(p.gsm || "")}<br>
+                📦 MOQ：${escapeHtml(p.moq || "")}<br>
+                🎬 视频：${p.video_url ? '<span style="color:#4ade80;">已添加</span>' : '<span style="color:#999;">未添加</span>'}<br><br>
+                📝 ${escapeHtml(p.feature || "")}<br>
+                ${p.image ? `<img src="${p.image}" class="item-img" onerror="this.style.display='none'">` : ""}
+            </div>
+            `;
+        });
     }
+    document.getElementById("list").innerHTML = html;
+}
 
-    /* ===== 插入数据库 ===== */
-
-    const productData = {
-        name: productName,
-        category: document.getElementById("category").value,
-        gsm: document.getElementById("gsm").value,
-        moq: document.getElementById("moq").value,
-        feature: document.getElementById("feature").value,
-        image: imageUrl
-    };
-
-    console.log("准备保存的产品数据:", productData);
-
-    const { error: dbError } = await sb
-    .from("products")
-    .insert([productData]);
-
-    if(dbError){
-
-        console.log("数据库错误:", dbError);
-
-        alert("上传失败：" + dbError.message);
-
-    }else{
-
-        alert("✅ 产品上传成功" + (imageUrl ? "（含图片）" : "（无图片）"));
-
-        /* 清空表单 */
-        document.getElementById("name").value = "";
-        document.getElementById("gsm").value = "";
-        document.getElementById("moq").value = "";
-        document.getElementById("feature").value = "";
-        document.getElementById("file").value = "";
-        
-        // 重置分类下拉框
-        const categorySelect = document.getElementById("category");
-        if(categorySelect) categorySelect.value = "";
-
-        load();
+async function loadCRM() {
+    const { data, error } = await sb
+        .from("inquiries")
+        .select("*");
+    if (error) {
+        console.log("CRM错误:", error);
+        return;
     }
-
-}catch(e){
-
-    console.log("系统异常:", e);
-
-    alert("系统错误：" + e.message);
+    let html = "";
+    if (!data || data.length === 0) {
+        html = "<div class='item'>暂无客户询盘</div>";
+    } else {
+        data.forEach(c => {
+            html += `
+            <div class="item">
+                <b>${escapeHtml(c.name || "匿名客户")}</b><br><br>
+                📌 产品：${escapeHtml(c.product || "")}<br><br>
+                💬 ${escapeHtml(c.message || "")}
+            </div>
+            `;
+        });
+    }
+    document.getElementById("crm").innerHTML = html;
 }
 
-}
-
-/* ===================== 加载产品 ===================== */
-
-async function load(){
-
-const { data, error } = await sb
-.from("products")
-.select("*");
-
-if(error){
-
-    console.log("加载错误:", error);
-
-    alert("加载产品失败：" + error.message);
-
-    return;
-}
-
-let html = "";
-
-if(!data || data.length === 0){
-
-    html = "<div class='item'>暂无产品</div>";
-
-}else{
-
-    data.forEach(p=>{
-
-        // 调试：打印图片URL
-        if(p.image) console.log("产品图片URL:", p.name, p.image);
-        
-        html += `
-        <div class="item">
-            <b>${escapeHtml(p.name || "")}</b><br><br>
-            📁 分类：${escapeHtml(p.category || "")}<br>
-            ⚖️ GSM：${escapeHtml(p.gsm || "")}<br>
-            📦 MOQ：${escapeHtml(p.moq || "")}<br><br>
-            📝 ${escapeHtml(p.feature || "")}<br>
-            ${
-                p.image && p.image.trim() !== ""
-                ? `<img src="${p.image}" class="item-img" onerror="this.onerror=null; this.style.display='none'; this.insertAdjacentHTML('afterend', '<span style=\"color:red;font-size:12px;\"> 图片加载失败</span>');" 
-                       onload="console.log('图片加载成功: ${p.image}')">`
-                : "<span style='color:#999;font-size:12px;'>📷 无图片</span>"
-            }
-        </div>
-        `;
-    });
-}
-
-document.getElementById("list").innerHTML = html;
-
-}
-
-/* ===================== CRM ===================== */
-
-async function loadCRM(){
-
-const { data, error } = await sb
-.from("inquiries")
-.select("*");
-
-if(error){
-
-    console.log("CRM错误:", error);
-
-    return;
-}
-
-let html = "";
-
-if(!data || data.length === 0){
-
-    html = "<div class='item'>暂无客户询盘</div>";
-
-}else{
-
-    data.forEach(c=>{
-
-        html += `
-        <div class="item">
-            <b>${escapeHtml(c.name || "匿名客户")}</b><br><br>
-            📌 产品：${escapeHtml(c.product || "")}<br><br>
-            💬 ${escapeHtml(c.message || "")}
-        </div>
-        `;
-    });
-}
-
-document.getElementById("crm").innerHTML = html;
-
-}
-
-/* ===================== 防XSS辅助函数 ===================== */
-function escapeHtml(str){
-    if(!str) return "";
+function escapeHtml(str) {
+    if (!str) return "";
     return str
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -383,22 +315,15 @@ function escapeHtml(str){
         .replace(/'/g, "&#39;");
 }
 
-/* ===================== 绑定事件 ===================== */
-
 document.getElementById("loginBtn").onclick = login;
-
 document.getElementById("uploadBtn").onclick = upload;
-
 document.getElementById("refreshBtn").onclick = load;
-
 document.getElementById("crmBtn").onclick = loadCRM;
 
-/* ===== 回车登录 ===== */
-
 const passInput = document.getElementById("pass");
-if(passInput){
-    passInput.addEventListener("keydown", function(e){
-        if(e.key === "Enter"){
+if (passInput) {
+    passInput.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
             login();
         }
     });
