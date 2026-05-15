@@ -84,6 +84,10 @@ header{
     position:relative;
     height:200px;
     overflow:hidden;
+    background:#f0f0f0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
 .img-box img{
@@ -102,6 +106,11 @@ header{
 
 .img-box:hover .hover-img{
     opacity:1;
+}
+
+.no-img{
+    color:#999;
+    font-size:14px;
 }
 
 /* INFO */
@@ -153,6 +162,23 @@ input{
     margin-top:18px;
     border-radius:10px;
     border:1px solid #e5e7eb;
+    box-sizing:border-box;
+}
+
+/* 加载提示 */
+.loading{
+    text-align:center;
+    padding:40px;
+    color:#666;
+}
+
+.error-msg{
+    background:#fee2e2;
+    color:#dc2626;
+    padding:12px;
+    border-radius:8px;
+    margin:20px 0;
+    text-align:center;
 }
 
 </style>
@@ -176,14 +202,16 @@ input{
 
 <div class="filters" id="filters"></div>
 
-<div class="grid" id="grid"></div>
+<div class="grid" id="grid">
+    <div class="loading">加载产品中...</div>
+</div>
 
 </div>
 
 <script>
 
 /* ===================== */
-/* SUPABASE CONFIG（正确版） */
+/* SUPABASE CONFIG */
 /* ===================== */
 
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
@@ -197,102 +225,64 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let products = [];
 let current = "All";
+let isLoading = true;
 
 /* ===================== */
-/* CATEGORIES */
+/* CATEGORIES（从数据库动态获取） */
 /* ===================== */
 
-const categories = [
-"All",
-"Top Sell",
-"Outdoor Functional Fabrics",
-"Sports & Activewear Fabrics",
-"Recycled & Sustainable Fabrics",
-"Stretch Fabrics",
-"Nylon & Polyester Fabrics",
-"Jacquard & Textured Fabrics",
-"Printed Fabrics",
-"Swimwear Fabrics",
-"Underwear & Lingerie Fabrics",
-"Workwear Fabrics",
-"Fashion Fabrics",
-"Others"
-];
-
-/* ===================== */
-/* DEMO DATA（防止空白） */
-/* ===================== */
-
-const demoProducts = [
-{
-id: 1,
-name: "Waterproof Nylon Fabric",
-category: "Outdoor Functional Fabrics",
-gsm: "120",
-moq: "1000",
-image: "https://images.unsplash.com/photo-1520975916090-3105956dac38",
-feature: "Waterproof breathable outdoor fabric"
-},
-{
-id: 2,
-name: "4-Way Stretch Fabric",
-category: "Sports & Activewear Fabrics",
-gsm: "160",
-moq: "800",
-image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438",
-feature: "High elasticity sports fabric"
-},
-{
-id: 3,
-name: "Recycled Polyester Fabric",
-category: "Recycled & Sustainable Fabrics",
-gsm: "140",
-moq: "1000",
-image: "https://images.unsplash.com/photo-1523381294911-8d3cead13475",
-feature: "Eco-friendly recycled fabric"
-}
-];
+let categories = ["All"];
 
 /* ===================== */
 /* INIT */
 /* ===================== */
 
 load();
-renderFilters();
 
 /* ===================== */
-/* LOAD DATA */
+/* LOAD DATA（只从数据库读取，不使用演示数据） */
 /* ===================== */
 
 async function load(){
 
 try{
-
-let { data, error } = await sb
-.from("products")
-.select("*");
-
-if(error){
-    console.log("DB error:", error);
-    products = demoProducts;
+    isLoading = true;
+    document.getElementById("grid").innerHTML = '<div class="loading">加载产品中...</div>';
+    
+    console.log("正在连接Supabase...");
+    
+    let { data, error } = await sb
+        .from("products")
+        .select("*");
+    
+    if(error){
+        console.error("数据库错误详情:", error);
+        document.getElementById("grid").innerHTML = `<div class="error-msg">❌ 数据库连接失败: ${error.message}<br><br>请检查：<br>1. Supabase URL和KEY是否正确<br>2. 网络是否正常</div>`;
+        return;
+    }
+    
+    console.log("数据库返回数据:", data);
+    
+    if(data && data.length > 0){
+        products = data;
+        console.log(`✅ 成功加载 ${products.length} 个产品`);
+        
+        // 从产品中提取唯一的分类
+        const uniqueCats = [...new Set(data.map(p => p.category).filter(c => c))];
+        categories = ["All", ...uniqueCats];
+        
+    }else{
+        products = [];
+        console.log("数据库中没有产品，请在后台上传");
+        document.getElementById("grid").innerHTML = '<div class="loading" style="color:#999;">📭 暂无产品，请在后台添加</div>';
+    }
+    
+    renderFilters();
     render();
-    return;
-}
-
-if(data && data.length > 0){
-    products = data;
-    console.log("DB loaded:", data);
-}else{
-    products = demoProducts;
-    console.log("Using demo data");
-}
-
-render();
 
 }catch(err){
-    console.log("Fallback:", err);
-    products = demoProducts;
-    render();
+    console.error("加载异常:", err);
+    document.getElementById("grid").innerHTML = `<div class="error-msg">❌ 系统异常: ${err.message}</div>`;
 }
 
 }
@@ -306,7 +296,8 @@ function renderFilters(){
 let html = "";
 
 categories.forEach(c=>{
-html += `<div class="filter ${c==="All"?"active":""}" onclick="setFilter(event,'${c}')">${c}</div>`;
+let activeClass = (c === current) ? "active" : "";
+html += `<div class="filter ${activeClass}" data-cat="${c.replace(/'/g, "\\'")}" onclick="setFilter(event, '${c.replace(/'/g, "\\'")}')">${escapeHtml(c)}</div>`;
 });
 
 document.getElementById("filters").innerHTML = html;
@@ -333,7 +324,9 @@ render();
 /* SEARCH */
 /* ===================== */
 
-document.getElementById("search").addEventListener("input", render);
+document.getElementById("search").addEventListener("input", function(){
+    render();
+});
 
 /* ===================== */
 /* DETAIL PAGE */
@@ -344,10 +337,15 @@ window.location.href = "product.html?id=" + id;
 }
 
 /* ===================== */
-/* RENDER（核心） */
+/* RENDER（核心展示） */
 /* ===================== */
 
 function render(){
+
+if(!products || products.length === 0){
+    document.getElementById("grid").innerHTML = '<div class="loading" style="color:#999;">📭 暂无产品，请在后台添加</div>';
+    return;
+}
 
 let key = document.getElementById("search").value.toLowerCase();
 
@@ -355,43 +353,59 @@ let list = products.filter(p=>{
 
 let matchCat = current === "All" || p.category === current;
 
-let matchSearch =
-    (p.name || "").toLowerCase().includes(key) ||
-    (p.feature || "").toLowerCase().includes(key);
+let matchSearch = true;
+if(key){
+    matchSearch = 
+        (p.name || "").toLowerCase().includes(key) ||
+        (p.feature || "").toLowerCase().includes(key) ||
+        (p.category || "").toLowerCase().includes(key);
+}
 
 return matchCat && matchSearch;
 });
+
+if(list.length === 0){
+    document.getElementById("grid").innerHTML = '<div class="loading" style="color:#999;">🔍 没有找到匹配的产品</div>';
+    return;
+}
 
 let html = "";
 
 list.forEach(p=>{
 
 let img = p.image || "";
-let hoverImg = (p.images && p.images.length > 1) ? p.images[1] : img;
+let hoverImg = (p.images && p.images.length > 0) ? p.images[0] : img;
+
+// 图片显示处理
+let imgHtml = '';
+if(img){
+    imgHtml = `<img src="${img}" class="main-img" onerror="this.style.display='none';this.parentElement.innerHTML='<div class=\'no-img\'>📷 图片加载失败</div>'">`;
+    if(hoverImg && hoverImg !== img){
+        imgHtml += `<img src="${hoverImg}" class="hover-img" onerror="this.style.display='none'">`;
+    }
+}else{
+    imgHtml = '<div class="no-img">📷 无图片</div>';
+}
 
 html += `
 <div class="product-card" onclick="goDetail('${p.id}')">
 
     <div class="img-box">
-
-        <img src="${img}" class="main-img">
-
-        <img src="${hoverImg}" class="hover-img">
-
+        ${imgHtml}
     </div>
 
     <div class="info">
 
-        <div class="tag">${p.category || "Fabric"}</div>
+        <div class="tag">${escapeHtml(p.category || "Fabric")}</div>
 
-        <h3>${p.name || ""}</h3>
+        <h3>${escapeHtml(p.name || "")}</h3>
 
         <p class="meta">
-            GSM: ${p.gsm || "-"} | MOQ: ${p.moq || "-"}
+            GSM: ${escapeHtml(p.gsm || "-")} | MOQ: ${escapeHtml(p.moq || "-")}
         </p>
 
         <p class="feature">
-            ${(p.feature || "").substring(0,80)}
+            ${escapeHtml((p.feature || "").substring(0,80))}
         </p>
 
         <button>View Details</button>
@@ -403,7 +417,19 @@ html += `
 });
 
 document.getElementById("grid").innerHTML = html;
+}
 
+/* ===================== */
+/* 防XSS辅助函数 */
+/* ===================== */
+function escapeHtml(str){
+    if(!str) return "";
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
 }
 
 </script>
