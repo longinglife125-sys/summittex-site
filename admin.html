@@ -92,37 +92,6 @@ button:hover{
     object-fit:cover;
 }
 
-.item-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-    justify-content: flex-end;
-}
-
-.edit-btn, .delete-btn {
-    padding: 6px 12px;
-    font-size: 12px;
-    width: auto;
-    margin-top: 0;
-    border-radius: 6px;
-}
-
-.edit-btn {
-    background: #f59e0b;
-}
-
-.edit-btn:hover {
-    background: #d97706;
-}
-
-.delete-btn {
-    background: #dc2626;
-}
-
-.delete-btn:hover {
-    background: #b91c1c;
-}
-
 .hint {
     font-size: 11px;
     color: #9ca3af;
@@ -193,7 +162,7 @@ button:hover{
     border-radius: 50%;
     width: 20px;
     height: 20px;
- font-size: 12px;
+    font-size: 12px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -228,8 +197,8 @@ button:hover{
     background: #1e293b;
     border-radius: 16px;
     padding: 24px;
-    max-width: 500px;
     width: 90%;
+    max-width: 500px;
     max-height: 80vh;
     overflow-y: auto;
 }
@@ -255,6 +224,21 @@ button:hover{
 
 .confirm-delete:hover {
     background: #b91c1c;
+}
+
+.edit-modal-input, .edit-modal-select, .edit-modal-textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: none;
+    background: #334155;
+    color: white;
+}
+
+.edit-modal-textarea {
+    min-height: 80px;
+    resize: vertical;
 }
 </style>
 </head>
@@ -332,8 +316,8 @@ button:hover{
     <div class="modal-content">
         <h3>✏️ 编辑产品</h3>
         <input type="hidden" id="editId">
-        <input id="editName" placeholder="产品名称">
-        <select id="editCategory">
+        <input type="text" id="editName" class="edit-modal-input" placeholder="产品名称">
+        <select id="editCategory" class="edit-modal-select">
             <option value="">请选择产品分类</option>
             <option>Outdoor Functional Fabrics</option>
             <option>Sports & Activewear Fabrics</option>
@@ -348,12 +332,12 @@ button:hover{
             <option>Fashion Fabrics</option>
             <option>Others</option>
         </select>
-        <input id="editGsm" placeholder="GSM">
-        <input id="editMoq" placeholder="MOQ">
-        <textarea id="editFeature" placeholder="产品描述"></textarea>
-        <input id="editVideoUrl" placeholder="视频链接">
+        <input type="text" id="editGsm" class="edit-modal-input" placeholder="GSM">
+        <input type="text" id="editMoq" class="edit-modal-input" placeholder="MOQ">
+        <textarea id="editFeature" class="edit-modal-textarea" placeholder="产品描述"></textarea>
+        <input type="text" id="editVideoUrl" class="edit-modal-input" placeholder="视频链接">
         <div class="modal-buttons">
-            <button id="saveEditBtn">保存修改</button>
+            <button id="saveEditBtn" style="background:#f59e0b;">保存修改</button>
             <button id="cancelEditBtn" style="background:#6c757d;">取消</button>
         </div>
     </div>
@@ -385,7 +369,6 @@ const sb = createClient(
 let selectedImages = [];
 let editingProductId = null;
 let deletingProductId = null;
-let deletingProductName = '';
 
 // DOM 元素
 const dropArea = document.getElementById('dropArea');
@@ -413,11 +396,13 @@ dropArea.addEventListener('drop', (e) => {
     addImages(files);
 });
 
+// 选择文件
 imageInput.addEventListener('change', (e) => {
     addImages(Array.from(e.target.files));
     imageInput.value = '';
 });
 
+// 添加图片到列表
 function addImages(files) {
     for (const file of files) {
         if (file.size > 10 * 1024 * 1024) {
@@ -429,11 +414,13 @@ function addImages(files) {
     refreshPreview();
 }
 
+// 移除图片
 function removeImage(index) {
     selectedImages.splice(index, 1);
     refreshPreview();
 }
 
+// 刷新预览
 function refreshPreview() {
     previewContainer.innerHTML = '';
     selectedImages.forEach((file, idx) => {
@@ -452,6 +439,7 @@ function refreshPreview() {
     imgCountSpan.innerText = `已选择 ${selectedImages.length} 张图片`;
 }
 
+// 登录
 function login() {
     const pass = document.getElementById("pass").value.trim();
     if (pass === "123456") {
@@ -464,6 +452,7 @@ function login() {
     }
 }
 
+// 上传产品
 async function upload() {
     try {
         const productName = document.getElementById("name").value.trim();
@@ -551,16 +540,72 @@ async function upload() {
     }
 }
 
+// 加载产品列表
+async function load() {
+    const { data, error } = await sb
+        .from("products")
+        .select("*")
+        .order("id", { ascending: false });
+    
+    if (error) {
+        console.error("加载错误:", error);
+        return;
+    }
+
+    let html = "";
+    if (!data || data.length === 0) {
+        html = "<div class='item'>暂无产品</div>";
+    } else {
+        data.forEach(p => {
+            const imagesCount = p.images ? p.images.length : (p.image ? 1 : 0);
+            let previewImages = "";
+            if (p.images && p.images.length > 0) {
+                const showImages = p.images.slice(0, 3);
+                previewImages = showImages.map(img => `<img src="${img}" class="item-img" onerror="this.style.display='none'">`).join('');
+                if (p.images.length > 3) {
+                    previewImages += `<span style="font-size:10px;"> +${p.images.length-3}</span>`;
+                }
+            } else if (p.image) {
+                previewImages = `<img src="${p.image}" class="item-img" onerror="this.style.display='none'">`;
+            }
+            
+            // 安全转义
+            const safeName = escapeHtml(p.name || "").replace(/'/g, "\\'");
+            const safeCategory = escapeHtml(p.category || "").replace(/'/g, "\\'");
+            const safeGsm = escapeHtml(p.gsm || "").replace(/'/g, "\\'");
+            const safeMoq = escapeHtml(p.moq || "").replace(/'/g, "\\'");
+            const safeFeature = escapeHtml(p.feature || "").replace(/'/g, "\\'");
+            const safeVideoUrl = (p.video_url || "").replace(/'/g, "\\'");
+            
+            html += `
+            <div class="item">
+                <b>${escapeHtml(p.name || "")}</b><br><br>
+                📁 分类：${escapeHtml(p.category || "")}<br>
+                ⚖️ GSM：${escapeHtml(p.gsm || "")}<br>
+                📦 MOQ：${escapeHtml(p.moq || "")}<br>
+                🖼️ 图片：${imagesCount}张 &nbsp;|&nbsp; 🎬 视频：${p.video_url ? '✅' : '❌'}<br>
+                📝 ${escapeHtml((p.feature || "").substring(0, 80))}${p.feature && p.feature.length > 80 ? '...' : ''}<br>
+                <div style="margin-top:5px;">${previewImages}</div>
+                <div style="margin-top:10px; display:flex; gap:10px; justify-content:flex-end;">
+                    <button onclick='editProduct(${p.id}, "${safeName}", "${safeCategory}", "${safeGsm}", "${safeMoq}", "${safeFeature}", "${safeVideoUrl}")' style="background:#f59e0b; padding:6px 12px; font-size:12px; width:auto; margin:0; border:none; border-radius:6px; cursor:pointer;">✏️ 编辑</button>
+                    <button onclick='deleteProduct(${p.id}, "${safeName}")' style="background:#dc2626; padding:6px 12px; font-size:12px; width:auto; margin:0; border:none; border-radius:6px; cursor:pointer;">🗑️ 删除</button>
+                </div>
+            </div>
+            `;
+        });
+    }
+    document.getElementById("list").innerHTML = html;
+}
+
 // 编辑产品
 function editProduct(id, name, category, gsm, moq, feature, videoUrl) {
-    editingProductId = id;
     document.getElementById("editId").value = id;
-    document.getElementById("editName").value = name || '';
-    document.getElementById("editCategory").value = category || '';
-    document.getElementById("editGsm").value = gsm || '';
-    document.getElementById("editMoq").value = moq || '';
-    document.getElementById("editFeature").value = feature || '';
-    document.getElementById("editVideoUrl").value = videoUrl || '';
+    document.getElementById("editName").value = name;
+    document.getElementById("editCategory").value = category;
+    document.getElementById("editGsm").value = gsm;
+    document.getElementById("editMoq").value = moq;
+    document.getElementById("editFeature").value = feature;
+    document.getElementById("editVideoUrl").value = videoUrl;
     document.getElementById("editModal").style.display = "flex";
 }
 
@@ -594,27 +639,18 @@ async function saveEdit() {
     }
 }
 
-// 删除确认
-function confirmDeleteProduct(id, name) {
+// 删除产品（弹出确认框）
+function deleteProduct(id, name) {
     deletingProductId = id;
-    deletingProductName = name;
     document.getElementById("deleteProductName").innerText = name;
     document.getElementById("deleteModal").style.display = "flex";
 }
 
 // 执行删除
-async function executeDelete() {
+async function confirmDelete() {
     if (!deletingProductId) return;
     
     try {
-        // 先获取产品图片URL，准备删除存储文件
-        const { data: product } = await sb
-            .from("products")
-            .select("image, images")
-            .eq("id", deletingProductId)
-            .single();
-        
-        // 删除数据库记录
         const { error } = await sb
             .from("products")
             .delete()
@@ -634,42 +670,7 @@ async function executeDelete() {
     }
 }
 
-async function load() {
-    const { data, error } = await sb
-        .from("products")
-        .select("*")
-        .order("id", { ascending: false });
-    
-    if (error) {
-        console.error("加载错误:", error);
-        return;
-    }
-
-    let html = "";
-    if (!data || data.length === 0) {
-        html = "<div class='item'>暂无产品</div>";
-    } else {
-        data.forEach(p => {
-            const imagesCount = p.images ? p.images.length : (p.image ? 1 : 0);
-            html += `
-            <div class="item">
-                <b>${escapeHtml(p.name || "")}</b><br><br>
-                📁 分类：${escapeHtml(p.category || "")}<br>
-                ⚖️ GSM：${escapeHtml(p.gsm || "")}<br>
-                📦 MOQ：${escapeHtml(p.moq || "")}<br>
-                🖼️ 图片：${imagesCount}张 &nbsp;|&nbsp; 🎬 视频：${p.video_url ? '✅' : '❌'}<br>
-                📝 ${escapeHtml((p.feature || "").substring(0, 80))}${p.feature && p.feature.length > 80 ? '...' : ''}<br>
-                <div class="item-actions">
-                    <button class="edit-btn" onclick="editProduct('${p.id}', '${escapeHtml(p.name || "").replace(/'/g, "\\'")}', '${escapeHtml(p.category || "").replace(/'/g, "\\'")}', '${escapeHtml(p.gsm || "").replace(/'/g, "\\'")}', '${escapeHtml(p.moq || "").replace(/'/g, "\\'")}', ${escapeHtml(p.feature || "").replace(/'/g, "\\'")}, '${p.video_url || ""}')">✏️ 编辑</button>
-                    <button class="delete-btn" onclick="confirmDeleteProduct('${p.id}', '${escapeHtml(p.name || "").replace(/'/g, "\\'")}')">🗑️ 删除</button>
-                </div>
-            </div>
-            `;
-        });
-    }
-    document.getElementById("list").innerHTML = html;
-}
-
+// 加载CRM
 async function loadCRM() {
     const { data, error } = await sb
         .from("inquiries")
@@ -710,7 +711,7 @@ function escapeHtml(str) {
 // 暴露全局函数
 window.removeImage = removeImage;
 window.editProduct = editProduct;
-window.confirmDeleteProduct = confirmDeleteProduct;
+window.deleteProduct = deleteProduct;
 
 // 绑定事件
 document.getElementById("loginBtn").onclick = login;
@@ -719,7 +720,7 @@ document.getElementById("refreshBtn").onclick = load;
 document.getElementById("crmBtn").onclick = loadCRM;
 document.getElementById("saveEditBtn").onclick = saveEdit;
 document.getElementById("cancelEditBtn").onclick = () => document.getElementById("editModal").style.display = "none";
-document.getElementById("confirmDeleteBtn").onclick = executeDelete;
+document.getElementById("confirmDeleteBtn").onclick = confirmDelete;
 document.getElementById("cancelDeleteBtn").onclick = () => document.getElementById("deleteModal").style.display = "none";
 
 const passInput = document.getElementById("pass");
