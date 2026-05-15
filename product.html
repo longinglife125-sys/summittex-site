@@ -197,23 +197,28 @@ input, textarea{
 <script>
 
 /* ===================== */
-/* SUPABASE 配置（修复版） */
+/* SUPABASE 配置 */
 /* ===================== */
 
-// 【关键修复】URL 不要加 /rest/v1/
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /* ===================== */
-/* 获取 URL 参数 id */
+/* 获取 URL 参数 id（支持数字和字符串） */
 /* ===================== */
 
 const urlParams = new URLSearchParams(window.location.search);
-const productId = urlParams.get("id");
+let productId = urlParams.get("id");
 
-console.log("产品ID:", productId);
+console.log("原始产品ID参数:", productId, "类型:", typeof productId);
+
+// 如果 ID 存在且是数字字符串，转换为数字类型
+if (productId && !isNaN(parseInt(productId))) {
+    productId = parseInt(productId);
+    console.log("转换后的数字ID:", productId, "类型:", typeof productId);
+}
 
 /* ===================== */
 /* 全局变量 */
@@ -252,10 +257,11 @@ async function loadProduct() {
     
     // 验证产品ID
     if (!productId) {
+        console.error("没有找到产品ID参数");
         contentDiv.innerHTML = `
             <div class="not-found">
                 <h2>❌ 无效的产品链接</h2>
-                <p>请从产品列表页重新选择产品</p>
+                <p>URL中没有找到产品ID，请从产品列表页重新进入</p>
                 <a href="products.html" style="color:#2563eb;">返回产品列表 →</a>
             </div>
         `;
@@ -263,8 +269,9 @@ async function loadProduct() {
     }
     
     try {
-        console.log("正在查询产品 ID:", productId);
+        console.log("正在查询产品, ID:", productId, "类型:", typeof productId);
         
+        // 查询产品
         const { data, error } = await sb
             .from("products")
             .select("*")
@@ -276,7 +283,8 @@ async function loadProduct() {
             contentDiv.innerHTML = `
                 <div class="error">
                     <h2>❌ 产品加载失败</h2>
-                    <p>${escapeHtml(error.message)}</p>
+                    <p>错误信息: ${escapeHtml(error.message)}</p>
+                    <p>产品ID: ${escapeHtml(String(productId))}</p>
                     <a href="products.html" style="color:#2563eb;">返回产品列表</a>
                 </div>
             `;
@@ -284,18 +292,18 @@ async function loadProduct() {
         }
         
         if (!data) {
-            console.warn("未找到产品");
+            console.warn("未找到产品, ID:", productId);
             contentDiv.innerHTML = `
                 <div class="not-found">
                     <h2>❌ 产品未找到</h2>
-                    <p>您查找的产品可能已被删除或不存在</p>
+                    <p>找不到ID为 ${escapeHtml(String(productId))} 的产品</p>
                     <a href="products.html" style="color:#2563eb;">返回产品列表 →</a>
                 </div>
             `;
             return;
         }
         
-        console.log("找到产品:", data);
+        console.log("✅ 找到产品:", data.name, "ID:", data.id);
         productData = data;
         
         // 处理图片列表
@@ -307,25 +315,13 @@ async function loadProduct() {
             imagesList = [];
         }
         
+        console.log("图片数量:", imagesList.length);
+        
         // 渲染页面
         renderProduct();
         
         // 设置 WhatsApp 链接
         setupWhatsApp();
-        
-        // 【可选】记录询盘访问（如果需要记录访问日志）
-        // 注意：如果 inquiries 表没有 product_id 字段，请注释掉下面的代码
-        /*
-        try {
-            await sb.from("inquiries").insert([{
-                product: data.name,
-                message: "用户查看了产品详情",
-                created_at: new Date().toISOString()
-            }]);
-        } catch(logErr) {
-            console.log("记录访问失败（可忽略）:", logErr.message);
-        }
-        */
         
     } catch (err) {
         console.error("系统异常:", err);
@@ -351,7 +347,7 @@ function renderProduct() {
     
     // 生成缩略图 HTML
     let thumbsHtml = "";
-    if (imagesList.length > 0) {
+    if (imagesList.length > 1) {
         thumbsHtml = `
             <div class="thumbs">
                 ${imagesList.map((img, idx) => `
@@ -371,7 +367,7 @@ function renderProduct() {
             <div>
                 ${mainImage ? 
                     `<img id="mainImg" class="main-img" src="${mainImage}" onerror="this.src='https://placehold.co/600x400?text=Image+Not+Found'">` :
-                    `<div class="main-img" style="display:flex;align-items:center;justify-content:center;background:#f0f0f0;">
+                    `<div class="main-img" style="display:flex;align-items:center;justify-content:center;background:#f0f0f0;min-height:300px;">
                         📷 暂无产品图片
                      </div>`
                 }
