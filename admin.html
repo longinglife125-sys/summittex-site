@@ -21,16 +21,12 @@ h3 { margin-bottom: 15px; color: #e2e8f0; }
 .tab-content { display: none; }
 .tab-content.active { display: block; }
 
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
 .stat-card { background: #1e293b; border-radius: 12px; padding: 15px; text-align: center; border-left: 4px solid #2563eb; }
 .stat-number { font-size: 28px; font-weight: bold; color: #60a5fa; }
 .stat-label { font-size: 12px; color: #94a3b8; margin-top: 5px; }
-.category-stats { max-height: 250px; overflow-y: auto; }
 .category-stat-item { display: flex; justify-content: space-between; padding: 8px 10px; border-bottom: 1px solid #334155; font-size: 13px; }
 
 input,select,textarea { width:100%; padding:10px; margin-top:8px; margin-bottom:8px; border-radius:8px; border:none; box-sizing:border-box; background:#1f2a3e; color:white; }
-input::placeholder, textarea::placeholder { color: #9ca3af; }
-select { background: #1f2a3e; color: white; }
 button { padding:12px; margin-top:10px; background:#2563eb; color:white; border:none; border-radius:10px; cursor:pointer; }
 button:hover { background:#1d4ed8; }
 
@@ -41,30 +37,34 @@ button:hover { background:#1d4ed8; }
 .edit-btn { background: #f59e0b; }
 .delete-btn { background: #dc2626; }
 
-.hint { font-size: 11px; color: #9ca3af; margin-top: 5px; }
 .section-title { margin-top: 15px; margin-bottom: 5px; font-size: 13px; color: #9ca3af; border-left: 3px solid #2563eb; padding-left: 8px; }
 
-.drop-area { border: 2px dashed #4b5563; border-radius: 12px; padding: 20px; text-align: center; margin-top: 10px; cursor: pointer; transition: all 0.2s; background: #1e293b; }
-.drop-area:hover { border-color: #2563eb; background: #334155; }
-.preview-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
-.preview-item { position: relative; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; background: #1e293b; border: 1px solid #4b5563; }
-.preview-item img { width: 100%; height: 100%; object-fit: cover; }
-.remove-btn { position: absolute; top: 2px; right: 2px; background: rgba(220,38,38,0.8); color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; }
-.img-count { font-size: 12px; color: #4ade80; margin-top: 5px; }
+/* 上传区域样式 */
+.upload-box {
+    border: 2px dashed #4b5563;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    margin: 10px 0;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #1e293b;
+}
+.upload-box:hover { border-color: #2563eb; background: #334155; }
+.preview-img { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; margin-top: 10px; }
 
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
-.modal-content { background: #1e293b; border-radius: 16px; padding: 24px; width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto; }
-.modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
-.modal-buttons button { flex: 1; margin-top: 0; }
-
-.media-item { background: #1e293b; border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+.media-item { background: #1e293b; border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
 .media-img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
 .media-info { flex: 1; margin-left: 12px; }
 .media-title { font-weight: bold; margin-bottom: 4px; }
-.media-url { font-size: 10px; color: #94a3b8; word-break: break-all; }
-.media-actions { display: flex; gap: 8px; }
-.media-actions button { padding: 4px 8px; font-size: 11px; margin: 0; }
-.media-form { background: #0f1722; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+.media-actions button { padding: 4px 12px; font-size: 12px; margin: 0; }
+
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
+.modal-content { background: #1e293b; border-radius: 16px; padding: 24px; width: 90%; max-width: 500px; }
+.modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
+
+.preview-row { display: flex; align-items: center; gap: 15px; margin-top: 10px; flex-wrap: wrap; }
+.preview-thumb { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
 </style>
 </head>
 
@@ -85,18 +85,18 @@ button:hover { background:#1d4ed8; }
     <button class="tab-btn" data-tab="factory">🏭 工厂照片管理</button>
 </div>
 
-<!-- 产品管理 -->
+<!-- ========== 产品管理 ========== -->
 <div id="productsTab" class="tab-content active">
     <div class="box">
         <h3>📊 产品统计</h3>
-        <div class="stats-grid"><div class="stat-card"><div class="stat-number" id="totalCount">-</div><div class="stat-label">总产品数</div></div></div>
-        <div class="category-stats" id="categoryStats">加载中...</div>
+        <div class="stat-card"><div class="stat-number" id="totalCount">-</div><div class="stat-label">总产品数</div></div>
+        <div id="categoryStats" style="margin-top:15px;"></div>
     </div>
     <div class="box">
         <h3>📤 上传产品</h3>
         <input id="name" placeholder="产品名称 *">
         <select id="category">
-            <option value="">请选择产品分类</option>
+            <option value="">请选择分类</option>
             <option>Outdoor Functional Fabrics</option><option>Sports & Activewear Fabrics</option>
             <option>Recycled & Sustainable Fabrics</option><option>Stretch Fabrics</option>
             <option>Nylon & Polyester Fabrics</option><option>Jacquard & Textured Fabrics</option>
@@ -107,46 +107,48 @@ button:hover { background:#1d4ed8; }
         <input id="gsm" placeholder="GSM"><input id="moq" placeholder="MOQ">
         <textarea id="feature" placeholder="产品描述"></textarea>
         <div class="section-title">🖼️ 产品图片</div>
-        <div class="drop-area" id="dropArea">📸 点击或拖拽图片上传</div>
-        <div class="preview-container" id="previewContainer"></div>
-        <div class="img-count" id="imgCount">已选择 0 张图片</div>
-        <input type="file" id="imageInput" multiple accept="image/*" style="display:none">
+        <input type="file" id="productImages" multiple accept="image/*">
+        <div id="productPreview"></div>
         <div class="section-title">📹 视频</div>
-        <input id="videoUrl" placeholder="视频链接 (YouTube)">
+        <input id="videoUrl" placeholder="YouTube 视频链接">
         <input type="file" id="videoFile" accept="video/mp4">
         <button id="uploadBtn">上传产品</button>
     </div>
-    <div class="box"><h3>📦 产品列表</h3><button id="refreshBtn">刷新产品</button><div id="list"></div></div>
+    <div class="box"><h3>📦 产品列表</h3><button id="refreshBtn">刷新</button><div id="productList"></div></div>
 </div>
 
-<!-- 轮播图管理（支持本地上传） -->
+<!-- ========== 轮播图管理（本地上传） ========== -->
 <div id="slidesTab" class="tab-content">
     <div class="box">
         <h3>🖼️ 首页轮播图管理</h3>
-        <div class="media-form">
-            <h4>➕ 添加轮播图（本地上传）</h4>
-            <div class="drop-area" id="slideDropArea">📸 点击或拖拽图片上传轮播图</div>
+        <div style="background:#0f1722; padding:15px; border-radius:8px; margin-bottom:20px;">
+            <h4>➕ 添加新轮播图</h4>
+            <div class="upload-box" id="slideUploadBox">📸 点击这里选择轮播图图片</div>
+            <input type="file" id="slideFileInput" accept="image/*" style="display:none">
+            <div id="slidePreviewArea" class="preview-row"></div>
             <input type="text" id="slideTitle" placeholder="图片标题（选填）">
             <input type="number" id="slideOrder" placeholder="排序（数字越小越靠前）" value="0">
-            <div class="preview-container" id="slidePreviewContainer"></div>
-            <button id="addSlideBtn">添加轮播图</button>
+            <button id="addSlideBtn" style="margin-top:10px;">确认添加轮播图</button>
         </div>
+        <h4>📋 现有轮播图</h4>
         <div id="slidesList">加载中...</div>
     </div>
 </div>
 
-<!-- 工厂照片管理（支持本地上传） -->
+<!-- ========== 工厂照片管理（本地上传） ========== -->
 <div id="factoryTab" class="tab-content">
     <div class="box">
         <h3>🏭 工厂照片管理</h3>
-        <div class="media-form">
-            <h4>➕ 添加工厂照片（本地上传）</h4>
-            <div class="drop-area" id="factoryDropArea">📸 点击或拖拽图片上传工厂照片</div>
+        <div style="background:#0f1722; padding:15px; border-radius:8px; margin-bottom:20px;">
+            <h4>➕ 添加新工厂照片</h4>
+            <div class="upload-box" id="factoryUploadBox">📸 点击这里选择工厂照片</div>
+            <input type="file" id="factoryFileInput" accept="image/*" style="display:none">
+            <div id="factoryPreviewArea" class="preview-row"></div>
             <input type="text" id="factoryCaption" placeholder="照片描述（选填）">
             <input type="number" id="factoryOrder" placeholder="排序（数字越小越靠前）" value="0">
-            <div class="preview-container" id="factoryPreviewContainer"></div>
-            <button id="addFactoryBtn">添加工厂照片</button>
+            <button id="addFactoryBtn" style="margin-top:10px;">确认添加工厂照片</button>
         </div>
+        <h4>📋 现有工厂照片</h4>
         <div id="factoryList">加载中...</div>
     </div>
 </div>
@@ -159,8 +161,16 @@ button:hover { background:#1d4ed8; }
         <h3>✏️ 编辑产品</h3>
         <input type="hidden" id="editId">
         <input type="text" id="editName" placeholder="产品名称">
-        <select id="editCategory"><option>Outdoor Functional Fabrics</option><option>Sports & Activewear Fabrics</option><option>Recycled & Sustainable Fabrics</option><option>Stretch Fabrics</option><option>Nylon & Polyester Fabrics</option><option>Jacquard & Textured Fabrics</option><option>Printed Fabrics</option><option>Swimwear Fabrics</option><option>Underwear Fabrics</option><option>Workwear Fabrics</option><option>Fashion Fabrics</option><option>Others</option></select>
-        <input type="text" id="editGsm" placeholder="GSM"><input type="text" id="editMoq" placeholder="MOQ">
+        <select id="editCategory">
+            <option>Outdoor Functional Fabrics</option><option>Sports & Activewear Fabrics</option>
+            <option>Recycled & Sustainable Fabrics</option><option>Stretch Fabrics</option>
+            <option>Nylon & Polyester Fabrics</option><option>Jacquard & Textured Fabrics</option>
+            <option>Printed Fabrics</option><option>Swimwear Fabrics</option>
+            <option>Underwear Fabrics</option><option>Workwear Fabrics</option>
+            <option>Fashion Fabrics</option><option>Others</option>
+        </select>
+        <input type="text" id="editGsm" placeholder="GSM">
+        <input type="text" id="editMoq" placeholder="MOQ">
         <textarea id="editFeature" placeholder="产品描述"></textarea>
         <input type="text" id="editVideoUrl" placeholder="视频链接">
         <div class="modal-buttons"><button id="saveEditBtn" style="background:#f59e0b;">保存</button><button id="cancelEditBtn" style="background:#6c757d;">取消</button></div>
@@ -173,9 +183,9 @@ const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ========== 全局变量 ==========
-let selectedImages = [];
-let slideSelectedFile = null;
-let factorySelectedFile = null;
+let selectedProductImages = [];
+let selectedSlideFile = null;
+let selectedFactoryFile = null;
 
 // ========== 标签页切换 ==========
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -183,16 +193,9 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-        if (btn.dataset.tab === 'products') {
-            document.getElementById('productsTab').classList.add('active');
-            loadProducts();
-        } else if (btn.dataset.tab === 'slides') {
-            document.getElementById('slidesTab').classList.add('active');
-            loadSlides();
-        } else if (btn.dataset.tab === 'factory') {
-            document.getElementById('factoryTab').classList.add('active');
-            loadFactoryPhotos();
-        }
+        if (btn.dataset.tab === 'products') { document.getElementById('productsTab').classList.add('active'); loadProducts(); }
+        else if (btn.dataset.tab === 'slides') { document.getElementById('slidesTab').classList.add('active'); loadSlides(); }
+        else if (btn.dataset.tab === 'factory') { document.getElementById('factoryTab').classList.add('active'); loadFactoryPhotos(); }
     });
 });
 
@@ -201,95 +204,46 @@ function login() {
     if (document.getElementById("pass").value.trim() === "123456") {
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("panelBox").style.display = "block";
-        loadProducts();
-        loadSlides();
-        loadFactoryPhotos();
+        loadProducts(); loadSlides(); loadFactoryPhotos();
     } else { alert("密码错误"); }
 }
 
-// ========== 产品图片上传 ==========
-const dropArea = document.getElementById('dropArea');
-const imageInput = document.getElementById('imageInput');
-const previewContainer = document.getElementById('previewContainer');
-const imgCountSpan = document.getElementById('imgCount');
-
-dropArea.onclick = () => imageInput.click();
-dropArea.ondragover = (e) => { e.preventDefault(); dropArea.classList.add('dragover'); };
-dropArea.ondragleave = () => dropArea.classList.remove('dragover');
-dropArea.ondrop = (e) => {
-    e.preventDefault();
-    dropArea.classList.remove('dragover');
-    addImages(Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')));
-};
-imageInput.onchange = (e) => { addImages(Array.from(e.target.files)); imageInput.value = ''; };
-
-function addImages(files) {
-    files.forEach(file => { if (file.size <= 10*1024*1024) selectedImages.push(file); else alert(`${file.name} 超过10MB`); });
-    refreshPreview();
-}
-function removeImage(idx) { selectedImages.splice(idx,1); refreshPreview(); }
-function refreshPreview() {
-    previewContainer.innerHTML = '';
-    selectedImages.forEach((f,idx) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            let div = document.createElement('div');
-            div.className = 'preview-item';
-            div.innerHTML = `<img src="${e.target.result}"><button class="remove-btn" onclick="removeImage(${idx})">×</button>`;
-            previewContainer.appendChild(div);
+// ========== 产品图片预览 ==========
+document.getElementById('productImages').addEventListener('change', (e) => {
+    selectedProductImages = Array.from(e.target.files);
+    let container = document.getElementById('productPreview');
+    container.innerHTML = '';
+    selectedProductImages.forEach((file, idx) => {
+        let reader = new FileReader();
+        reader.onload = (ev) => {
+            container.innerHTML += `<div class="preview-item"><img src="${ev.target.result}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;"><button class="remove-btn" onclick="removeProductImage(${idx})">×</button></div>`;
         };
-        reader.readAsDataURL(f);
+        reader.readAsDataURL(file);
     });
-    imgCountSpan.innerText = `已选择 ${selectedImages.length} 张图片`;
-}
+});
+function removeProductImage(idx) { selectedProductImages.splice(idx,1); document.getElementById('productImages').value = ''; location.reload(); }
 
-// ========== 轮播图上传（本地上传） ==========
-const slideDropArea = document.getElementById('slideDropArea');
-const slidePreview = document.getElementById('slidePreviewContainer');
-let slideSelectedFile = null;
-
-slideDropArea.onclick = () => { let input = document.createElement('input'); input.type='file'; input.accept='image/*'; input.onchange=(e)=>{if(e.target.files[0]){slideSelectedFile=e.target.files[0]; updateSlidePreview();}}; input.click(); };
-slideDropArea.ondragover = (e) => { e.preventDefault(); slideDropArea.classList.add('dragover'); };
-slideDropArea.ondragleave = () => slideDropArea.classList.remove('dragover');
-slideDropArea.ondrop = (e) => {
-    e.preventDefault();
-    slideDropArea.classList.remove('dragover');
-    let file = e.dataTransfer.files[0];
-    if(file && file.type.startsWith('image/')) { slideSelectedFile = file; updateSlidePreview(); }
-};
-function updateSlidePreview() {
-    slidePreview.innerHTML = '';
-    if(slideSelectedFile){
+// ========== 轮播图上传 ==========
+document.getElementById('slideUploadBox').addEventListener('click', () => { document.getElementById('slideFileInput').click(); });
+document.getElementById('slideFileInput').addEventListener('change', (e) => {
+    if (e.target.files.length > 0) { selectedSlideFile = e.target.files[0];
         let reader = new FileReader();
-        reader.onload = (e) => { slidePreview.innerHTML = `<div class="preview-item"><img src="${e.target.result}"><button class="remove-btn" onclick="clearSlideFile()">×</button></div>`; };
-        reader.readAsDataURL(slideSelectedFile);
+        reader.onload = (ev) => { document.getElementById('slidePreviewArea').innerHTML = `<img src="${ev.target.result}" class="preview-thumb"><button onclick="clearSlideFile()" style="padding:4px 8px;margin-left:10px;">取消选择</button>`; };
+        reader.readAsDataURL(selectedSlideFile);
     }
-}
-function clearSlideFile() { slideSelectedFile = null; slidePreview.innerHTML = ''; }
+});
+function clearSlideFile() { selectedSlideFile = null; document.getElementById('slideFileInput').value = ''; document.getElementById('slidePreviewArea').innerHTML = ''; }
 
-// ========== 工厂照片上传（本地上传） ==========
-const factoryDropArea = document.getElementById('factoryDropArea');
-const factoryPreview = document.getElementById('factoryPreviewContainer');
-let factorySelectedFile = null;
-
-factoryDropArea.onclick = () => { let input = document.createElement('input'); input.type='file'; input.accept='image/*'; input.onchange=(e)=>{if(e.target.files[0]){factorySelectedFile=e.target.files[0]; updateFactoryPreview();}}; input.click(); };
-factoryDropArea.ondragover = (e) => { e.preventDefault(); factoryDropArea.classList.add('dragover'); };
-factoryDropArea.ondragleave = () => factoryDropArea.classList.remove('dragover');
-factoryDropArea.ondrop = (e) => {
-    e.preventDefault();
-    factoryDropArea.classList.remove('dragover');
-    let file = e.dataTransfer.files[0];
-    if(file && file.type.startsWith('image/')) { factorySelectedFile = file; updateFactoryPreview(); }
-};
-function updateFactoryPreview() {
-    factoryPreview.innerHTML = '';
-    if(factorySelectedFile){
+// ========== 工厂照片上传 ==========
+document.getElementById('factoryUploadBox').addEventListener('click', () => { document.getElementById('factoryFileInput').click(); });
+document.getElementById('factoryFileInput').addEventListener('change', (e) => {
+    if (e.target.files.length > 0) { selectedFactoryFile = e.target.files[0];
         let reader = new FileReader();
-        reader.onload = (e) => { factoryPreview.innerHTML = `<div class="preview-item"><img src="${e.target.result}"><button class="remove-btn" onclick="clearFactoryFile()">×</button></div>`; };
-        reader.readAsDataURL(factorySelectedFile);
+        reader.onload = (ev) => { document.getElementById('factoryPreviewArea').innerHTML = `<img src="${ev.target.result}" class="preview-thumb"><button onclick="clearFactoryFile()" style="padding:4px 8px;margin-left:10px;">取消选择</button>`; };
+        reader.readAsDataURL(selectedFactoryFile);
     }
-}
-function clearFactoryFile() { factorySelectedFile = null; factoryPreview.innerHTML = ''; }
+});
+function clearFactoryFile() { selectedFactoryFile = null; document.getElementById('factoryFileInput').value = ''; document.getElementById('factoryPreviewArea').innerHTML = ''; }
 
 // ========== 上传产品 ==========
 async function uploadProduct() {
@@ -298,8 +252,8 @@ async function uploadProduct() {
     let btn = document.getElementById("uploadBtn");
     btn.disabled = true; btn.innerText = "上传中...";
     let imageUrls = [];
-    for (let i=0; i<selectedImages.length; i++) {
-        let f = selectedImages[i];
+    for (let i=0; i<selectedProductImages.length; i++) {
+        let f = selectedProductImages[i];
         let fn = Date.now() + "_" + i + "_" + f.name.replace(/[^a-zA-Z0-9.-]/g, '_');
         let { error } = await sb.storage.from("images").upload(fn, f);
         if (!error) { let { data: urlData } = sb.storage.from("images").getPublicUrl(fn); imageUrls.push(urlData.publicUrl); }
@@ -318,94 +272,94 @@ async function uploadProduct() {
         image: imageUrls[0] || "", images: imageUrls, video_url: videoUrl || null
     }]);
     if (error) alert("失败：" + error.message);
-    else {
-        alert("✅ 上传成功");
+    else { alert("✅ 产品上传成功！图片：" + imageUrls.length + "张");
         document.getElementById("name").value = ""; document.getElementById("gsm").value = ""; document.getElementById("moq").value = "";
         document.getElementById("feature").value = ""; document.getElementById("videoUrl").value = ""; document.getElementById("videoFile").value = "";
-        document.getElementById("category").value = ""; selectedImages = []; refreshPreview(); loadProducts();
+        document.getElementById("category").value = ""; selectedProductImages = []; document.getElementById('productImages').value = ''; document.getElementById('productPreview').innerHTML = '';
+        loadProducts();
     }
     btn.disabled = false; btn.innerText = "上传产品";
 }
 
-// ========== 添加轮播图（本地上传） ==========
+// ========== 添加轮播图 ==========
 async function addSlide() {
-    let title = document.getElementById("slideTitle").value;
-    let order = parseInt(document.getElementById("slideOrder").value) || 0;
-    if (!slideSelectedFile) { alert("请先选择一张图片"); return; }
+    if (!selectedSlideFile) { alert("请先点击上传区域选择一张图片"); return; }
     let btn = document.getElementById("addSlideBtn");
     btn.disabled = true; btn.innerText = "上传中...";
-    let fileName = "slides/" + Date.now() + "_" + slideSelectedFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-    let { error: uploadError } = await sb.storage.from("images").upload(fileName, slideSelectedFile);
-    if (uploadError) { alert("上传失败：" + uploadError.message); btn.disabled=false; btn.innerText="添加轮播图"; return; }
+    let fileName = "slides/" + Date.now() + "_" + selectedSlideFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    let { error: uploadError } = await sb.storage.from("images").upload(fileName, selectedSlideFile);
+    if (uploadError) { alert("上传失败：" + uploadError.message); btn.disabled=false; btn.innerText="确认添加轮播图"; return; }
     let { data: urlData } = sb.storage.from("images").getPublicUrl(fileName);
+    let title = document.getElementById("slideTitle").value;
+    let order = parseInt(document.getElementById("slideOrder").value) || 0;
     let { error } = await sb.from("home_slides").insert([{ image_url: urlData.publicUrl, title: title || null, sort_order: order, is_active: true }]);
     if (error) alert("失败：" + error.message);
-    else { alert("✅ 轮播图已添加"); slideSelectedFile = null; updateSlidePreview(); document.getElementById("slideTitle").value = ""; document.getElementById("slideOrder").value = "0"; loadSlides(); }
-    btn.disabled = false; btn.innerText = "添加轮播图";
+    else { alert("✅ 轮播图已添加"); clearSlideFile(); document.getElementById("slideTitle").value = ""; document.getElementById("slideOrder").value = "0"; loadSlides(); }
+    btn.disabled = false; btn.innerText = "确认添加轮播图";
 }
 
-// ========== 添加工厂照片（本地上传） ==========
+// ========== 添加工厂照片 ==========
 async function addFactoryPhoto() {
-    let caption = document.getElementById("factoryCaption").value;
-    let order = parseInt(document.getElementById("factoryOrder").value) || 0;
-    if (!factorySelectedFile) { alert("请先选择一张图片"); return; }
+    if (!selectedFactoryFile) { alert("请先点击上传区域选择一张图片"); return; }
     let btn = document.getElementById("addFactoryBtn");
     btn.disabled = true; btn.innerText = "上传中...";
-    let fileName = "factory/" + Date.now() + "_" + factorySelectedFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-    let { error: uploadError } = await sb.storage.from("images").upload(fileName, factorySelectedFile);
-    if (uploadError) { alert("上传失败：" + uploadError.message); btn.disabled=false; btn.innerText="添加工厂照片"; return; }
+    let fileName = "factory/" + Date.now() + "_" + selectedFactoryFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    let { error: uploadError } = await sb.storage.from("images").upload(fileName, selectedFactoryFile);
+    if (uploadError) { alert("上传失败：" + uploadError.message); btn.disabled=false; btn.innerText="确认添加工厂照片"; return; }
     let { data: urlData } = sb.storage.from("images").getPublicUrl(fileName);
+    let caption = document.getElementById("factoryCaption").value;
+    let order = parseInt(document.getElementById("factoryOrder").value) || 0;
     let { error } = await sb.from("factory_photos").insert([{ image_url: urlData.publicUrl, caption: caption || null, sort_order: order, is_active: true }]);
     if (error) alert("失败：" + error.message);
-    else { alert("✅ 工厂照片已添加"); factorySelectedFile = null; updateFactoryPreview(); document.getElementById("factoryCaption").value = ""; document.getElementById("factoryOrder").value = "0"; loadFactoryPhotos(); }
-    btn.disabled = false; btn.innerText = "添加工厂照片";
+    else { alert("✅ 工厂照片已添加"); clearFactoryFile(); document.getElementById("factoryCaption").value = ""; document.getElementById("factoryOrder").value = "0"; loadFactoryPhotos(); }
+    btn.disabled = false; btn.innerText = "确认添加工厂照片";
 }
 
-// ========== 加载产品列表 ==========
+// ========== 加载产品 ==========
 async function loadProducts() {
     let { data } = await sb.from("products").select("*").order("id", { ascending: false });
     document.getElementById("totalCount").innerText = data?.length || 0;
     let catMap = {}; (data||[]).forEach(p => { let c = p.category || "未分类"; catMap[c] = (catMap[c]||0)+1; });
     let catHtml = ""; for (let [k,v] of Object.entries(catMap)) catHtml += `<div class="category-stat-item"><span>📁 ${k}</span><span>${v}个</span></div>`;
-    document.getElementById("categoryStats").innerHTML = catHtml || "暂无分类";
+    document.getElementById("categoryStats").innerHTML = catHtml || "暂无";
     let html = "";
     (data||[]).forEach(p => {
         let imgCount = p.images?.length || (p.image ? 1 : 0);
         let preview = ""; if (p.images?.length) preview = p.images.slice(0,2).map(img => `<img src="${img}" class="item-img">`).join('');
         else if (p.image) preview = `<img src="${p.image}" class="item-img">`;
         let safeName = escapeHtml(p.name||"").replace(/'/g,"\\'");
-        html += `<div class="item"><b>${escapeHtml(p.name)}</b><br>📁 ${escapeHtml(p.category)}<br>⚖️ ${escapeHtml(p.gsm)} | 📦 ${escapeHtml(p.moq)}<br>🖼️ ${imgCount}张 | 🎬 ${p.video_url?'有':'无'}<br><div>${preview}</div>
+        html += `<div class="item"><b>${escapeHtml(p.name)}</b><br>📁 ${escapeHtml(p.category)}<br>⚖️ ${escapeHtml(p.gsm)} | 📦 ${escapeHtml(p.moq)}<br>🖼️ ${imgCount}张<br><div>${preview}</div>
         <div class="item-actions"><button class="edit-btn" onclick='editProduct(${p.id}, "${safeName}", "${escapeHtml(p.category||"").replace(/'/g,"\\'")}", "${escapeHtml(p.gsm||"").replace(/'/g,"\\'")}", "${escapeHtml(p.moq||"").replace(/'/g,"\\'")}", "${escapeHtml(p.feature||"").replace(/'/g,"\\'")}", "${p.video_url||""}")'>✏️ 编辑</button>
         <button class="delete-btn" onclick='deleteProduct(${p.id}, "${safeName}")'>🗑️ 删除</button></div></div>`;
     });
-    document.getElementById("list").innerHTML = html || "<div class='item'>暂无产品</div>";
+    document.getElementById("productList").innerHTML = html || "<div class='item'>暂无产品</div>";
 }
 
-// ========== 加载轮播图列表 ==========
+// ========== 加载轮播图 ==========
 async function loadSlides() {
     let { data } = await sb.from("home_slides").select("*").order("sort_order");
     let html = "";
     (data||[]).forEach(s => {
-        html += `<div class="media-item"><img src="${s.image_url}" class="media-img" onerror="this.src='https://placehold.co/60x60'">
-        <div class="media-info"><div class="media-title">${escapeHtml(s.title||'无标题')}</div><div class="media-url">${s.image_url.substring(0,50)}...</div></div>
+        html += `<div class="media-item"><img src="${s.image_url}" class="media-img">
+        <div class="media-info"><div class="media-title">${escapeHtml(s.title||'无标题')}</div></div>
         <div class="media-actions"><button onclick="deleteSlide(${s.id})" style="background:#dc2626;">删除</button></div></div>`;
     });
-    document.getElementById("slidesList").innerHTML = html || "<div>暂无轮播图，请添加上传</div>";
+    document.getElementById("slidesList").innerHTML = html || "<div>暂无轮播图，请点击上方区域添加</div>";
 }
 
-// ========== 加载工厂照片列表 ==========
+// ========== 加载工厂照片 ==========
 async function loadFactoryPhotos() {
     let { data } = await sb.from("factory_photos").select("*").order("sort_order");
     let html = "";
     (data||[]).forEach(f => {
-        html += `<div class="media-item"><img src="${f.image_url}" class="media-img" onerror="this.src='https://placehold.co/60x60'">
-        <div class="media-info"><div class="media-title">${escapeHtml(f.caption||'工厂照片')}</div><div class="media-url">${f.image_url.substring(0,50)}...</div></div>
+        html += `<div class="media-item"><img src="${f.image_url}" class="media-img">
+        <div class="media-info"><div class="media-title">${escapeHtml(f.caption||'工厂照片')}</div></div>
         <div class="media-actions"><button onclick="deleteFactoryPhoto(${f.id})" style="background:#dc2626;">删除</button></div></div>`;
     });
-    document.getElementById("factoryList").innerHTML = html || "<div>暂无工厂照片，请添加上传</div>";
+    document.getElementById("factoryList").innerHTML = html || "<div>暂无工厂照片，请点击上方区域添加</div>";
 }
 
-// ========== 编辑/删除产品 ==========
+// ========== 编辑/删除 ==========
 function editProduct(id,name,category,gsm,moq,feature,videoUrl) {
     document.getElementById("editId").value = id; document.getElementById("editName").value = name;
     document.getElementById("editCategory").value = category; document.getElementById("editGsm").value = gsm;
@@ -422,7 +376,7 @@ async function saveEdit() {
     if (error) alert("失败：" + error.message);
     else { alert("✅ 已更新"); document.getElementById("editModal").style.display = "none"; loadProducts(); }
 }
-async function deleteProduct(id,name) { if (confirm(`删除 "${name}"？不可恢复`)) { await sb.from("products").delete().eq("id", id); loadProducts(); } }
+async function deleteProduct(id,name) { if (confirm(`删除 "${name}"？`)) { await sb.from("products").delete().eq("id", id); loadProducts(); } }
 async function deleteSlide(id) { if (confirm("删除这张轮播图？")) { await sb.from("home_slides").delete().eq("id", id); loadSlides(); } }
 async function deleteFactoryPhoto(id) { if (confirm("删除这张照片？")) { await sb.from("factory_photos").delete().eq("id", id); loadFactoryPhotos(); } }
 
@@ -438,7 +392,7 @@ document.getElementById("addSlideBtn").onclick = addSlide;
 document.getElementById("addFactoryBtn").onclick = addFactoryPhoto;
 document.getElementById("pass").addEventListener("keydown", (e) => { if (e.key === "Enter") login(); });
 
-window.removeImage = removeImage;
+window.removeProductImage = removeProductImage;
 window.deleteProduct = deleteProduct;
 window.editProduct = editProduct;
 window.deleteSlide = deleteSlide;
