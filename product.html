@@ -89,7 +89,6 @@ body {
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    cursor: zoom-in;
     position: relative;
 }
 
@@ -98,7 +97,6 @@ body {
     aspect-ratio: 1 / 1;
     object-fit: contain;
     background: #f8fafc;
-    transition: transform 0.3s ease;
 }
 
 .main-video {
@@ -106,42 +104,6 @@ body {
     aspect-ratio: 16 / 9;
     border: none;
     background: #000;
-}
-
-/* 放大镜效果 */
-.zoom-lens {
-    position: absolute;
-    border: 2px solid #2563eb;
-    width: 100px;
-    height: 100px;
-    background: rgba(37, 99, 235, 0.1);
-    pointer-events: none;
-    z-index: 10;
-    display: none;
-    border-radius: 4px;
-}
-
-.zoom-result {
-    position: fixed;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 400px;
-    height: 400px;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-    background-repeat: no-repeat;
-    display: none;
-    z-index: 1000;
-    border: 1px solid #e5e7eb;
-    pointer-events: none;
-}
-
-@media (max-width: 1200px) {
-    .zoom-result {
-        display: none !important;
-    }
 }
 
 /* 缩略图区域 */
@@ -183,8 +145,8 @@ body {
     transform: translate(-50%, -50%);
     background: rgba(0,0,0,0.6);
     color: white;
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -192,7 +154,7 @@ body {
     font-size: 12px;
 }
 
-/* 导航箭头 */
+/* 导航按钮 */
 .gallery-nav {
     display: flex;
     gap: 10px;
@@ -242,14 +204,6 @@ body {
     line-height: 1.3;
 }
 
-.sku {
-    color: #6b7280;
-    font-size: 14px;
-    margin-bottom: 20px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #e5e7eb;
-}
-
 /* 规格表格 */
 .specs-table {
     background: #f8fafc;
@@ -269,7 +223,7 @@ body {
 }
 
 .spec-label {
-    width: 100px;
+    width: 80px;
     font-weight: 600;
     color: #475569;
 }
@@ -371,6 +325,7 @@ body {
     border-radius: 12px;
     font-size: 14px;
     transition: all 0.2s;
+    font-family: inherit;
 }
 
 .form-group input:focus,
@@ -418,55 +373,6 @@ body {
     margin-top: 30px;
     color: #dc2626;
 }
-
-/* ========== 底部推荐 ========== */
-.related-section {
-    margin-top: 60px;
-    padding-top: 30px;
-    border-top: 1px solid #e5e7eb;
-}
-
-.related-title {
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 20px;
-}
-
-.related-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-}
-
-.related-card {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-decoration: none;
-    color: inherit;
-}
-
-.related-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
-
-.related-card img {
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-}
-
-.related-card .info {
-    padding: 12px;
-}
-
-.related-card .name {
-    font-weight: 500;
-    font-size: 14px;
-}
 </style>
 
 </head>
@@ -485,9 +391,6 @@ body {
         <div class="loading">Loading product details...</div>
     </div>
 </div>
-
-<!-- 放大镜结果区域 -->
-<div class="zoom-result" id="zoomResult"></div>
 
 <script>
 
@@ -545,7 +448,17 @@ function getEmbedUrl(url) {
     return url;
 }
 
-// 构建媒体列表
+// 获取视频缩略图
+function getVideoThumbnail(url) {
+    if (!url) return null;
+    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    if (match) {
+        return `https://img.youtube.com/vi/${match[1]}/default.jpg`;
+    }
+    return null;
+}
+
+// 构建媒体列表（图片 + 视频）
 function buildMediaList(product) {
     const list = [];
     
@@ -560,8 +473,8 @@ function buildMediaList(product) {
         list.push({ type: 'image', url: product.image });
     }
     
-    // 添加视频（如果有 video_url 字段）
-    if (product.video_url && product.video_url.trim()) {
+    // 添加视频（如果有 video_url 字段且不为空）
+    if (product.video_url && product.video_url.trim() && isVideoUrl(product.video_url)) {
         list.push({ type: 'video', url: product.video_url });
     }
     
@@ -584,63 +497,7 @@ function renderMainMedia() {
         mainMediaDiv.innerHTML = `<iframe class="main-video" src="${embedUrl}" frameborder="0" allowfullscreen></iframe>`;
     } else {
         mainMediaDiv.innerHTML = `<img id="mainImage" class="main-image" src="${media.url}" alt="Product image" onerror="this.src='https://placehold.co/800x800?text=Image+Not+Found'">`;
-        
-        // 设置放大镜效果
-        setTimeout(setupZoom, 100);
     }
-}
-
-// 放大镜效果
-function setupZoom() {
-    const mainImage = document.getElementById('mainImage');
-    const zoomResult = document.getElementById('zoomResult');
-    if (!mainImage || !zoomResult) return;
-    
-    let lens = document.querySelector('.zoom-lens');
-    if (!lens) {
-        lens = document.createElement('div');
-        lens.className = 'zoom-lens';
-        mainImage.parentElement.style.position = 'relative';
-        mainImage.parentElement.appendChild(lens);
-    }
-    
-    mainImage.addEventListener('mousemove', (e) => {
-        const rect = mainImage.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
-            lens.style.display = 'none';
-            zoomResult.style.display = 'none';
-            return;
-        }
-        
-        lens.style.display = 'block';
-        zoomResult.style.display = 'block';
-        
-        const lensWidth = 100;
-        const lensHeight = 100;
-        let lensX = x - lensWidth / 2;
-        let lensY = y - lensHeight / 2;
-        
-        lensX = Math.max(0, Math.min(lensX, rect.width - lensWidth));
-        lensY = Math.max(0, Math.min(lensY, rect.height - lensHeight));
-        
-        lens.style.left = lensX + 'px';
-        lens.style.top = lensY + 'px';
-        
-        const zoomX = (lensX / (rect.width - lensWidth)) * 100;
-        const zoomY = (lensY / (rect.height - lensHeight)) * 100;
-        
-        zoomResult.style.backgroundImage = `url(${mainImage.src})`;
-        zoomResult.style.backgroundSize = `${rect.width * 2}px ${rect.height * 2}px`;
-        zoomResult.style.backgroundPosition = `${zoomX}% ${zoomY}%`;
-    });
-    
-    mainImage.addEventListener('mouseleave', () => {
-        lens.style.display = 'none';
-        zoomResult.style.display = 'none';
-    });
 }
 
 // 渲染缩略图
@@ -650,20 +507,26 @@ function renderThumbnails() {
     
     if (mediaList.length <= 1) {
         container.style.display = 'none';
+        const nav = document.querySelector('.gallery-nav');
+        if (nav) nav.style.display = 'none';
         return;
     }
     
     container.style.display = 'flex';
+    if (document.querySelector('.gallery-nav')) {
+        document.querySelector('.gallery-nav').style.display = 'flex';
+    }
+    
     container.innerHTML = mediaList.map((media, idx) => {
         const isActive = idx === currentMediaIndex;
-        const isVideo = media.type === 'video';
         let thumbUrl = media.url;
-        if (isVideo && media.url.includes('youtube')) {
-            const match = media.url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-            if (match) {
-                thumbUrl = `https://img.youtube.com/vi/${match[1]}/default.jpg`;
-            }
+        let isVideo = media.type === 'video';
+        
+        if (isVideo) {
+            const videoThumb = getVideoThumbnail(media.url);
+            if (videoThumb) thumbUrl = videoThumb;
         }
+        
         return `<img src="${thumbUrl}" class="thumbnail ${isActive ? 'active' : ''} ${isVideo ? 'video-thumb' : ''}" onclick="switchMedia(${idx})" onerror="this.src='https://placehold.co/80x80?text=No+Image'">`;
     }).join('');
 }
@@ -704,19 +567,16 @@ function renderProduct() {
             <div class="media-gallery">
                 <div class="main-media" id="mainMedia"></div>
                 <div class="thumbnails" id="thumbnails"></div>
-                ${mediaList.length > 1 ? `
-                <div class="gallery-nav">
+                <div class="gallery-nav" style="${mediaList.length <= 1 ? 'display:none' : 'display:flex'}">
                     <button class="nav-btn" onclick="prevMedia()">← Previous</button>
                     <button class="nav-btn" onclick="nextMedia()">Next →</button>
                 </div>
-                ` : ''}
             </div>
             
             <!-- 右侧产品信息 -->
             <div class="product-info">
                 <div class="category-tag">${escapeHtml(p.category || "Fabric")}</div>
                 <h1 class="product-title">${escapeHtml(p.name || "Product Name")}</h1>
-                <div class="sku">SKU: ${escapeHtml(p.sku || p.id || "N/A")}</div>
                 
                 <div class="specs-table">
                     <div class="spec-row">
@@ -727,8 +587,6 @@ function renderProduct() {
                         <div class="spec-label">📦 MOQ</div>
                         <div class="spec-value">${escapeHtml(p.moq || "-")}</div>
                     </div>
-                    ${p.width ? `<div class="spec-row"><div class="spec-label">📏 Width</div><div class="spec-value">${escapeHtml(p.width)}</div></div>` : ''}
-                    ${p.composition ? `<div class="spec-row"><div class="spec-label">🧵 Composition</div><div class="spec-value">${escapeHtml(p.composition)}</div></div>` : ''}
                 </div>
                 
                 <div class="features">
