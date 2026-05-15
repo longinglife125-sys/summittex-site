@@ -110,6 +110,7 @@ input, textarea{
     border-radius:8px;
     border:1px solid #e5e7eb;
     box-sizing:border-box;
+    font-family:Arial;
 }
 
 .tag{
@@ -317,13 +318,13 @@ function renderProduct() {
                 
                 <div class="rfq" id="rfqBox">
                     <h3>📋 Inquiry Form</h3>
-                    <p style="font-size:13px; color:#666;">We'll get back to you soon</p>
+                    <p style="font-size:13px; color:#666;">We'll get back to you within 24 hours</p>
                     
-                    <input type="text" id="inquiryName" placeholder="Your Name *">
-                    <input type="email" id="inquiryEmail" placeholder="Your Email *">
-                    <input type="text" id="inquiryCompany" placeholder="Company Name (optional)">
-                    <input type="text" id="inquiryQuantity" placeholder="Quantity">
-                    <textarea id="inquiryMessage" rows="4" placeholder="Your message..."></textarea>
+                    <input type="text" id="inquiryName" placeholder="Full Name *">
+                    <input type="email" id="inquiryEmail" placeholder="Email Address *">
+                    <input type="text" id="inquiryCompany" placeholder="Company Name">
+                    <input type="text" id="inquiryQuantity" placeholder="Quantity (meters/rolls)">
+                    <textarea id="inquiryMessage" rows="4" placeholder="Your message or specific requirements..."></textarea>
                     
                     <button onclick="sendInquiry()">Send Inquiry ✉️</button>
                     <button onclick="closeRFQ()" style="background:#6c757d; margin-top:10px;">Cancel</button>
@@ -367,7 +368,7 @@ async function sendInquiry() {
         return;
     }
     if (!email) {
-        alert("Please enter your email");
+        alert("Please enter your email address");
         return;
     }
     if (!message) {
@@ -397,7 +398,7 @@ async function sendInquiry() {
         if (error) {
             alert("Failed to send: " + error.message);
         } else {
-            alert("✅ Inquiry sent! We'll contact you soon.");
+            alert("✅ Inquiry sent successfully! We'll contact you soon.");
             closeRFQ();
             document.getElementById("inquiryName").value = "";
             document.getElementById("inquiryEmail").value = "";
