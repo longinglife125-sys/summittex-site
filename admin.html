@@ -135,11 +135,12 @@ button:hover{
 <input id="moq" placeholder="MOQ (例: 1000 meters)">
 <textarea id="feature" placeholder="产品描述"></textarea>
 
-<!-- 新增：视频链接输入框 -->
-<input id="videoUrl" placeholder="视频链接 (YouTube/Vimeo，选填)">
-<div class="video-hint">💡 支持 YouTube 链接如: https://youtu.be/xxxxx 或 https://www.youtube.com/watch?v=xxxxx</div>
+<!-- 视频链接输入框 -->
+<input id="videoUrl" placeholder="视频链接 (YouTube 或 MP4 网址，选填)">
+<div class="video-hint">💡 支持 YouTube: https://youtu.be/xxxxx 或 https://www.youtube.com/watch?v=xxxxx</div>
 
-<input type="file" id="file">
+<input type="file" id="file" accept="image/*">
+
 <button id="uploadBtn">上传产品</button>
 </div>
 
@@ -202,7 +203,6 @@ async function upload() {
                     .from("images")
                     .getPublicUrl(fileName);
                 imageUrl = publicUrlData.publicUrl;
-                console.log("图片URL:", imageUrl);
             }
         }
 
@@ -231,7 +231,6 @@ async function upload() {
         } else {
             alert("✅ 产品上传成功" + (imageUrl ? "（含图片）" : "（无图片）") + (videoUrl ? "（含视频）" : ""));
             
-            // 清空表单
             document.getElementById("name").value = "";
             document.getElementById("gsm").value = "";
             document.getElementById("moq").value = "";
