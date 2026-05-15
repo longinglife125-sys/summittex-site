@@ -178,12 +178,27 @@
             color: #475569;
         }
 
-        /* Marble Texture for Fabric Feel */
+        /* Hero Image - 可动态更换背景图 */
         .hero-image {
-            background: url('https://images.unsplash.com/photo-1567277971502-c3d2fc0f8b9d?q=80&w=2070&auto=format') center/cover;
+            background: linear-gradient(145deg, #334155, #0f172a);
             border-radius: 32px;
             min-height: 400px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .hero-image span {
+            background: rgba(0,0,0,0.5);
+            padding: 12px 24px;
+            border-radius: 40px;
         }
 
         /* Features Grid */
@@ -340,7 +355,9 @@
                 <div class="stat-item"><h3>300+</h3><p>Active Clients</p></div>
             </div>
         </div>
-        <div class="hero-image"></div>
+        <div class="hero-image" id="heroImage">
+            <span>Premium Quality Fabrics</span>
+        </div>
     </div>
 </section>
 
@@ -396,36 +413,72 @@
 </a>
 
 <script>
-    // Dynamic Product Fetching from your existing Supabase "products" table
+    // Supabase 配置
     const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
     const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    // 默认图片链接（如果产品没有图片时使用）
+    const DEFAULT_IMAGE = "https://placehold.co/400x260?text=SummitTex+Fabric";
+
+    // 加载首页背景图（从 products 表随机取一张产品图片作为背景）
+    async function loadHeroBackground() {
+        try {
+            const { data, error } = await sb
+                .from("products")
+                .select("image")
+                .not("image", "is", null)
+                .limit(1);
+            
+            const heroDiv = document.getElementById("heroImage");
+            if (heroDiv && data && data.length > 0 && data[0].image) {
+                heroDiv.style.backgroundImage = `url('${data[0].image}')`;
+                heroDiv.style.backgroundSize = "cover";
+                heroDiv.style.backgroundPosition = "center";
+                heroDiv.innerHTML = ""; // 移除文字叠加
+            } else {
+                // 没有图片时保持默认渐变
+                heroDiv.style.background = "linear-gradient(145deg, #334155, #0f172a)";
+                heroDiv.innerHTML = "<span>SummitTex Premium Fabrics</span>";
+            }
+        } catch (err) {
+            console.warn("加载背景图失败:", err);
+        }
+    }
+
+    // 加载首页精选产品（只显示有图片的产品）
     async function loadFeaturedProducts() {
         try {
             const { data, error } = await sb
                 .from("products")
-                .select("name, gsm, moq, image, category")
-                .limit(3); // Get top 3 products as featured
+                .select("id, name, gsm, moq, image, category")
+                .not("image", "is", null)
+                .limit(6);  // 显示最多6个产品
 
             const container = document.getElementById("featured-products");
-            if (error || !data || data.length === 0) {
-                container.innerHTML = `<div style="text-align: center; grid-column: 1/-1;">✨ No products yet, please upload from admin panel</div>`;
+            if (error) {
+                console.error("数据库错误:", error);
+                container.innerHTML = `<div style="text-align: center; grid-column: 1/-1;">⚠️ 无法加载产品，请刷新重试</div>`;
+                return;
+            }
+            
+            if (!data || data.length === 0) {
+                container.innerHTML = `<div style="text-align: center; grid-column: 1/-1;">✨ 暂无产品，请先在后台上传产品图片</div>`;
                 return;
             }
 
             container.innerHTML = data.map(p => `
                 <div class="product-card" onclick="window.location.href='product.html?id=${p.id}'">
-                    <img src="${p.image || 'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a'}" alt="${p.name}" onerror="this.src='https://placehold.co/400x260?text=Fabric'">
+                    <img src="${p.image || DEFAULT_IMAGE}" alt="${escapeHtml(p.name)}" onerror="this.src='${DEFAULT_IMAGE}'">
                     <div class="product-info">
-                        <b>${escapeHtml(p.name || "High-Grade Fabric")}</b>
-                        <p style="font-size: 0.85rem; color: #475569; margin-top: 4px;">${p.category || "Functional Fabric"} · GSM ${p.gsm || "—"} / MOQ ${p.moq || "Contact"}</p>
+                        <b>${escapeHtml(p.name || "Premium Fabric")}</b>
+                        <p style="font-size: 0.85rem; color: #475569; margin-top: 4px;">${escapeHtml(p.category || "Functional Fabric")} · GSM ${escapeHtml(p.gsm || "—")} / MOQ ${escapeHtml(p.moq || "Contact")}</p>
                     </div>
                 </div>
             `).join('');
         } catch (err) {
-            console.warn(err);
-            document.getElementById("featured-products").innerHTML = `<div style="text-align: center; grid-column: 1/-1;">Unable to load products, please refresh</div>`;
+            console.warn("加载产品失败:", err);
+            document.getElementById("featured-products").innerHTML = `<div style="text-align: center; grid-column: 1/-1;">⚠️ 加载失败，请刷新页面</div>`;
         }
     }
 
@@ -439,6 +492,8 @@
         });
     }
 
+    // 页面加载时运行
+    loadHeroBackground();
     loadFeaturedProducts();
 </script>
 
