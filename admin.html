@@ -84,10 +84,10 @@ button:hover{
 }
 
 .item-img{
-    max-width:60px;
-    max-height:60px;
-    border-radius:8px;
-    margin:5px;
+    max-width:50px;
+    max-height:50px;
+    border-radius:5px;
+    margin:2px;
     object-fit:cover;
 }
 
@@ -142,6 +142,7 @@ button:hover{
     border-radius: 8px;
     overflow: hidden;
     background: #1e293b;
+    border: 1px solid #4b5563;
 }
 
 .preview-item img {
@@ -154,7 +155,7 @@ button:hover{
     position: absolute;
     top: 2px;
     right: 2px;
-    background: rgba(0,0,0,0.6);
+    background: rgba(220,38,38,0.8);
     color: white;
     border: none;
     border-radius: 50%;
@@ -171,10 +172,10 @@ button:hover{
     background: #dc2626;
 }
 
-.video-preview {
-    margin-top: 10px;
-    color: #4ade80;
+.img-count {
     font-size: 12px;
+    color: #4ade80;
+    margin-top: 5px;
 }
 </style>
 </head>
@@ -221,6 +222,7 @@ button:hover{
     <small>支持 JPG、PNG、WEBP，可同时选择多张</small>
 </div>
 <div class="preview-container" id="previewContainer"></div>
+<div class="img-count" id="imgCount">已选择 0 张图片</div>
 <input type="file" id="imageInput" multiple accept="image/jpeg,image/jpg,image/png,image/webp" style="display:none">
 
 <div class="section-title">📹 视频（二选一即可）</div>
@@ -262,6 +264,7 @@ let selectedImages = [];
 const dropArea = document.getElementById('dropArea');
 const imageInput = document.getElementById('imageInput');
 const previewContainer = document.getElementById('previewContainer');
+const imgCountSpan = document.getElementById('imgCount');
 
 // 打开文件选择
 dropArea.addEventListener('click', () => imageInput.click());
@@ -292,23 +295,13 @@ imageInput.addEventListener('change', (e) => {
 // 添加图片到列表
 function addImages(files) {
     for (const file of files) {
-        if (file.size > 5 * 1024 * 1024) {
-            alert(`图片 ${file.name} 超过5MB，已跳过`);
+        if (file.size > 10 * 1024 * 1024) {
+            alert(`图片 ${file.name} 超过10MB，已跳过`);
             continue;
         }
         selectedImages.push(file);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const previewDiv = document.createElement('div');
-            previewDiv.className = 'preview-item';
-            previewDiv.innerHTML = `
-                <img src="${e.target.result}">
-                <button class="remove-btn" onclick="removeImage(${selectedImages.length - 1})">×</button>
-            `;
-            previewContainer.appendChild(previewDiv);
-        };
-        reader.readAsDataURL(file);
     }
+    refreshPreview();
 }
 
 // 移除图片
@@ -333,8 +326,10 @@ function refreshPreview() {
         };
         reader.readAsDataURL(file);
     });
+    imgCountSpan.innerText = `已选择 ${selectedImages.length} 张图片`;
 }
 
+// 登录
 function login() {
     const pass = document.getElementById("pass").value.trim();
     if (pass === "123456") {
@@ -347,6 +342,7 @@ function login() {
     }
 }
 
+// 上传产品
 async function upload() {
     try {
         const productName = document.getElementById("name").value.trim();
@@ -355,16 +351,24 @@ async function upload() {
             return;
         }
 
-        // 1. 上传多张图片
+        const uploadBtn = document.getElementById("uploadBtn");
+        uploadBtn.disabled = true;
+        uploadBtn.innerText = "上传中...";
+
+        // 1. 上传多张图片到 Supabase
         const imageUrls = [];
-        for (const file of selectedImages) {
-            const fileName = Date.now() + "_" + Math.random().toString(36).substring(2, 8) + "_" + file.name;
+        for (let i = 0; i < selectedImages.length; i++) {
+            const file = selectedImages[i];
+            const fileName = Date.now() + "_" + i + "_" + file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+            console.log(`上传图片 ${i+1}/${selectedImages.length}: ${fileName}`);
+            
             const { error: uploadError } = await sb.storage
                 .from("images")
                 .upload(fileName, file);
+            
             if (uploadError) {
-                console.log("图片上传错误:", uploadError);
-                alert("图片上传失败：" + uploadError.message);
+                console.error("图片上传错误:", uploadError);
+                alert(`图片 ${file.name} 上传失败: ${uploadError.message}`);
             } else {
                 const { data: publicUrlData } = sb.storage
                     .from("images")
@@ -378,12 +382,12 @@ async function upload() {
         const videoFile = document.getElementById("videoFile").files[0];
         
         if (videoFile) {
-            const videoFileName = Date.now() + "_video_" + videoFile.name;
+            const videoFileName = Date.now() + "_video_" + videoFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
             const { error: videoUploadError } = await sb.storage
                 .from("images")
                 .upload(videoFileName, videoFile);
             if (videoUploadError) {
-                console.log("视频上传错误:", videoUploadError);
+                console.error("视频上传错误:", videoUploadError);
                 alert("视频上传失败：" + videoUploadError.message);
             } else {
                 const { data: publicUrlData } = sb.storage
@@ -400,10 +404,12 @@ async function upload() {
             gsm: document.getElementById("gsm").value,
             moq: document.getElementById("moq").value,
             feature: document.getElementById("feature").value,
-            image: imageUrls[0] || "",
-            images: imageUrls,
+            image: imageUrls[0] || "",  // 第一张作为封面
+            images: imageUrls,          // 所有图片数组
             video_url: videoUrl || null
         };
+
+        console.log("保存产品，图片数量:", imageUrls.length);
 
         const { error: dbError } = await sb
             .from("products")
@@ -412,7 +418,7 @@ async function upload() {
         if (dbError) {
             alert("上传失败：" + dbError.message);
         } else {
-            alert("✅ 产品上传成功！图片：" + imageUrls.length + "张" + (videoUrl ? "，含视频" : ""));
+            alert(`✅ 产品上传成功！\n图片：${imageUrls.length}张\n视频：${videoUrl ? "已添加" : "无"}`);
             
             // 清空表单
             document.getElementById("name").value = "";
@@ -428,17 +434,24 @@ async function upload() {
             load();
         }
     } catch (e) {
-        console.log("系统异常:", e);
+        console.error("系统异常:", e);
         alert("系统错误：" + e.message);
+    } finally {
+        const uploadBtn = document.getElementById("uploadBtn");
+        uploadBtn.disabled = false;
+        uploadBtn.innerText = "上传产品";
     }
 }
 
+// 加载产品列表
 async function load() {
     const { data, error } = await sb
         .from("products")
-        .select("*");
+        .select("*")
+        .order("id", { ascending: false });
+    
     if (error) {
-        console.log("加载错误:", error);
+        console.error("加载错误:", error);
         return;
     }
 
@@ -448,15 +461,27 @@ async function load() {
     } else {
         data.forEach(p => {
             const imagesCount = p.images ? p.images.length : (p.image ? 1 : 0);
+            // 显示前3张图片作为预览
+            let previewImages = "";
+            if (p.images && p.images.length > 0) {
+                const showImages = p.images.slice(0, 3);
+                previewImages = showImages.map(img => `<img src="${img}" class="item-img" onerror="this.style.display='none'">`).join('');
+                if (p.images.length > 3) {
+                    previewImages += `<span style="font-size:10px;"> +${p.images.length-3}</span>`;
+                }
+            } else if (p.image) {
+                previewImages = `<img src="${p.image}" class="item-img" onerror="this.style.display='none'">`;
+            }
+            
             html += `
             <div class="item">
                 <b>${escapeHtml(p.name || "")}</b><br><br>
                 📁 分类：${escapeHtml(p.category || "")}<br>
                 ⚖️ GSM：${escapeHtml(p.gsm || "")}<br>
                 📦 MOQ：${escapeHtml(p.moq || "")}<br>
-                🖼️ 图片：${imagesCount}张 &nbsp;|&nbsp; 🎬 视频：${p.video_url ? '✅' : '❌'}<br><br>
-                📝 ${escapeHtml((p.feature || "").substring(0, 100))}${p.feature && p.feature.length > 100 ? '...' : ''}<br>
-                ${p.image ? `<img src="${p.image}" class="item-img" onerror="this.style.display='none'">` : ""}
+                🖼️ 图片：${imagesCount}张 &nbsp;|&nbsp; 🎬 视频：${p.video_url ? '✅' : '❌'}<br>
+                📝 ${escapeHtml((p.feature || "").substring(0, 80))}${p.feature && p.feature.length > 80 ? '...' : ''}<br>
+                <div style="margin-top:5px;">${previewImages}</div>
             </div>
             `;
         });
@@ -464,12 +489,15 @@ async function load() {
     document.getElementById("list").innerHTML = html;
 }
 
+// 加载CRM
 async function loadCRM() {
     const { data, error } = await sb
         .from("inquiries")
-        .select("*");
+        .select("*")
+        .order("created_at", { ascending: false });
+    
     if (error) {
-        console.log("CRM错误:", error);
+        console.error("CRM错误:", error);
         return;
     }
     let html = "";
@@ -502,6 +530,7 @@ function escapeHtml(str) {
 // 暴露全局函数
 window.removeImage = removeImage;
 
+// 绑定事件
 document.getElementById("loginBtn").onclick = login;
 document.getElementById("uploadBtn").onclick = upload;
 document.getElementById("refreshBtn").onclick = load;
