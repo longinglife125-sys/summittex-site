@@ -1,19 +1,15 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Product Detail - SummitTex</title>
+<title>Product Detail | SummitTex</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
-/* ===================== */
-/* GLOBAL */
-/* ===================== */
 
 body{
     font-family:Arial;
@@ -28,7 +24,6 @@ body{
     padding:30px;
 }
 
-/* BACK */
 .back{
     color:#2563eb;
     text-decoration:none;
@@ -40,14 +35,12 @@ body{
     text-decoration:underline;
 }
 
-/* LAYOUT */
 .layout{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:40px;
 }
 
-/* IMAGE */
 .main-img{
     width:100%;
     border-radius:16px;
@@ -57,7 +50,6 @@ body{
     object-fit:contain;
 }
 
-/* THUMB */
 .thumbs{
     display:flex;
     gap:10px;
@@ -78,7 +70,6 @@ body{
     border:2px solid #2563eb;
 }
 
-/* BOX */
 .box{
     background:white;
     padding:20px;
@@ -87,7 +78,6 @@ body{
     box-shadow:0 8px 20px rgba(0,0,0,.06);
 }
 
-/* BUTTON */
 button{
     margin-top:20px;
     padding:14px;
@@ -104,7 +94,6 @@ button:hover{
     background:#1d4ed8;
 }
 
-/* RFQ */
 .rfq{
     margin-top:25px;
     background:white;
@@ -123,7 +112,6 @@ input, textarea{
     box-sizing:border-box;
 }
 
-/* TAG */
 .tag{
     display:inline-block;
     background:#e0edff;
@@ -134,7 +122,6 @@ input, textarea{
     margin-bottom:15px;
 }
 
-/* WHATSAPP */
 .wa{
     position:fixed;
     bottom:20px;
@@ -153,7 +140,6 @@ input, textarea{
     background:#128C7E;
 }
 
-/* 加载和错误提示 */
 .loading, .error, .not-found{
     text-align:center;
     padding:60px 20px;
@@ -166,7 +152,6 @@ input, textarea{
     color:#dc2626;
 }
 
-/* MOBILE */
 @media(max-width:768px){
     .layout{
         grid-template-columns:1fr;
@@ -186,50 +171,30 @@ input, textarea{
 <a class="back" href="products.html">← Back to Products</a>
 
 <div id="content">
-    <div class="loading">加载产品详情中...</div>
+    <div class="loading">Loading product details...</div>
 </div>
 
 </div>
 
-<!-- WhatsApp -->
 <a class="wa" id="wa" target="_blank">💬 WhatsApp</a>
 
 <script>
-
-/* ===================== */
-/* SUPABASE 配置 */
-/* ===================== */
 
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-/* ===================== */
-/* 获取 URL 参数 id（支持数字和字符串） */
-/* ===================== */
-
 const urlParams = new URLSearchParams(window.location.search);
 let productId = urlParams.get("id");
 
-console.log("原始产品ID参数:", productId, "类型:", typeof productId);
-
-// 如果 ID 存在且是数字字符串，转换为数字类型
 if (productId && !isNaN(parseInt(productId))) {
     productId = parseInt(productId);
-    console.log("转换后的数字ID:", productId, "类型:", typeof productId);
 }
-
-/* ===================== */
-/* 全局变量 */
-/* ===================== */
 
 let productData = null;
 let imagesList = [];
 
-/* ===================== */
-/* 辅助函数：防XSS */
-/* ===================== */
 function escapeHtml(str) {
     if (!str) return "";
     return str
@@ -240,73 +205,45 @@ function escapeHtml(str) {
         .replace(/'/g, "&#39;");
 }
 
-/* ===================== */
-/* 格式化文本（保留换行） */
-/* ===================== */
 function formatText(text) {
-    if (!text) return "暂无描述";
+    if (!text) return "No description available";
     return escapeHtml(text).replace(/\n/g, "<br>");
 }
-
-/* ===================== */
-/* 加载产品详情 */
-/* ===================== */
 
 async function loadProduct() {
     const contentDiv = document.getElementById("content");
     
-    // 验证产品ID
     if (!productId) {
-        console.error("没有找到产品ID参数");
         contentDiv.innerHTML = `
             <div class="not-found">
-                <h2>❌ 无效的产品链接</h2>
-                <p>URL中没有找到产品ID，请从产品列表页重新进入</p>
-                <a href="products.html" style="color:#2563eb;">返回产品列表 →</a>
+                <h2>❌ Invalid Product Link</h2>
+                <p>Please select a product from the products page</p>
+                <a href="products.html" style="color:#2563eb;">← Back to Products</a>
             </div>
         `;
         return;
     }
     
     try {
-        console.log("正在查询产品, ID:", productId, "类型:", typeof productId);
-        
-        // 查询产品
         const { data, error } = await sb
             .from("products")
             .select("*")
             .eq("id", productId)
             .single();
         
-        if (error) {
-            console.error("查询错误:", error);
-            contentDiv.innerHTML = `
-                <div class="error">
-                    <h2>❌ 产品加载失败</h2>
-                    <p>错误信息: ${escapeHtml(error.message)}</p>
-                    <p>产品ID: ${escapeHtml(String(productId))}</p>
-                    <a href="products.html" style="color:#2563eb;">返回产品列表</a>
-                </div>
-            `;
-            return;
-        }
-        
-        if (!data) {
-            console.warn("未找到产品, ID:", productId);
+        if (error || !data) {
             contentDiv.innerHTML = `
                 <div class="not-found">
-                    <h2>❌ 产品未找到</h2>
-                    <p>找不到ID为 ${escapeHtml(String(productId))} 的产品</p>
-                    <a href="products.html" style="color:#2563eb;">返回产品列表 →</a>
+                    <h2>❌ Product Not Found</h2>
+                    <p>The product you're looking for may have been removed</p>
+                    <a href="products.html" style="color:#2563eb;">← Back to Products</a>
                 </div>
             `;
             return;
         }
         
-        console.log("✅ 找到产品:", data.name, "ID:", data.id);
         productData = data;
         
-        // 处理图片列表
         if (data.images && Array.isArray(data.images) && data.images.length > 0) {
             imagesList = data.images.filter(img => img && img.trim() !== "");
         } else if (data.image && data.image.trim() !== "") {
@@ -315,29 +252,20 @@ async function loadProduct() {
             imagesList = [];
         }
         
-        console.log("图片数量:", imagesList.length);
-        
-        // 渲染页面
         renderProduct();
-        
-        // 设置 WhatsApp 链接
         setupWhatsApp();
         
     } catch (err) {
-        console.error("系统异常:", err);
+        console.error("Error:", err);
         contentDiv.innerHTML = `
             <div class="error">
-                <h2>⚠️ 系统错误</h2>
+                <h2>⚠️ System Error</h2>
                 <p>${escapeHtml(err.message)}</p>
-                <a href="products.html" style="color:#2563eb;">返回产品列表</a>
+                <a href="products.html" style="color:#2563eb;">← Back to Products</a>
             </div>
         `;
     }
 }
-
-/* ===================== */
-/* 渲染产品页面 */
-/* ===================== */
 
 function renderProduct() {
     if (!productData) return;
@@ -345,7 +273,6 @@ function renderProduct() {
     const p = productData;
     const contentDiv = document.getElementById("content");
     
-    // 生成缩略图 HTML
     let thumbsHtml = "";
     if (imagesList.length > 1) {
         thumbsHtml = `
@@ -357,28 +284,24 @@ function renderProduct() {
         `;
     }
     
-    // 主图地址
     const mainImage = imagesList.length > 0 ? imagesList[0] : "";
     
     contentDiv.innerHTML = `
         <div class="layout">
-            
-            <!-- 左侧：图片区 -->
             <div>
                 ${mainImage ? 
                     `<img id="mainImg" class="main-img" src="${mainImage}" onerror="this.src='https://placehold.co/600x400?text=Image+Not+Found'">` :
                     `<div class="main-img" style="display:flex;align-items:center;justify-content:center;background:#f0f0f0;min-height:300px;">
-                        📷 暂无产品图片
+                        📷 No Image Available
                      </div>`
                 }
                 ${thumbsHtml}
             </div>
             
-            <!-- 右侧：产品信息 -->
             <div>
-                <div class="tag">${escapeHtml(p.category || "产品分类")}</div>
+                <div class="tag">${escapeHtml(p.category || "Fabric")}</div>
                 
-                <h1>${escapeHtml(p.name || "产品名称")}</h1>
+                <h1>${escapeHtml(p.name || "Product Name")}</h1>
                 
                 <div class="box">
                     <b>⚖️ GSM:</b> ${escapeHtml(p.gsm || "-")}<br>
@@ -386,34 +309,29 @@ function renderProduct() {
                 </div>
                 
                 <div class="box">
-                    <h3>📝 产品特性</h3>
+                    <h3>📝 Product Features</h3>
                     <div>${formatText(p.feature)}</div>
                 </div>
                 
-                <button onclick="openRFQ()">📧 获取报价 / Request Quotation</button>
+                <button onclick="openRFQ()">📧 Request Quotation</button>
                 
                 <div class="rfq" id="rfqBox">
-                    <h3>📋 询价表单</h3>
-                    <p style="font-size:13px; color:#666;">我们会尽快回复您</p>
+                    <h3>📋 Inquiry Form</h3>
+                    <p style="font-size:13px; color:#666;">We'll get back to you soon</p>
                     
-                    <input type="text" id="inquiryName" placeholder="您的姓名 *">
-                    <input type="email" id="inquiryEmail" placeholder="您的邮箱 *">
-                    <input type="text" id="inquiryCompany" placeholder="公司名称（选填）">
-                    <input type="text" id="inquiryQuantity" placeholder="需求数量">
-                    <textarea id="inquiryMessage" rows="4" placeholder="留言信息..."></textarea>
+                    <input type="text" id="inquiryName" placeholder="Your Name *">
+                    <input type="email" id="inquiryEmail" placeholder="Your Email *">
+                    <input type="text" id="inquiryCompany" placeholder="Company Name (optional)">
+                    <input type="text" id="inquiryQuantity" placeholder="Quantity">
+                    <textarea id="inquiryMessage" rows="4" placeholder="Your message..."></textarea>
                     
-                    <button onclick="sendInquiry()">发送询盘 ✉️</button>
-                    <button onclick="closeRFQ()" style="background:#6c757d; margin-top:10px;">取消</button>
+                    <button onclick="sendInquiry()">Send Inquiry ✉️</button>
+                    <button onclick="closeRFQ()" style="background:#6c757d; margin-top:10px;">Cancel</button>
                 </div>
             </div>
-            
         </div>
     `;
 }
-
-/* ===================== */
-/* 切换主图 */
-/* ===================== */
 
 function setMainImage(index) {
     if (imagesList && imagesList[index]) {
@@ -423,10 +341,6 @@ function setMainImage(index) {
         }
     }
 }
-
-/* ===================== */
-/* 打开/关闭 RFQ 表单 */
-/* ===================== */
 
 function openRFQ() {
     const box = document.getElementById("rfqBox");
@@ -443,74 +357,63 @@ function closeRFQ() {
     }
 }
 
-/* ===================== */
-/* 发送询盘（保存到 Supabase） */
-/* ===================== */
-
 async function sendInquiry() {
     const name = document.getElementById("inquiryName")?.value.trim();
     const email = document.getElementById("inquiryEmail")?.value.trim();
-    const company = document.getElementById("inquiryCompany")?.value.trim();
-    const quantity = document.getElementById("inquiryQuantity")?.value.trim();
     const message = document.getElementById("inquiryMessage")?.value.trim();
     
     if (!name) {
-        alert("请填写您的姓名");
+        alert("Please enter your name");
         return;
     }
     if (!email) {
-        alert("请填写您的邮箱");
+        alert("Please enter your email");
         return;
     }
     if (!message) {
-        alert("请填写留言信息");
+        alert("Please enter your message");
         return;
     }
     
     const sendBtn = event?.target;
     if (sendBtn) {
         sendBtn.disabled = true;
-        sendBtn.textContent = "发送中...";
+        sendBtn.textContent = "Sending...";
     }
     
     try {
-        // 保存到 inquiries 表
+        const company = document.getElementById("inquiryCompany")?.value.trim() || "";
+        const quantity = document.getElementById("inquiryQuantity")?.value.trim() || "";
+        
         const { error } = await sb.from("inquiries").insert([{
             name: name,
             email: email,
             product: productData?.name || "",
-            message: `【公司】${company}\n【数量】${quantity}\n【留言】${message}`,
+            message: `Company: ${company}\nQuantity: ${quantity}\nMessage: ${message}`,
             status: "new",
             created_at: new Date().toISOString()
         }]);
         
         if (error) {
-            console.error("保存失败:", error);
-            alert("发送失败: " + error.message);
+            alert("Failed to send: " + error.message);
         } else {
-            alert("✅ 询盘已发送！我们会尽快联系您。");
+            alert("✅ Inquiry sent! We'll contact you soon.");
             closeRFQ();
-            // 清空表单
-            if (document.getElementById("inquiryName")) document.getElementById("inquiryName").value = "";
-            if (document.getElementById("inquiryEmail")) document.getElementById("inquiryEmail").value = "";
-            if (document.getElementById("inquiryCompany")) document.getElementById("inquiryCompany").value = "";
-            if (document.getElementById("inquiryQuantity")) document.getElementById("inquiryQuantity").value = "";
-            if (document.getElementById("inquiryMessage")) document.getElementById("inquiryMessage").value = "";
+            document.getElementById("inquiryName").value = "";
+            document.getElementById("inquiryEmail").value = "";
+            document.getElementById("inquiryCompany").value = "";
+            document.getElementById("inquiryQuantity").value = "";
+            document.getElementById("inquiryMessage").value = "";
         }
     } catch (err) {
-        console.error("异常:", err);
-        alert("发送异常: " + err.message);
+        alert("Error: " + err.message);
     } finally {
         if (sendBtn) {
             sendBtn.disabled = false;
-            sendBtn.textContent = "发送询盘 ✉️";
+            sendBtn.textContent = "Send Inquiry ✉️";
         }
     }
 }
-
-/* ===================== */
-/* 设置 WhatsApp 链接 */
-/* ===================== */
 
 function setupWhatsApp() {
     if (!productData) return;
@@ -520,10 +423,6 @@ function setupWhatsApp() {
         waLink.href = `https://wa.me/8613800000000?text=${encodeURIComponent(message)}`;
     }
 }
-
-/* ===================== */
-/* 页面加载 */
-/* ===================== */
 
 window.addEventListener("DOMContentLoaded", () => {
     loadProduct();
