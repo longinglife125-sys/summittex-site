@@ -97,11 +97,13 @@ button:hover{
     margin-top: 5px;
 }
 
-.file-label {
-    margin-top: 12px;
-    display: block;
+.section-title {
+    margin-top: 15px;
+    margin-bottom: 5px;
     font-size: 13px;
     color: #9ca3af;
+    border-left: 3px solid #2563eb;
+    padding-left: 8px;
 }
 </style>
 </head>
@@ -142,16 +144,18 @@ button:hover{
 <input id="moq" placeholder="MOQ (例: 1000 meters)">
 <textarea id="feature" placeholder="产品描述"></textarea>
 
+<div class="section-title">🖼️ 产品图片</div>
+<input type="file" id="file" accept="image/*">
+
+<div class="section-title">📹 视频（二选一即可）</div>
+
 <!-- 方式一：粘贴视频链接 -->
-<input id="videoUrl" placeholder="方式一：粘贴视频链接 (YouTube/Vimeo，选填)">
-<div class="hint">💡 支持 YouTube: https://youtu.be/xxxxx</div>
+<input id="videoUrl" placeholder="方式一：粘贴视频链接 (YouTube/Vimeo)">
+<div class="hint">💡 支持 YouTube: https://youtu.be/xxxxx 或 https://www.youtube.com/watch?v=xxxxx</div>
 
 <!-- 方式二：上传 MP4 文件 -->
-<label class="file-label">📹 方式二：或直接上传 MP4 视频文件（小于50MB）</label>
+<div class="hint" style="margin-top: 10px;">📁 方式二：或直接上传 MP4 视频文件（小于50MB）</div>
 <input type="file" id="videoFile" accept="video/mp4,video/webm">
-
-<label class="file-label">🖼️ 产品图片</label>
-<input type="file" id="file" accept="image/*">
 
 <button id="uploadBtn">上传产品</button>
 </div>
@@ -223,16 +227,13 @@ async function upload() {
         const videoFile = document.getElementById("videoFile").files[0];
         
         if (videoFile) {
-            // 上传 MP4 文件到 images 存储桶
+            // 上传 MP4 文件
             const videoFileName = Date.now() + "_video_" + videoFile.name;
             console.log("开始上传MP4:", videoFileName);
             
             const { error: videoUploadError } = await sb.storage
                 .from("images")
-                .upload(videoFileName, videoFile, {
-                    cacheControl: '3600',
-                    contentType: 'video/mp4'
-                });
+                .upload(videoFileName, videoFile);
             
             if (videoUploadError) {
                 console.log("视频上传错误:", videoUploadError);
