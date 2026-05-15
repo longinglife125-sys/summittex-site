@@ -91,10 +91,17 @@ button:hover{
     object-fit:cover;
 }
 
-.video-hint {
+.hint {
     font-size: 11px;
     color: #9ca3af;
     margin-top: 5px;
+}
+
+.file-label {
+    margin-top: 12px;
+    display: block;
+    font-size: 13px;
+    color: #9ca3af;
 }
 </style>
 </head>
@@ -135,10 +142,15 @@ button:hover{
 <input id="moq" placeholder="MOQ (例: 1000 meters)">
 <textarea id="feature" placeholder="产品描述"></textarea>
 
-<!-- 视频链接输入框 -->
-<input id="videoUrl" placeholder="视频链接 (YouTube 或 MP4 网址，选填)">
-<div class="video-hint">💡 支持 YouTube: https://youtu.be/xxxxx 或 https://www.youtube.com/watch?v=xxxxx</div>
+<!-- 方式一：粘贴视频链接 -->
+<input id="videoUrl" placeholder="方式一：粘贴视频链接 (YouTube/Vimeo，选填)">
+<div class="hint">💡 支持 YouTube: https://youtu.be/xxxxx</div>
 
+<!-- 方式二：上传 MP4 文件 -->
+<label class="file-label">📹 方式二：或直接上传 MP4 视频文件（小于50MB）</label>
+<input type="file" id="videoFile" accept="video/mp4,video/webm">
+
+<label class="file-label">🖼️ 产品图片</label>
 <input type="file" id="file" accept="image/*">
 
 <button id="uploadBtn">上传产品</button>
@@ -187,14 +199,14 @@ async function upload() {
             return;
         }
 
-        const file = document.getElementById("file").files[0];
+        // 1. 上传产品图片
+        const imageFile = document.getElementById("file").files[0];
         let imageUrl = "";
-
-        if (file) {
-            const fileName = Date.now() + "_" + file.name;
+        if (imageFile) {
+            const fileName = Date.now() + "_img_" + imageFile.name;
             const { error: uploadError } = await sb.storage
                 .from("images")
-                .upload(fileName, file);
+                .upload(fileName, imageFile);
             if (uploadError) {
                 console.log("图片上传错误:", uploadError);
                 alert("图片上传失败：" + uploadError.message);
@@ -206,9 +218,36 @@ async function upload() {
             }
         }
 
-        // 获取视频链接
-        const videoUrl = document.getElementById("videoUrl").value.trim();
+        // 2. 处理视频（优先使用上传的MP4文件）
+        let videoUrl = document.getElementById("videoUrl").value.trim();
+        const videoFile = document.getElementById("videoFile").files[0];
+        
+        if (videoFile) {
+            // 上传 MP4 文件到 images 存储桶
+            const videoFileName = Date.now() + "_video_" + videoFile.name;
+            console.log("开始上传MP4:", videoFileName);
+            
+            const { error: videoUploadError } = await sb.storage
+                .from("images")
+                .upload(videoFileName, videoFile, {
+                    cacheControl: '3600',
+                    contentType: 'video/mp4'
+                });
+            
+            if (videoUploadError) {
+                console.log("视频上传错误:", videoUploadError);
+                alert("视频上传失败：" + videoUploadError.message);
+            } else {
+                const { data: publicUrlData } = sb.storage
+                    .from("images")
+                    .getPublicUrl(videoFileName);
+                videoUrl = publicUrlData.publicUrl;
+                console.log("MP4视频URL:", videoUrl);
+                alert("✅ 视频上传成功");
+            }
+        }
 
+        // 3. 保存到数据库
         const productData = {
             name: productName,
             category: document.getElementById("category").value,
@@ -231,11 +270,13 @@ async function upload() {
         } else {
             alert("✅ 产品上传成功" + (imageUrl ? "（含图片）" : "（无图片）") + (videoUrl ? "（含视频）" : ""));
             
+            // 清空表单
             document.getElementById("name").value = "";
             document.getElementById("gsm").value = "";
             document.getElementById("moq").value = "";
             document.getElementById("feature").value = "";
             document.getElementById("videoUrl").value = "";
+            document.getElementById("videoFile").value = "";
             document.getElementById("file").value = "";
             const categorySelect = document.getElementById("category");
             if (categorySelect) categorySelect.value = "";
