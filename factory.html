@@ -2,246 +2,357 @@
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factory | SummitTex Functional Fabric Manufacturer</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    /* ===================== */
+    /* GLOBAL STYLE */
+    /* ===================== */
 
-<title>Factory | SummitTex Functional Fabric Manufacturer</title>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-<style>
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+        background: #f8fafc;
+        color: #0f172a;
+        line-height: 1.5;
+    }
 
-/* ===================== */
-/* GLOBAL STYLE */
-/* ===================== */
+    .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
 
-body{
-    margin:0;
-    font-family:Arial;
-    background:#f8fafc;
-    color:#0f172a;
-}
+    /* HEADER */
+    .header {
+        text-align: center;
+        padding: 80px 20px 40px;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: white;
+    }
 
-/* HEADER */
+    .header h1 {
+        font-size: 48px;
+        margin-bottom: 16px;
+    }
 
-.header{
-    text-align:center;
-    padding:60px 20px 30px;
-}
+    .header p {
+        font-size: 18px;
+        color: #94a3b8;
+        max-width: 600px;
+        margin: 0 auto;
+    }
 
-.header h1{
-    font-size:42px;
-    margin-bottom:10px;
-}
+    /* SECTION */
+    .section {
+        padding: 60px 0;
+    }
 
-.header p{
-    color:#64748b;
-}
+    .section:nth-child(even) {
+        background: #ffffff;
+    }
 
-/* SECTION */
+    .section h2 {
+        font-size: 32px;
+        text-align: center;
+        margin-bottom: 40px;
+        color: #1e293b;
+    }
 
-.section{
-    padding:70px 20px;
-    max-width:1200px;
-    margin:auto;
-    text-align:center;
-}
+    /* GRID */
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+    }
 
-.section h2{
-    font-size:34px;
-    margin-bottom:40px;
-}
+    /* IMAGE CARD */
+    .card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
 
-/* GRID */
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.1);
+    }
 
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-    gap:20px;
-}
+    .card img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+    }
 
-/* IMAGE CARD */
+    .card p {
+        padding: 16px;
+        margin: 0;
+        color: #475569;
+        font-weight: 500;
+        text-align: center;
+    }
 
-.card{
-    background:white;
-    border-radius:14px;
-    overflow:hidden;
-    border:1px solid #e2e8f0;
-    box-shadow:0 4px 14px rgba(0,0,0,0.05);
-}
+    /* STATS SECTION */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 24px;
+        text-align: center;
+    }
 
-.card img{
-    width:100%;
-    height:220px;
-    object-fit:cover;
-}
+    .stat-card {
+        background: white;
+        padding: 32px 20px;
+        border-radius: 20px;
+        border: 1px solid #e2e8f0;
+    }
 
-.card p{
-    padding:15px;
-    margin:0;
-    color:#475569;
-}
+    .stat-number {
+        font-size: 36px;
+        font-weight: 700;
+        color: #2563eb;
+    }
 
-/* VIDEO */
+    .stat-label {
+        color: #64748b;
+        margin-top: 8px;
+    }
 
-.video{
-    max-width:900px;
-    margin:auto;
-}
+    /* VIDEO */
+    .video-container {
+        max-width: 900px;
+        margin: 0 auto;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+    }
 
-iframe{
-    width:100%;
-    height:420px;
-    border-radius:14px;
-}
+    .video-container iframe {
+        width: 100%;
+        height: 500px;
+        border: none;
+        display: block;
+    }
 
-/* CTA */
+    /* CTA */
+    .cta {
+        background: #0f172a;
+        color: white;
+        text-align: center;
+        padding: 60px 24px;
+        margin-top: 40px;
+    }
 
-.cta{
-    background:#0f172a;
-    color:white;
-    padding:80px 20px;
-    text-align:center;
-    margin-top:60px;
-}
+    .cta h2 {
+        font-size: 32px;
+        margin-bottom: 16px;
+    }
 
-.cta a{
-    display:inline-block;
-    margin-top:20px;
-    padding:14px 26px;
-    background:#3b82f6;
-    color:white;
-    text-decoration:none;
-    border-radius:10px;
-}
+    .cta p {
+        color: #94a3b8;
+        margin-bottom: 24px;
+    }
 
-/* BACK */
+    .cta .btn {
+        display: inline-block;
+        padding: 14px 32px;
+        background: #2563eb;
+        color: white;
+        text-decoration: none;
+        border-radius: 40px;
+        font-weight: 600;
+        transition: background 0.2s;
+    }
 
-.back{
-    display:inline-block;
-    margin:20px;
-    color:#2563eb;
-    text-decoration:none;
-}
+    .cta .btn:hover {
+        background: #1d4ed8;
+    }
 
-</style>
+    /* BACK BUTTON */
+    .back {
+        display: inline-block;
+        margin: 20px 0 0 24px;
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: 500;
+    }
 
+    .back:hover {
+        text-decoration: underline;
+    }
+
+    /* LOADING */
+    .loading {
+        text-align: center;
+        padding: 60px;
+        color: #64748b;
+    }
+
+    @media (max-width: 768px) {
+        .header h1 { font-size: 32px; }
+        .section h2 { font-size: 24px; }
+        .video-container iframe { height: 280px; }
+        .stat-number { font-size: 28px; }
+    }
+    </style>
 </head>
 
 <body>
 
 <a class="back" href="index.html">← Back Home</a>
 
-<div class="header">
-
-<h1>Our Factory</h1>
-<p>Professional Functional Fabric Manufacturing Facility in China</p>
-
+<div id="factoryContent">
+    <div class="loading">加载中...</div>
 </div>
 
-<!-- FACTORY OVERVIEW -->
-<div class="section">
+<script>
+    const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-<h2>Factory Overview</h2>
+    // 加载所有工厂数据
+    async function loadFactoryData() {
+        try {
+            // 并行加载所有数据
+            const [photosRes, certificatesRes, settingsRes] = await Promise.all([
+                sb.from("factory_photos").select("*").eq("is_active", true).order("sort_order", { ascending: true }),
+                sb.from("factory_certificates").select("*").eq("is_active", true).order("sort_order", { ascending: true }),
+                sb.from("factory_settings").select("*")
+            ]);
 
-<div class="grid">
+            const photos = photosRes.data || [];
+            const certificates = certificatesRes.data || [];
+            const settings = settingsRes.data || [];
 
-<div class="card">
-<img src="images/factory1.jpg">
-<p>Main production facility</p>
-</div>
+            // 获取视频链接
+            const videoSetting = settings.find(s => s.setting_key === "factory_video_url");
+            const videoUrl = videoSetting ? videoSetting.setting_value : "https://www.youtube.com/embed/dQw4w9WgXcQ";
+            
+            const factoryName = settings.find(s => s.setting_key === "factory_name")?.setting_value || "Our Factory";
+            const factoryDesc = settings.find(s => s.setting_key === "factory_description")?.setting_value || "Professional Functional Fabric Manufacturing Facility in China";
 
-<div class="card">
-<img src="images/factory2.jpg">
-<p>Modern textile workshop</p>
-</div>
+            // 分类照片（按category字段分类）
+            const productionPhotos = photos.filter(p => p.category === "production" || p.category === "production_line");
+            const facilityPhotos = photos.filter(p => p.category === "facility" || p.category === "overview");
 
-<div class="card">
-<img src="images/factory3.jpg">
-<p>Warehouse & logistics</p>
-</div>
+            renderPage(factoryName, factoryDesc, videoUrl, productionPhotos, facilityPhotos, certificates);
+        } catch (err) {
+            console.error("加载失败:", err);
+            document.getElementById("factoryContent").innerHTML = `<div class="loading">加载失败，请刷新重试</div>`;
+        }
+    }
 
-</div>
+    function renderPage(factoryName, factoryDesc, videoUrl, productionPhotos, facilityPhotos, certificates) {
+        const html = `
+            <div class="header">
+                <h1>${escapeHtml(factoryName)}</h1>
+                <p>${escapeHtml(factoryDesc)}</p>
+            </div>
 
-</div>
+            <!-- 统计数据 -->
+            <div class="container section">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-number">50,000+</div><div class="stat-label">㎡ Factory Area</div></div>
+                    <div class="stat-card"><div class="stat-number">300+</div><div class="stat-label">Skilled Workers</div></div>
+                    <div class="stat-card"><div class="stat-number">50+</div><div class="stat-label">Export Countries</div></div>
+                    <div class="stat-card"><div class="stat-number">15+</div><div class="stat-label">Years Experience</div></div>
+                </div>
+            </div>
 
-<!-- PRODUCTION LINE -->
-<div class="section">
+            <!-- 工厂设施 -->
+            <div class="section">
+                <div class="container">
+                    <h2>🏭 Factory Facility</h2>
+                    <div class="grid">
+                        ${facilityPhotos.length > 0 ? facilityPhotos.map(p => `
+                            <div class="card">
+                                <img src="${p.image_url}" alt="${escapeHtml(p.title || 'Factory')}" onerror="this.src='https://placehold.co/400x220?text=Photo'">
+                                <p>${escapeHtml(p.title || 'Facility')}</p>
+                            </div>
+                        `).join('') : `
+                            <div class="card"><div style="padding:60px; text-align:center; color:#94a3b8;">暂无照片，请在后台添加</div></div>
+                        `}
+                    </div>
+                </div>
+            </div>
 
-<h2>Production Line</h2>
+            <!-- 生产线 -->
+            <div class="section">
+                <div class="container">
+                    <h2>⚙️ Production Line</h2>
+                    <div class="grid">
+                        ${productionPhotos.length > 0 ? productionPhotos.map(p => `
+                            <div class="card">
+                                <img src="${p.image_url}" alt="${escapeHtml(p.title || 'Production')}" onerror="this.src='https://placehold.co/400x220?text=Photo'">
+                                <p>${escapeHtml(p.title || 'Production Line')}</p>
+                            </div>
+                        `).join('') : `
+                            <div class="card"><div style="padding:60px; text-align:center; color:#94a3b8;">暂无照片，请在后台添加</div></div>
+                        `}
+                    </div>
+                </div>
+            </div>
 
-<div class="grid">
+            <!-- 认证证书 -->
+            <div class="section">
+                <div class="container">
+                    <h2>📜 Certifications</h2>
+                    <div class="grid">
+                        ${certificates.length > 0 ? certificates.map(c => `
+                            <div class="card">
+                                <img src="${c.image_url}" alt="${escapeHtml(c.name || 'Certificate')}" onerror="this.src='https://placehold.co/400x220?text=Certificate'">
+                                <p>${escapeHtml(c.name || 'Certificate')}</p>
+                            </div>
+                        `).join('') : `
+                            <div class="card"><div style="padding:60px; text-align:center; color:#94a3b8;">暂无证书，请在后台添加</div></div>
+                        `}
+                    </div>
+                </div>
+            </div>
 
-<div class="card">
-<img src="images/line1.jpg">
-<p>Coating production line</p>
-</div>
+            <!-- 工厂视频 -->
+            <div class="section">
+                <div class="container">
+                    <h2>📹 Factory Video Tour</h2>
+                    <div class="video-container">
+                        <iframe src="${videoUrl}" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
 
-<div class="card">
-<img src="images/line2.jpg">
-<p>Lamination process</p>
-</div>
+            <!-- CTA -->
+            <div class="cta">
+                <h2>Visit Our Factory or Request Samples</h2>
+                <p>We support OEM/ODM functional fabric development.</p>
+                <a href="contact.html" class="btn">Contact Us →</a>
+            </div>
+        `;
 
-<div class="card">
-<img src="images/line3.jpg">
-<p>Quality inspection</p>
-</div>
+        document.getElementById("factoryContent").innerHTML = html;
+    }
 
-</div>
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
 
-</div>
-
-<!-- CERTIFICATIONS -->
-<div class="section">
-
-<h2>Certifications</h2>
-
-<div class="grid">
-
-<div class="card">
-<img src="images/sgs.jpg">
-<p>SGS Certification</p>
-</div>
-
-<div class="card">
-<img src="images/oeko.jpg">
-<p>OEKO-TEX Standard</p>
-</div>
-
-<div class="card">
-<img src="images/iso.jpg">
-<p>ISO Quality System</p>
-</div>
-
-</div>
-
-</div>
-
-<!-- VIDEO -->
-<div class="section">
-
-<h2>Factory Video</h2>
-
-<div class="video">
-
-<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-frameborder="0"
-allowfullscreen>
-</iframe>
-
-</div>
-
-</div>
-
-<!-- CTA -->
-<div class="cta">
-
-<h2>Visit Our Factory or Request Samples</h2>
-
-<p>We support OEM/ODM functional fabric development.</p>
-
-<a href="contact.html">Contact Us</a>
-
-</div>
+    loadFactoryData();
+</script>
 
 </body>
 </html>
