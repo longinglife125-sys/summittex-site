@@ -3,17 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>SummitTex | Premium Technical & Functional Fabric Supplier</title>
     <meta name="description" content="Leading technical fabric supplier from China. Explore outdoor, functional, sustainable, stretch and fashion fabrics. OEM/ODM, global shipping.">
 
-    <!-- Supabase SDK for dynamic data -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        /* ===================== */
-        /* DESIGN SYSTEM (Modern & Professional) */
-        /* ===================== */
         * {
             margin: 0;
             padding: 0;
@@ -34,7 +30,6 @@
             padding: 0 24px;
         }
 
-        /* Typography */
         h1, h2, h3 {
             font-weight: 600;
             letter-spacing: -0.02em;
@@ -57,7 +52,6 @@
             h2 { font-size: 1.8rem; }
         }
 
-        /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -94,7 +88,6 @@
             background: #f8fafc;
         }
 
-        /* Header */
         header {
             position: sticky;
             top: 0;
@@ -137,7 +130,6 @@
             color: #1e40af;
         }
 
-        /* Hero Section */
         .hero {
             background: linear-gradient(110deg, #f8fafc 0%, #eef2ff 100%);
             padding: 80px 0;
@@ -178,30 +170,100 @@
             color: #475569;
         }
 
-        /* Hero Image - 可动态更换背景图 */
-        .hero-image {
-            background: linear-gradient(145deg, #334155, #0f172a);
+        /* ========== 轮播图样式 ========== */
+        .carousel-container {
+            position: relative;
             border-radius: 32px;
-            min-height: 400px;
+            overflow: hidden;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            background: #f1f5f9;
+        }
+
+        .carousel-slides {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-slide {
+            flex-shrink: 0;
+            width: 100%;
+            min-height: 400px;
             background-size: cover;
             background-position: center;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            padding: 24px;
+        }
+
+        .carousel-caption {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
             color: white;
-            text-align: center;
-            font-size: 1rem;
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
             font-weight: 500;
         }
 
-        .hero-image span {
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
             background: rgba(0,0,0,0.5);
-            padding: 12px 24px;
-            border-radius: 40px;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            z-index: 10;
         }
 
-        /* Features Grid */
+        .carousel-btn:hover {
+            background: rgba(0,0,0,0.8);
+        }
+
+        .carousel-btn.prev {
+            left: 16px;
+        }
+
+        .carousel-btn.next {
+            right: 16px;
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 16px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dot.active {
+            width: 24px;
+            border-radius: 4px;
+            background: white;
+        }
+
+        /* 其他样式保持不变 */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -223,7 +285,6 @@
             box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.1);
         }
 
-        /* Certificate Showcase */
         .cert-logos {
             display: flex;
             justify-content: center;
@@ -239,7 +300,6 @@
             color: #475569;
         }
 
-        /* Product Showcase */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -273,7 +333,6 @@
             padding: 20px;
         }
 
-        /* CTA */
         .cta-section {
             background: #0f172a;
             color: white;
@@ -283,7 +342,6 @@
             padding: 64px 48px;
         }
 
-        /* Footer */
         footer {
             background: #0f172a;
             color: #94a3b8;
@@ -317,6 +375,7 @@
             .hero-grid { grid-template-columns: 1fr; }
             .menu { gap: 16px; }
             .container { padding: 0 16px; }
+            .carousel-slide { min-height: 280px; }
         }
     </style>
 </head>
@@ -336,7 +395,7 @@
     </div>
 </header>
 
-<!-- Hero Section -->
+<!-- Hero Section with Carousel -->
 <section class="hero">
     <div class="container hero-grid">
         <div>
@@ -355,8 +414,13 @@
                 <div class="stat-item"><h3>300+</h3><p>Active Clients</p></div>
             </div>
         </div>
-        <div class="hero-image" id="heroImage">
-            <span>Premium Quality Fabrics</span>
+        
+        <!-- 自动轮播图区域 -->
+        <div class="carousel-container" id="carouselContainer">
+            <div class="carousel-slides" id="carouselSlides"></div>
+            <button class="carousel-btn prev" id="prevBtn">‹</button>
+            <button class="carousel-btn next" id="nextBtn">›</button>
+            <div class="carousel-dots" id="carouselDots"></div>
         </div>
     </div>
 </section>
@@ -383,7 +447,7 @@
     </div>
 </section>
 
-<!-- Dynamic Featured Products (Live from your database) -->
+<!-- Dynamic Featured Products -->
 <section class="container">
     <h2>Trending Fabrics</h2>
     <div id="featured-products" class="products-grid">
@@ -413,57 +477,143 @@
 </a>
 
 <script>
-    // Supabase 配置
     const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
     const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // 默认图片链接（如果产品没有图片时使用）
-    const DEFAULT_IMAGE = "https://placehold.co/400x260?text=SummitTex+Fabric";
+    let slides = [];
+    let currentIndex = 0;
+    let autoInterval = null;
+    const DEFAULT_IMAGE = "https://placehold.co/600x400?text=SummitTex+Fabric";
 
-    // 加载首页背景图（从 products 表随机取一张产品图片作为背景）
-    async function loadHeroBackground() {
+    // 加载轮播图数据
+    async function loadCarouselSlides() {
         try {
             const { data, error } = await sb
-                .from("products")
-                .select("image")
-                .not("image", "is", null)
-                .limit(1);
-            
-            const heroDiv = document.getElementById("heroImage");
-            if (heroDiv && data && data.length > 0 && data[0].image) {
-                heroDiv.style.backgroundImage = `url('${data[0].image}')`;
-                heroDiv.style.backgroundSize = "cover";
-                heroDiv.style.backgroundPosition = "center";
-                heroDiv.innerHTML = ""; // 移除文字叠加
-            } else {
-                // 没有图片时保持默认渐变
-                heroDiv.style.background = "linear-gradient(145deg, #334155, #0f172a)";
-                heroDiv.innerHTML = "<span>SummitTex Premium Fabrics</span>";
+                .from("home_slides")
+                .select("*")
+                .eq("is_active", true)
+                .order("sort_order", { ascending: true });
+
+            if (error) {
+                console.error("轮播图加载错误:", error);
+                useFallbackSlides();
+                return;
             }
+
+            if (data && data.length > 0) {
+                slides = data;
+            } else {
+                useFallbackSlides();
+            }
+            
+            renderCarousel();
+            startAutoPlay();
         } catch (err) {
-            console.warn("加载背景图失败:", err);
+            console.warn(err);
+            useFallbackSlides();
+            renderCarousel();
+            startAutoPlay();
         }
     }
 
-    // 加载首页精选产品（只显示有图片的产品）
+    // 备用默认轮播图（当数据库没有数据时）
+    function useFallbackSlides() {
+        slides = [
+            { image_url: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a", title: "Functional Fabrics" },
+            { image_url: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518", title: "Technical Textiles" },
+            { image_url: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f", title: "Sustainable Materials" }
+        ];
+    }
+
+    // 渲染轮播图
+    function renderCarousel() {
+        const slidesContainer = document.getElementById("carouselSlides");
+        const dotsContainer = document.getElementById("carouselDots");
+        
+        if (!slidesContainer) return;
+        
+        // 渲染幻灯片
+        slidesContainer.innerHTML = slides.map(slide => `
+            <div class="carousel-slide" style="background-image: url('${slide.image_url}'); background-size: cover; background-position: center;">
+                ${slide.title ? `<div class="carousel-caption">${escapeHtml(slide.title)}</div>` : ''}
+            </div>
+        `).join('');
+        
+        // 渲染指示点
+        dotsContainer.innerHTML = slides.map((_, idx) => `
+            <div class="dot ${idx === currentIndex ? 'active' : ''}" onclick="goToSlide(${idx})"></div>
+        `).join('');
+        
+        updateCarouselPosition();
+    }
+
+    function updateCarouselPosition() {
+        const slidesContainer = document.getElementById("carouselSlides");
+        if (slidesContainer) {
+            slidesContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
+        
+        // 更新指示点样式
+        const dots = document.querySelectorAll('.dot');
+        dots.forEach((dot, idx) => {
+            if (idx === currentIndex) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+    }
+
+    function nextSlide() {
+        if (slides.length === 0) return;
+        currentIndex = (currentIndex + 1) % slides.length;
+        updateCarouselPosition();
+    }
+
+    function prevSlide() {
+        if (slides.length === 0) return;
+        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+        updateCarouselPosition();
+    }
+
+    function goToSlide(index) {
+        currentIndex = index;
+        updateCarouselPosition();
+        resetAutoPlay();
+    }
+
+    function startAutoPlay() {
+        if (autoInterval) clearInterval(autoInterval);
+        autoInterval = setInterval(() => {
+            nextSlide();
+        }, 4000);
+    }
+
+    function resetAutoPlay() {
+        if (autoInterval) {
+            clearInterval(autoInterval);
+            startAutoPlay();
+        }
+    }
+
+    // 加载首页精选产品
     async function loadFeaturedProducts() {
         try {
             const { data, error } = await sb
                 .from("products")
                 .select("id, name, gsm, moq, image, category")
                 .not("image", "is", null)
-                .limit(6);  // 显示最多6个产品
+                .limit(6);
 
             const container = document.getElementById("featured-products");
             if (error) {
-                console.error("数据库错误:", error);
-                container.innerHTML = `<div style="text-align: center; grid-column: 1/-1;">⚠️ 无法加载产品，请刷新重试</div>`;
+                container.innerHTML = `<div style="text-align: center; grid-column: 1/-1;">⚠️ Unable to load products</div>`;
                 return;
             }
             
             if (!data || data.length === 0) {
-                container.innerHTML = `<div style="text-align: center; grid-column: 1/-1;">✨ 暂无产品，请先在后台上传产品图片</div>`;
+                container.innerHTML = `<div style="text-align: center; grid-column: 1/-1;">✨ No products yet, please upload from admin panel</div>`;
                 return;
             }
 
@@ -477,8 +627,8 @@
                 </div>
             `).join('');
         } catch (err) {
-            console.warn("加载产品失败:", err);
-            document.getElementById("featured-products").innerHTML = `<div style="text-align: center; grid-column: 1/-1;">⚠️ 加载失败，请刷新页面</div>`;
+            console.warn(err);
+            document.getElementById("featured-products").innerHTML = `<div style="text-align: center; grid-column: 1/-1;">⚠️ Failed to load products</div>`;
         }
     }
 
@@ -492,9 +642,18 @@
         });
     }
 
-    // 页面加载时运行
-    loadHeroBackground();
+    // 绑定按钮事件
+    document.getElementById("prevBtn")?.addEventListener("click", () => { prevSlide(); resetAutoPlay(); });
+    document.getElementById("nextBtn")?.addEventListener("click", () => { nextSlide(); resetAutoPlay(); });
+
+    // 页面加载
+    loadCarouselSlides();
     loadFeaturedProducts();
+    
+    // 暴露全局函数供内联调用
+    window.goToSlide = goToSlide;
+    window.prevSlide = prevSlide;
+    window.nextSlide = nextSlide;
 </script>
 
 </body>
