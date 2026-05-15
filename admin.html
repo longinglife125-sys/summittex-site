@@ -7,287 +7,64 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
+body { margin:0; font-family:Arial; background:#0b1220; color:white; }
 
-body{
-    margin:0;
-    font-family:Arial;
-    background:#0b1220;
-    color:white;
-}
+#loginBox { max-width:360px; margin:120px auto; background:white; color:black; padding:24px; border-radius:16px; }
+#panelBox { display:none; padding:20px; }
+.box { background:#111827; padding:15px; border-radius:12px; margin-bottom:15px; }
+h3 { margin-bottom: 15px; color: #e2e8f0; }
 
-#loginBox{
-    max-width:360px;
-    margin:120px auto;
-    background:white;
-    color:black;
-    padding:24px;
-    border-radius:16px;
-}
+.tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.tab-btn { flex: 1; background: #1e293b; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 14px; min-width: 120px; }
+.tab-btn.active { background: #2563eb; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
 
-#panelBox{
-    display:none;
-    padding:20px;
-}
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.stat-card { background: #1e293b; border-radius: 12px; padding: 15px; text-align: center; border-left: 4px solid #2563eb; }
+.stat-number { font-size: 28px; font-weight: bold; color: #60a5fa; }
+.stat-label { font-size: 12px; color: #94a3b8; margin-top: 5px; }
+.category-stats { max-height: 250px; overflow-y: auto; }
+.category-stat-item { display: flex; justify-content: space-between; padding: 8px 10px; border-bottom: 1px solid #334155; font-size: 13px; }
 
-.box{
-    background:#111827;
-    padding:15px;
-    border-radius:12px;
-    margin-bottom:15px;
-}
+input,select,textarea { width:100%; padding:10px; margin-top:8px; margin-bottom:8px; border-radius:8px; border:none; box-sizing:border-box; background:#1f2a3e; color:white; }
+input::placeholder, textarea::placeholder { color: #9ca3af; }
+select { background: #1f2a3e; color: white; }
+button { padding:12px; margin-top:10px; background:#2563eb; color:white; border:none; border-radius:10px; cursor:pointer; }
+button:hover { background:#1d4ed8; }
 
-h3 {
-    margin-bottom: 15px;
-    color: #e2e8f0;
-}
-
-/* 标签页按钮 */
-.tab-buttons {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-}
-
-.tab-btn {
-    flex: 1;
-    background: #1e293b;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    min-width: 120px;
-}
-
-.tab-btn.active {
-    background: #2563eb;
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-/* 统计卡片 */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
-.stat-card {
-    background: #1e293b;
-    border-radius: 12px;
-    padding: 15px;
-    text-align: center;
-    border-left: 4px solid #2563eb;
-}
-
-.stat-number {
-    font-size: 28px;
-    font-weight: bold;
-    color: #60a5fa;
-}
-
-.stat-label {
-    font-size: 12px;
-    color: #94a3b8;
-    margin-top: 5px;
-}
-
-.category-stats {
-    max-height: 250px;
-    overflow-y: auto;
-}
-
-.category-stat-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 10px;
-    border-bottom: 1px solid #334155;
-    font-size: 13px;
-}
-
-input,select,textarea{
-    width:100%;
-    padding:10px;
-    margin-top:8px;
-    margin-bottom:8px;
-    border-radius:8px;
-    border:none;
-    box-sizing:border-box;
-    background:#1f2a3e;
-    color:white;
-}
-
-input::placeholder, textarea::placeholder {
-    color: #9ca3af;
-}
-
-select {
-    background: #1f2a3e;
-    color: white;
-}
-
-button{
-    padding:12px;
-    margin-top:10px;
-    background:#2563eb;
-    color:white;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-}
-
-button:hover{
-    background:#1d4ed8;
-}
-
-.item{
-    background:white;
-    color:black;
-    padding:10px;
-    border-radius:10px;
-    margin-top:10px;
-}
-
-.item-img{
-    max-width:50px;
-    max-height:50px;
-    border-radius:5px;
-    margin:2px;
-    object-fit:cover;
-}
-
-.item-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-    justify-content: flex-end;
-}
-
-.edit-btn, .delete-btn {
-    padding: 6px 12px;
-    font-size: 12px;
-    width: auto;
-    margin-top: 0;
-    border-radius: 6px;
-}
-
+.item { background:white; color:black; padding:10px; border-radius:10px; margin-top:10px; }
+.item-img { max-width:50px; max-height:50px; border-radius:5px; margin:2px; object-fit:cover; }
+.item-actions { display: flex; gap: 10px; margin-top: 10px; justify-content: flex-end; }
+.edit-btn, .delete-btn { padding: 6px 12px; font-size: 12px; width: auto; margin-top: 0; border-radius: 6px; }
 .edit-btn { background: #f59e0b; }
 .delete-btn { background: #dc2626; }
 
 .hint { font-size: 11px; color: #9ca3af; margin-top: 5px; }
-.section-title {
-    margin-top: 15px;
-    margin-bottom: 5px;
-    font-size: 13px;
-    color: #9ca3af;
-    border-left: 3px solid #2563eb;
-    padding-left: 8px;
-}
+.section-title { margin-top: 15px; margin-bottom: 5px; font-size: 13px; color: #9ca3af; border-left: 3px solid #2563eb; padding-left: 8px; }
 
-.drop-area {
-    border: 2px dashed #4b5563;
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-    margin-top: 10px;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: #1e293b;
-}
-
+.drop-area { border: 2px dashed #4b5563; border-radius: 12px; padding: 20px; text-align: center; margin-top: 10px; cursor: pointer; transition: all 0.2s; background: #1e293b; }
 .drop-area:hover { border-color: #2563eb; background: #334155; }
-.preview-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 15px;
-}
-.preview-item {
-    position: relative;
-    width: 80px;
-    height: 80px;
-    border-radius: 8px;
-    overflow: hidden;
-    background: #1e293b;
-    border: 1px solid #4b5563;
-}
+.preview-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+.preview-item { position: relative; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; background: #1e293b; border: 1px solid #4b5563; }
 .preview-item img { width: 100%; height: 100%; object-fit: cover; }
-.remove-btn {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    background: rgba(220,38,38,0.8);
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
-    cursor: pointer;
-}
+.remove-btn { position: absolute; top: 2px; right: 2px; background: rgba(220,38,38,0.8); color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; }
 .img-count { font-size: 12px; color: #4ade80; margin-top: 5px; }
 
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.8);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-}
-.modal-content {
-    background: #1e293b;
-    border-radius: 16px;
-    padding: 24px;
-    width: 90%;
-    max-width: 500px;
-    max-height: 85vh;
-    overflow-y: auto;
-}
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
+.modal-content { background: #1e293b; border-radius: 16px; padding: 24px; width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto; }
 .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
 .modal-buttons button { flex: 1; margin-top: 0; }
 
-.media-item {
-    background: #1e293b;
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.media-img {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 8px;
-}
+.media-item { background: #1e293b; border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+.media-img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
 .media-info { flex: 1; margin-left: 12px; }
 .media-title { font-weight: bold; margin-bottom: 4px; }
 .media-url { font-size: 10px; color: #94a3b8; word-break: break-all; }
 .media-actions { display: flex; gap: 8px; }
 .media-actions button { padding: 4px 8px; font-size: 11px; margin: 0; }
-.media-form {
-    background: #0f1722;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
+.media-form { background: #0f1722; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
 </style>
 </head>
 
@@ -302,49 +79,35 @@ button:hover{
 
 <div id="panelBox">
 
-<!-- 标签页切换 -->
 <div class="tab-buttons">
     <button class="tab-btn active" data-tab="products">📦 产品管理</button>
     <button class="tab-btn" data-tab="slides">🖼️ 轮播图管理</button>
     <button class="tab-btn" data-tab="factory">🏭 工厂照片管理</button>
 </div>
 
-<!-- ========== 产品管理标签页 ========== -->
+<!-- 产品管理 -->
 <div id="productsTab" class="tab-content active">
     <div class="box">
         <h3>📊 产品统计</h3>
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number" id="totalCount">-</div>
-                <div class="stat-label">总产品数</div>
-            </div>
-        </div>
+        <div class="stats-grid"><div class="stat-card"><div class="stat-number" id="totalCount">-</div><div class="stat-label">总产品数</div></div></div>
         <div class="category-stats" id="categoryStats">加载中...</div>
     </div>
-
     <div class="box">
         <h3>📤 上传产品</h3>
         <input id="name" placeholder="产品名称 *">
         <select id="category">
             <option value="">请选择产品分类</option>
-            <option>Outdoor Functional Fabrics</option>
-            <option>Sports & Activewear Fabrics</option>
-            <option>Recycled & Sustainable Fabrics</option>
-            <option>Stretch Fabrics</option>
-            <option>Nylon & Polyester Fabrics</option>
-            <option>Jacquard & Textured Fabrics</option>
-            <option>Printed Fabrics</option>
-            <option>Swimwear Fabrics</option>
-            <option>Underwear Fabrics</option>
-            <option>Workwear Fabrics</option>
-            <option>Fashion Fabrics</option>
-            <option>Others</option>
+            <option>Outdoor Functional Fabrics</option><option>Sports & Activewear Fabrics</option>
+            <option>Recycled & Sustainable Fabrics</option><option>Stretch Fabrics</option>
+            <option>Nylon & Polyester Fabrics</option><option>Jacquard & Textured Fabrics</option>
+            <option>Printed Fabrics</option><option>Swimwear Fabrics</option>
+            <option>Underwear Fabrics</option><option>Workwear Fabrics</option>
+            <option>Fashion Fabrics</option><option>Others</option>
         </select>
-        <input id="gsm" placeholder="GSM (例: 180)">
-        <input id="moq" placeholder="MOQ (例: 1000 meters)">
+        <input id="gsm" placeholder="GSM"><input id="moq" placeholder="MOQ">
         <textarea id="feature" placeholder="产品描述"></textarea>
         <div class="section-title">🖼️ 产品图片</div>
-        <div class="drop-area" id="dropArea">📸 点击或拖拽图片上传<br><small>支持多选</small></div>
+        <div class="drop-area" id="dropArea">📸 点击或拖拽图片上传</div>
         <div class="preview-container" id="previewContainer"></div>
         <div class="img-count" id="imgCount">已选择 0 张图片</div>
         <input type="file" id="imageInput" multiple accept="image/*" style="display:none">
@@ -353,38 +116,35 @@ button:hover{
         <input type="file" id="videoFile" accept="video/mp4">
         <button id="uploadBtn">上传产品</button>
     </div>
-
-    <div class="box">
-        <h3>📦 产品列表</h3>
-        <button id="refreshBtn">刷新产品</button>
-        <div id="list"></div>
-    </div>
+    <div class="box"><h3>📦 产品列表</h3><button id="refreshBtn">刷新产品</button><div id="list"></div></div>
 </div>
 
-<!-- ========== 轮播图管理标签页 ========== -->
+<!-- 轮播图管理（支持本地上传） -->
 <div id="slidesTab" class="tab-content">
     <div class="box">
         <h3>🖼️ 首页轮播图管理</h3>
         <div class="media-form">
-            <h4>➕ 添加轮播图</h4>
-            <input type="text" id="slideImageUrl" placeholder="图片URL *">
-            <input type="text" id="slideTitle" placeholder="图片标题">
-            <input type="number" id="slideOrder" placeholder="排序 (数字越小越靠前)" value="0">
+            <h4>➕ 添加轮播图（本地上传）</h4>
+            <div class="drop-area" id="slideDropArea">📸 点击或拖拽图片上传轮播图</div>
+            <input type="text" id="slideTitle" placeholder="图片标题（选填）">
+            <input type="number" id="slideOrder" placeholder="排序（数字越小越靠前）" value="0">
+            <div class="preview-container" id="slidePreviewContainer"></div>
             <button id="addSlideBtn">添加轮播图</button>
         </div>
         <div id="slidesList">加载中...</div>
     </div>
 </div>
 
-<!-- ========== 工厂照片管理标签页 ========== -->
+<!-- 工厂照片管理（支持本地上传） -->
 <div id="factoryTab" class="tab-content">
     <div class="box">
         <h3>🏭 工厂照片管理</h3>
         <div class="media-form">
-            <h4>➕ 添加工厂照片</h4>
-            <input type="text" id="factoryImageUrl" placeholder="图片URL *">
-            <input type="text" id="factoryCaption" placeholder="照片描述">
-            <input type="number" id="factoryOrder" placeholder="排序" value="0">
+            <h4>➕ 添加工厂照片（本地上传）</h4>
+            <div class="drop-area" id="factoryDropArea">📸 点击或拖拽图片上传工厂照片</div>
+            <input type="text" id="factoryCaption" placeholder="照片描述（选填）">
+            <input type="number" id="factoryOrder" placeholder="排序（数字越小越靠前）" value="0">
+            <div class="preview-container" id="factoryPreviewContainer"></div>
             <button id="addFactoryBtn">添加工厂照片</button>
         </div>
         <div id="factoryList">加载中...</div>
@@ -399,39 +159,23 @@ button:hover{
         <h3>✏️ 编辑产品</h3>
         <input type="hidden" id="editId">
         <input type="text" id="editName" placeholder="产品名称">
-        <select id="editCategory">
-            <option>Outdoor Functional Fabrics</option>
-            <option>Sports & Activewear Fabrics</option>
-            <option>Recycled & Sustainable Fabrics</option>
-            <option>Stretch Fabrics</option>
-            <option>Nylon & Polyester Fabrics</option>
-            <option>Jacquard & Textured Fabrics</option>
-            <option>Printed Fabrics</option>
-            <option>Swimwear Fabrics</option>
-            <option>Underwear Fabrics</option>
-            <option>Workwear Fabrics</option>
-            <option>Fashion Fabrics</option>
-            <option>Others</option>
-        </select>
-        <input type="text" id="editGsm" placeholder="GSM">
-        <input type="text" id="editMoq" placeholder="MOQ">
+        <select id="editCategory"><option>Outdoor Functional Fabrics</option><option>Sports & Activewear Fabrics</option><option>Recycled & Sustainable Fabrics</option><option>Stretch Fabrics</option><option>Nylon & Polyester Fabrics</option><option>Jacquard & Textured Fabrics</option><option>Printed Fabrics</option><option>Swimwear Fabrics</option><option>Underwear Fabrics</option><option>Workwear Fabrics</option><option>Fashion Fabrics</option><option>Others</option></select>
+        <input type="text" id="editGsm" placeholder="GSM"><input type="text" id="editMoq" placeholder="MOQ">
         <textarea id="editFeature" placeholder="产品描述"></textarea>
         <input type="text" id="editVideoUrl" placeholder="视频链接">
-        <div class="modal-buttons">
-            <button id="saveEditBtn" style="background:#f59e0b;">保存</button>
-            <button id="cancelEditBtn" style="background:#6c757d;">取消</button>
-        </div>
+        <div class="modal-buttons"><button id="saveEditBtn" style="background:#f59e0b;">保存</button><button id="cancelEditBtn" style="background:#6c757d;">取消</button></div>
     </div>
 </div>
 
 <script>
-
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ========== 全局变量 ==========
 let selectedImages = [];
+let slideSelectedFile = null;
+let factorySelectedFile = null;
 
 // ========== 标签页切换 ==========
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -463,7 +207,7 @@ function login() {
     } else { alert("密码错误"); }
 }
 
-// ========== 产品管理 ==========
+// ========== 产品图片上传 ==========
 const dropArea = document.getElementById('dropArea');
 const imageInput = document.getElementById('imageInput');
 const previewContainer = document.getElementById('previewContainer');
@@ -480,10 +224,7 @@ dropArea.ondrop = (e) => {
 imageInput.onchange = (e) => { addImages(Array.from(e.target.files)); imageInput.value = ''; };
 
 function addImages(files) {
-    files.forEach(file => {
-        if (file.size <= 10*1024*1024) selectedImages.push(file);
-        else alert(`${file.name} 超过10MB`);
-    });
+    files.forEach(file => { if (file.size <= 10*1024*1024) selectedImages.push(file); else alert(`${file.name} 超过10MB`); });
     refreshPreview();
 }
 function removeImage(idx) { selectedImages.splice(idx,1); refreshPreview(); }
@@ -502,6 +243,55 @@ function refreshPreview() {
     imgCountSpan.innerText = `已选择 ${selectedImages.length} 张图片`;
 }
 
+// ========== 轮播图上传（本地上传） ==========
+const slideDropArea = document.getElementById('slideDropArea');
+const slidePreview = document.getElementById('slidePreviewContainer');
+let slideSelectedFile = null;
+
+slideDropArea.onclick = () => { let input = document.createElement('input'); input.type='file'; input.accept='image/*'; input.onchange=(e)=>{if(e.target.files[0]){slideSelectedFile=e.target.files[0]; updateSlidePreview();}}; input.click(); };
+slideDropArea.ondragover = (e) => { e.preventDefault(); slideDropArea.classList.add('dragover'); };
+slideDropArea.ondragleave = () => slideDropArea.classList.remove('dragover');
+slideDropArea.ondrop = (e) => {
+    e.preventDefault();
+    slideDropArea.classList.remove('dragover');
+    let file = e.dataTransfer.files[0];
+    if(file && file.type.startsWith('image/')) { slideSelectedFile = file; updateSlidePreview(); }
+};
+function updateSlidePreview() {
+    slidePreview.innerHTML = '';
+    if(slideSelectedFile){
+        let reader = new FileReader();
+        reader.onload = (e) => { slidePreview.innerHTML = `<div class="preview-item"><img src="${e.target.result}"><button class="remove-btn" onclick="clearSlideFile()">×</button></div>`; };
+        reader.readAsDataURL(slideSelectedFile);
+    }
+}
+function clearSlideFile() { slideSelectedFile = null; slidePreview.innerHTML = ''; }
+
+// ========== 工厂照片上传（本地上传） ==========
+const factoryDropArea = document.getElementById('factoryDropArea');
+const factoryPreview = document.getElementById('factoryPreviewContainer');
+let factorySelectedFile = null;
+
+factoryDropArea.onclick = () => { let input = document.createElement('input'); input.type='file'; input.accept='image/*'; input.onchange=(e)=>{if(e.target.files[0]){factorySelectedFile=e.target.files[0]; updateFactoryPreview();}}; input.click(); };
+factoryDropArea.ondragover = (e) => { e.preventDefault(); factoryDropArea.classList.add('dragover'); };
+factoryDropArea.ondragleave = () => factoryDropArea.classList.remove('dragover');
+factoryDropArea.ondrop = (e) => {
+    e.preventDefault();
+    factoryDropArea.classList.remove('dragover');
+    let file = e.dataTransfer.files[0];
+    if(file && file.type.startsWith('image/')) { factorySelectedFile = file; updateFactoryPreview(); }
+};
+function updateFactoryPreview() {
+    factoryPreview.innerHTML = '';
+    if(factorySelectedFile){
+        let reader = new FileReader();
+        reader.onload = (e) => { factoryPreview.innerHTML = `<div class="preview-item"><img src="${e.target.result}"><button class="remove-btn" onclick="clearFactoryFile()">×</button></div>`; };
+        reader.readAsDataURL(factorySelectedFile);
+    }
+}
+function clearFactoryFile() { factorySelectedFile = null; factoryPreview.innerHTML = ''; }
+
+// ========== 上传产品 ==========
 async function uploadProduct() {
     let name = document.getElementById("name").value.trim();
     if (!name) { alert("填写产品名称"); return; }
@@ -512,20 +302,14 @@ async function uploadProduct() {
         let f = selectedImages[i];
         let fn = Date.now() + "_" + i + "_" + f.name.replace(/[^a-zA-Z0-9.-]/g, '_');
         let { error } = await sb.storage.from("images").upload(fn, f);
-        if (!error) {
-            let { data: urlData } = sb.storage.from("images").getPublicUrl(fn);
-            imageUrls.push(urlData.publicUrl);
-        }
+        if (!error) { let { data: urlData } = sb.storage.from("images").getPublicUrl(fn); imageUrls.push(urlData.publicUrl); }
     }
     let videoUrl = document.getElementById("videoUrl").value.trim();
     let videoFile = document.getElementById("videoFile").files[0];
     if (videoFile) {
         let fn = Date.now() + "_video_" + videoFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
         let { error } = await sb.storage.from("images").upload(fn, videoFile);
-        if (!error) {
-            let { data: urlData } = sb.storage.from("images").getPublicUrl(fn);
-            videoUrl = urlData.publicUrl;
-        }
+        if (!error) { let { data: urlData } = sb.storage.from("images").getPublicUrl(fn); videoUrl = urlData.publicUrl; }
     }
     let { error } = await sb.from("products").insert([{
         name, category: document.getElementById("category").value,
@@ -536,158 +320,112 @@ async function uploadProduct() {
     if (error) alert("失败：" + error.message);
     else {
         alert("✅ 上传成功");
-        document.getElementById("name").value = "";
-        document.getElementById("gsm").value = "";
-        document.getElementById("moq").value = "";
-        document.getElementById("feature").value = "";
-        document.getElementById("videoUrl").value = "";
-        document.getElementById("videoFile").value = "";
-        document.getElementById("category").value = "";
-        selectedImages = [];
-        refreshPreview();
-        loadProducts();
+        document.getElementById("name").value = ""; document.getElementById("gsm").value = ""; document.getElementById("moq").value = "";
+        document.getElementById("feature").value = ""; document.getElementById("videoUrl").value = ""; document.getElementById("videoFile").value = "";
+        document.getElementById("category").value = ""; selectedImages = []; refreshPreview(); loadProducts();
     }
     btn.disabled = false; btn.innerText = "上传产品";
 }
 
+// ========== 添加轮播图（本地上传） ==========
+async function addSlide() {
+    let title = document.getElementById("slideTitle").value;
+    let order = parseInt(document.getElementById("slideOrder").value) || 0;
+    if (!slideSelectedFile) { alert("请先选择一张图片"); return; }
+    let btn = document.getElementById("addSlideBtn");
+    btn.disabled = true; btn.innerText = "上传中...";
+    let fileName = "slides/" + Date.now() + "_" + slideSelectedFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    let { error: uploadError } = await sb.storage.from("images").upload(fileName, slideSelectedFile);
+    if (uploadError) { alert("上传失败：" + uploadError.message); btn.disabled=false; btn.innerText="添加轮播图"; return; }
+    let { data: urlData } = sb.storage.from("images").getPublicUrl(fileName);
+    let { error } = await sb.from("home_slides").insert([{ image_url: urlData.publicUrl, title: title || null, sort_order: order, is_active: true }]);
+    if (error) alert("失败：" + error.message);
+    else { alert("✅ 轮播图已添加"); slideSelectedFile = null; updateSlidePreview(); document.getElementById("slideTitle").value = ""; document.getElementById("slideOrder").value = "0"; loadSlides(); }
+    btn.disabled = false; btn.innerText = "添加轮播图";
+}
+
+// ========== 添加工厂照片（本地上传） ==========
+async function addFactoryPhoto() {
+    let caption = document.getElementById("factoryCaption").value;
+    let order = parseInt(document.getElementById("factoryOrder").value) || 0;
+    if (!factorySelectedFile) { alert("请先选择一张图片"); return; }
+    let btn = document.getElementById("addFactoryBtn");
+    btn.disabled = true; btn.innerText = "上传中...";
+    let fileName = "factory/" + Date.now() + "_" + factorySelectedFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    let { error: uploadError } = await sb.storage.from("images").upload(fileName, factorySelectedFile);
+    if (uploadError) { alert("上传失败：" + uploadError.message); btn.disabled=false; btn.innerText="添加工厂照片"; return; }
+    let { data: urlData } = sb.storage.from("images").getPublicUrl(fileName);
+    let { error } = await sb.from("factory_photos").insert([{ image_url: urlData.publicUrl, caption: caption || null, sort_order: order, is_active: true }]);
+    if (error) alert("失败：" + error.message);
+    else { alert("✅ 工厂照片已添加"); factorySelectedFile = null; updateFactoryPreview(); document.getElementById("factoryCaption").value = ""; document.getElementById("factoryOrder").value = "0"; loadFactoryPhotos(); }
+    btn.disabled = false; btn.innerText = "添加工厂照片";
+}
+
+// ========== 加载产品列表 ==========
 async function loadProducts() {
     let { data } = await sb.from("products").select("*").order("id", { ascending: false });
     document.getElementById("totalCount").innerText = data?.length || 0;
-    let catMap = {};
-    (data||[]).forEach(p => { let c = p.category || "未分类"; catMap[c] = (catMap[c]||0)+1; });
-    let catHtml = "";
-    for (let [k,v] of Object.entries(catMap)) catHtml += `<div class="category-stat-item"><span>📁 ${k}</span><span>${v}个</span></div>`;
+    let catMap = {}; (data||[]).forEach(p => { let c = p.category || "未分类"; catMap[c] = (catMap[c]||0)+1; });
+    let catHtml = ""; for (let [k,v] of Object.entries(catMap)) catHtml += `<div class="category-stat-item"><span>📁 ${k}</span><span>${v}个</span></div>`;
     document.getElementById("categoryStats").innerHTML = catHtml || "暂无分类";
-    
     let html = "";
     (data||[]).forEach(p => {
         let imgCount = p.images?.length || (p.image ? 1 : 0);
-        let preview = "";
-        if (p.images?.length) preview = p.images.slice(0,2).map(img => `<img src="${img}" class="item-img">`).join('');
+        let preview = ""; if (p.images?.length) preview = p.images.slice(0,2).map(img => `<img src="${img}" class="item-img">`).join('');
         else if (p.image) preview = `<img src="${p.image}" class="item-img">`;
         let safeName = escapeHtml(p.name||"").replace(/'/g,"\\'");
-        html += `<div class="item">
-            <b>${escapeHtml(p.name)}</b><br>📁 ${escapeHtml(p.category)}<br>⚖️ ${escapeHtml(p.gsm)} | 📦 ${escapeHtml(p.moq)}<br>🖼️ ${imgCount}张 | 🎬 ${p.video_url?'有':'无'}<br>
-            <div>${preview}</div>
-            <div class="item-actions">
-                <button class="edit-btn" onclick='editProduct(${p.id}, "${safeName}", "${escapeHtml(p.category||"").replace(/'/g,"\\'")}", "${escapeHtml(p.gsm||"").replace(/'/g,"\\'")}", "${escapeHtml(p.moq||"").replace(/'/g,"\\'")}", "${escapeHtml(p.feature||"").replace(/'/g,"\\'")}", "${p.video_url||""}")'>✏️ 编辑</button>
-                <button class="delete-btn" onclick='deleteProduct(${p.id}, "${safeName}")'>🗑️ 删除</button>
-            </div>
-        </div>`;
+        html += `<div class="item"><b>${escapeHtml(p.name)}</b><br>📁 ${escapeHtml(p.category)}<br>⚖️ ${escapeHtml(p.gsm)} | 📦 ${escapeHtml(p.moq)}<br>🖼️ ${imgCount}张 | 🎬 ${p.video_url?'有':'无'}<br><div>${preview}</div>
+        <div class="item-actions"><button class="edit-btn" onclick='editProduct(${p.id}, "${safeName}", "${escapeHtml(p.category||"").replace(/'/g,"\\'")}", "${escapeHtml(p.gsm||"").replace(/'/g,"\\'")}", "${escapeHtml(p.moq||"").replace(/'/g,"\\'")}", "${escapeHtml(p.feature||"").replace(/'/g,"\\'")}", "${p.video_url||""}")'>✏️ 编辑</button>
+        <button class="delete-btn" onclick='deleteProduct(${p.id}, "${safeName}")'>🗑️ 删除</button></div></div>`;
     });
     document.getElementById("list").innerHTML = html || "<div class='item'>暂无产品</div>";
 }
 
+// ========== 加载轮播图列表 ==========
+async function loadSlides() {
+    let { data } = await sb.from("home_slides").select("*").order("sort_order");
+    let html = "";
+    (data||[]).forEach(s => {
+        html += `<div class="media-item"><img src="${s.image_url}" class="media-img" onerror="this.src='https://placehold.co/60x60'">
+        <div class="media-info"><div class="media-title">${escapeHtml(s.title||'无标题')}</div><div class="media-url">${s.image_url.substring(0,50)}...</div></div>
+        <div class="media-actions"><button onclick="deleteSlide(${s.id})" style="background:#dc2626;">删除</button></div></div>`;
+    });
+    document.getElementById("slidesList").innerHTML = html || "<div>暂无轮播图，请添加上传</div>";
+}
+
+// ========== 加载工厂照片列表 ==========
+async function loadFactoryPhotos() {
+    let { data } = await sb.from("factory_photos").select("*").order("sort_order");
+    let html = "";
+    (data||[]).forEach(f => {
+        html += `<div class="media-item"><img src="${f.image_url}" class="media-img" onerror="this.src='https://placehold.co/60x60'">
+        <div class="media-info"><div class="media-title">${escapeHtml(f.caption||'工厂照片')}</div><div class="media-url">${f.image_url.substring(0,50)}...</div></div>
+        <div class="media-actions"><button onclick="deleteFactoryPhoto(${f.id})" style="background:#dc2626;">删除</button></div></div>`;
+    });
+    document.getElementById("factoryList").innerHTML = html || "<div>暂无工厂照片，请添加上传</div>";
+}
+
+// ========== 编辑/删除产品 ==========
 function editProduct(id,name,category,gsm,moq,feature,videoUrl) {
-    document.getElementById("editId").value = id;
-    document.getElementById("editName").value = name;
-    document.getElementById("editCategory").value = category;
-    document.getElementById("editGsm").value = gsm;
-    document.getElementById("editMoq").value = moq;
-    document.getElementById("editFeature").value = feature;
-    document.getElementById("editVideoUrl").value = videoUrl;
-    document.getElementById("editModal").style.display = "flex";
+    document.getElementById("editId").value = id; document.getElementById("editName").value = name;
+    document.getElementById("editCategory").value = category; document.getElementById("editGsm").value = gsm;
+    document.getElementById("editMoq").value = moq; document.getElementById("editFeature").value = feature;
+    document.getElementById("editVideoUrl").value = videoUrl; document.getElementById("editModal").style.display = "flex";
 }
 async function saveEdit() {
     let id = document.getElementById("editId").value;
     let { error } = await sb.from("products").update({
-        name: document.getElementById("editName").value,
-        category: document.getElementById("editCategory").value,
-        gsm: document.getElementById("editGsm").value,
-        moq: document.getElementById("editMoq").value,
-        feature: document.getElementById("editFeature").value,
-        video_url: document.getElementById("editVideoUrl").value
+        name: document.getElementById("editName").value, category: document.getElementById("editCategory").value,
+        gsm: document.getElementById("editGsm").value, moq: document.getElementById("editMoq").value,
+        feature: document.getElementById("editFeature").value, video_url: document.getElementById("editVideoUrl").value
     }).eq("id", id);
     if (error) alert("失败：" + error.message);
     else { alert("✅ 已更新"); document.getElementById("editModal").style.display = "none"; loadProducts(); }
 }
-async function deleteProduct(id,name) {
-    if (confirm(`删除 "${name}"？不可恢复`)) {
-        let { error } = await sb.from("products").delete().eq("id", id);
-        if (error) alert("失败：" + error.message);
-        else { alert("✅ 已删除"); loadProducts(); }
-    }
-}
+async function deleteProduct(id,name) { if (confirm(`删除 "${name}"？不可恢复`)) { await sb.from("products").delete().eq("id", id); loadProducts(); } }
+async function deleteSlide(id) { if (confirm("删除这张轮播图？")) { await sb.from("home_slides").delete().eq("id", id); loadSlides(); } }
+async function deleteFactoryPhoto(id) { if (confirm("删除这张照片？")) { await sb.from("factory_photos").delete().eq("id", id); loadFactoryPhotos(); } }
 
-// ========== 轮播图管理 ==========
-async function loadSlides() {
-    let { data } = await sb.from("home_slides").select("*").order("sort_order");
-    let html = `<div class="media-form"><h4>➕ 添加轮播图</h4>
-        <input type="text" id="slideImageUrl" placeholder="图片URL *">
-        <input type="text" id="slideTitle" placeholder="图片标题">
-        <input type="number" id="slideOrder" placeholder="排序" value="0">
-        <button id="addSlideBtn">添加轮播图</button></div>`;
-    (data||[]).forEach(s => {
-        html += `<div class="media-item">
-            <img src="${s.image_url}" class="media-img" onerror="this.src='https://placehold.co/60x60'">
-            <div class="media-info"><div class="media-title">${escapeHtml(s.title||'无标题')}</div><div class="media-url">${s.image_url.substring(0,50)}...</div></div>
-            <div class="media-actions">
-                <button onclick="deleteSlide(${s.id})" style="background:#dc2626;">删除</button>
-            </div>
-        </div>`;
-    });
-    document.getElementById("slidesList").innerHTML = html;
-    document.getElementById("addSlideBtn")?.addEventListener("click", addSlide);
-}
-async function addSlide() {
-    let url = document.getElementById("slideImageUrl").value.trim();
-    if (!url) { alert("填写图片URL"); return; }
-    let { error } = await sb.from("home_slides").insert([{
-        image_url: url,
-        title: document.getElementById("slideTitle").value,
-        sort_order: parseInt(document.getElementById("slideOrder").value) || 0,
-        is_active: true
-    }]);
-    if (error) alert("失败：" + error.message);
-    else { alert("✅ 已添加"); loadSlides(); }
-}
-async function deleteSlide(id) {
-    if (confirm("删除这张轮播图？")) {
-        await sb.from("home_slides").delete().eq("id", id);
-        loadSlides();
-    }
-}
-
-// ========== 工厂照片管理 ==========
-async function loadFactoryPhotos() {
-    let { data } = await sb.from("factory_photos").select("*").order("sort_order");
-    let html = `<div class="media-form"><h4>➕ 添加工厂照片</h4>
-        <input type="text" id="factoryImageUrl" placeholder="图片URL *">
-        <input type="text" id="factoryCaption" placeholder="照片描述">
-        <input type="number" id="factoryOrder" placeholder="排序" value="0">
-        <button id="addFactoryBtn">添加工厂照片</button></div>`;
-    (data||[]).forEach(f => {
-        html += `<div class="media-item">
-            <img src="${f.image_url}" class="media-img" onerror="this.src='https://placehold.co/60x60'">
-            <div class="media-info"><div class="media-title">${escapeHtml(f.caption||'工厂照片')}</div><div class="media-url">${f.image_url.substring(0,50)}...</div></div>
-            <div class="media-actions">
-                <button onclick="deleteFactoryPhoto(${f.id})" style="background:#dc2626;">删除</button>
-            </div>
-        </div>`;
-    });
-    document.getElementById("factoryList").innerHTML = html;
-    document.getElementById("addFactoryBtn")?.addEventListener("click", addFactoryPhoto);
-}
-async function addFactoryPhoto() {
-    let url = document.getElementById("factoryImageUrl").value.trim();
-    if (!url) { alert("填写图片URL"); return; }
-    let { error } = await sb.from("factory_photos").insert([{
-        image_url: url,
-        caption: document.getElementById("factoryCaption").value,
-        sort_order: parseInt(document.getElementById("factoryOrder").value) || 0,
-        is_active: true
-    }]);
-    if (error) alert("失败：" + error.message);
-    else { alert("✅ 已添加"); loadFactoryPhotos(); }
-}
-async function deleteFactoryPhoto(id) {
-    if (confirm("删除这张照片？")) {
-        await sb.from("factory_photos").delete().eq("id", id);
-        loadFactoryPhotos();
-    }
-}
-
-// ========== 辅助函数 ==========
 function escapeHtml(str) { if (!str) return ""; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
 
 // 绑定事件
@@ -696,13 +434,17 @@ document.getElementById("uploadBtn").onclick = uploadProduct;
 document.getElementById("refreshBtn").onclick = loadProducts;
 document.getElementById("saveEditBtn").onclick = saveEdit;
 document.getElementById("cancelEditBtn").onclick = () => document.getElementById("editModal").style.display = "none";
+document.getElementById("addSlideBtn").onclick = addSlide;
+document.getElementById("addFactoryBtn").onclick = addFactoryPhoto;
 document.getElementById("pass").addEventListener("keydown", (e) => { if (e.key === "Enter") login(); });
+
 window.removeImage = removeImage;
 window.deleteProduct = deleteProduct;
 window.editProduct = editProduct;
 window.deleteSlide = deleteSlide;
 window.deleteFactoryPhoto = deleteFactoryPhoto;
-
+window.clearSlideFile = clearSlideFile;
+window.clearFactoryFile = clearFactoryFile;
 </script>
 
 </body>
