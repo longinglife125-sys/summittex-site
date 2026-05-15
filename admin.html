@@ -27,9 +27,10 @@ button:hover { background:#1d4ed8; }
 .upload-box { border:2px dashed #4b5563; border-radius:12px; padding:20px; text-align:center; margin:10px 0; cursor:pointer; background:#1e293b; }
 .upload-box:hover { border-color:#2563eb; background:#334155; }
 .preview-img { width:80px; height:80px; object-fit:cover; border-radius:8px; margin-top:10px; }
+.preview-video { width:200px; border-radius:8px; margin-top:10px; }
 .media-item { background:#1e293b; border-radius:8px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
 .media-img { width:60px; height:60px; object-fit:cover; border-radius:8px; }
-.select-small { width:auto; display:inline-block; margin-left:10px; }
+.video-hint { font-size:11px; color:#94a3b8; margin-top:5px; }
 </style>
 </head>
 
@@ -55,12 +56,19 @@ button:hover { background:#1d4ed8; }
     <div class="box">
         <h3>📤 上传产品</h3>
         <input id="name" placeholder="产品名称">
-        <select id="category"><option>Outdoor Functional Fabrics</option><option>Sports & Activewear Fabrics</option><option>Recycled & Sustainable Fabrics</option><option>Stretch Fabrics</option><option>Nylon & Polyester Fabrics</option><option>Others</option></select>
+        <select id="category">
+            <option>Outdoor Functional Fabrics</option>
+            <option>Sports & Activewear Fabrics</option>
+            <option>Recycled & Sustainable Fabrics</option>
+            <option>Stretch Fabrics</option>
+            <option>Nylon & Polyester Fabrics</option>
+            <option>Others</option>
+        </select>
         <input id="gsm" placeholder="GSM">
         <input id="moq" placeholder="MOQ">
         <textarea id="feature" placeholder="产品描述"></textarea>
         <input type="file" id="productImage" accept="image/*">
-        <input id="videoUrl" placeholder="视频链接">
+        <input id="videoUrl" placeholder="视频链接 (YouTube)">
         <button id="uploadBtn">上传产品</button>
     </div>
     <div class="box">
@@ -120,13 +128,25 @@ button:hover { background:#1d4ed8; }
     </div>
     <div class="box">
         <h3>⚙️ 工厂设置</h3>
-        <label>工厂视频链接 (YouTube 嵌入链接)</label>
-        <input type="text" id="factoryVideoUrl" placeholder="https://www.youtube.com/embed/xxxxx">
-        <label>工厂页面标题</label>
+        
+        <div style="margin-bottom:15px;">
+            <label>📹 工厂视频（二选一）</label>
+            <div class="upload-box" id="videoUploadBox">📹 点击上传 MP4 视频文件（本地上传）</div>
+            <input type="file" id="videoFileUpload" accept="video/mp4,video/webm" style="display:none">
+            <div id="videoPreviewArea"></div>
+            <div class="video-hint">或</div>
+            <input type="text" id="factoryVideoUrl" placeholder="粘贴 YouTube/Vimeo 链接">
+            <div class="video-hint">💡 支持 YouTube: https://youtu.be/xxxxx 或 https://www.youtube.com/embed/xxxxx</div>
+        </div>
+        
+        <label>🏭 工厂页面标题</label>
         <input type="text" id="factoryName" placeholder="Our Factory">
-        <label>工厂描述</label>
+        
+        <label>📝 工厂描述</label>
         <textarea id="factoryDesc" placeholder="描述文字" rows="2"></textarea>
+        
         <button id="saveSettingsBtn">保存设置</button>
+        <div id="settingsStatus" style="margin-top:10px; font-size:12px; color:#4ade80;"></div>
     </div>
 </div>
 
@@ -141,6 +161,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentSlideFile = null;
 let currentFactoryFile = null;
 let currentCertFile = null;
+let currentVideoFile = null;
 
 // ========== 登录 ==========
 document.getElementById("loginBtn").onclick = function() {
@@ -278,4 +299,100 @@ document.getElementById("addCertBtn").onclick = async function() {
     if (!currentCertFile) { alert("请先选择图片"); return; }
     let fileName = "certificates/" + Date.now() + "_" + currentCertFile.name;
     let { error: uploadError } = await sb.storage.from("images").upload(fileName, currentCertFile);
-    if (uploadError) { alert("上传失败："
+    if (uploadError) { alert("上传失败：" + uploadError.message); return; }
+    let { data } = sb.storage.from("images").getPublicUrl(fileName);
+    let name = document.getElementById("certName").value;
+    let order = parseInt(document.getElementById("certOrder").value) || 0;
+    let { error } = await sb.from("factory_certificates").insert([{ image_url: data.publicUrl, name: name, sort_order: order, is_active: true }]);
+    if (error) alert("失败：" + error.message);
+    else { alert("添加成功"); currentCertFile = null; document.getElementById("certFile").value = ""; document.getElementById("certPreview").innerHTML = ""; document.getElementById("certName").value = ""; document.getElementById("certOrder").value = "0"; loadCertificates(); }
+};
+async function loadCertificates() {
+    let { data } = await sb.from("factory_certificates").select("*").order("sort_order");
+    let html = "";
+    (data || []).forEach(c => { html += `<div class="media-item"><img src="${c.image_url}" class="media-img"><div>${c.name || "证书"}</div><button onclick="deleteCertificate(${c.id})" style="background:#dc2626;padding:4px 12px;">删除</button></div>`; });
+    document.getElementById("certList").innerHTML = html || "<div>暂无证书</div>";
+}
+async function deleteCertificate(id) { if (confirm("删除这张证书？")) { await sb.from("factory_certificates").delete().eq("id", id); loadCertificates(); } }
+
+// ========== 工厂视频上传（本地上传MP4） ==========
+document.getElementById("videoUploadBox").onclick = () => document.getElementById("videoFileUpload").click();
+document.getElementById("videoFileUpload").onchange = (e) => {
+    if (e.target.files[0]) {
+        currentVideoFile = e.target.files[0];
+        let videoURL = URL.createObjectURL(currentVideoFile);
+        document.getElementById("videoPreviewArea").innerHTML = `
+            <video src="${videoURL}" controls class="preview-video" style="max-width:100%; max-height:150px; border-radius:8px; margin-top:10px;"></video>
+            <button onclick="clearVideoFile()" style="padding:4px 8px; font-size:12px; margin-left:10px;">取消选择</button>
+            <div style="font-size:12px; color:#4ade80; margin-top:5px;">✅ 已选择: ${currentVideoFile.name}</div>
+        `;
+    }
+};
+function clearVideoFile() {
+    currentVideoFile = null;
+    document.getElementById("videoFileUpload").value = "";
+    document.getElementById("videoPreviewArea").innerHTML = "";
+}
+
+// ========== 工厂设置加载与保存 ==========
+async function loadFactorySettings() {
+    let { data } = await sb.from("factory_settings").select("*");
+    let settings = {};
+    (data || []).forEach(s => { settings[s.setting_key] = s.setting_value; });
+    document.getElementById("factoryVideoUrl").value = settings.factory_video_url || "";
+    document.getElementById("factoryName").value = settings.factory_name || "Our Factory";
+    document.getElementById("factoryDesc").value = settings.factory_description || "Professional Functional Fabric Manufacturing Facility in China";
+}
+document.getElementById("saveSettingsBtn").onclick = async function() {
+    let statusDiv = document.getElementById("settingsStatus");
+    statusDiv.innerHTML = "⏳ 保存中...";
+    
+    let videoUrl = document.getElementById("factoryVideoUrl").value.trim();
+    
+    // 如果上传了本地视频文件
+    if (currentVideoFile) {
+        statusDiv.innerHTML = "⏳ 上传视频中...";
+        let fileName = "factory_video/" + Date.now() + "_" + currentVideoFile.name;
+        let { error: uploadError } = await sb.storage.from("images").upload(fileName, currentVideoFile);
+        if (uploadError) {
+            statusDiv.innerHTML = "❌ 视频上传失败：" + uploadError.message;
+            return;
+        }
+        let { data } = sb.storage.from("images").getPublicUrl(fileName);
+        videoUrl = data.publicUrl;
+        statusDiv.innerHTML = "✅ 视频上传成功，保存设置中...";
+    }
+    
+    // 保存设置
+    let updates = [
+        { setting_key: "factory_video_url", setting_value: videoUrl },
+        { setting_key: "factory_name", setting_value: document.getElementById("factoryName").value },
+        { setting_key: "factory_description", setting_value: document.getElementById("factoryDesc").value }
+    ];
+    
+    let allSuccess = true;
+    for (let item of updates) {
+        let { error } = await sb.from("factory_settings").upsert(item, { onConflict: "setting_key" });
+        if (error) { allSuccess = false; statusDiv.innerHTML = "❌ 保存失败：" + error.message; break; }
+    }
+    
+    if (allSuccess) {
+        statusDiv.innerHTML = "✅ 所有设置已保存！";
+        currentVideoFile = null;
+        document.getElementById("videoFileUpload").value = "";
+        document.getElementById("videoPreviewArea").innerHTML = "";
+        setTimeout(() => { statusDiv.innerHTML = ""; }, 3000);
+    }
+};
+
+// 暴露全局函数
+window.editProduct = editProduct;
+window.deleteProduct = deleteProduct;
+window.deleteSlide = deleteSlide;
+window.deleteFactoryPhoto = deleteFactoryPhoto;
+window.deleteCertificate = deleteCertificate;
+window.clearVideoFile = clearVideoFile;
+</script>
+
+</body>
+</html>
