@@ -67,10 +67,12 @@ button:hover{
     margin-top:10px;
 }
 
-img{
+.item-img{
     max-width:80px;
+    max-height:80px;
     border-radius:8px;
     margin-top:8px;
+    object-fit:cover;
 }
 </style>
 </head>
@@ -99,7 +101,6 @@ img{
 
 <select id="category">
     <option value="">请选择产品分类</option>
-
     <option>Outdoor Functional Fabrics</option>
     <option>Sports & Activewear Fabrics</option>
     <option>Recycled & Sustainable Fabrics</option>
@@ -213,67 +214,67 @@ try{
 
         if(uploadError){
 
-            console.log(uploadError);
+            console.log("图片上传错误:", uploadError);
 
-            alert("图片上传失败");
+            alert("图片上传失败：" + uploadError.message);
 
         }else{
 
-            imageUrl =
-            "https://tpcxaelljrudshchuzia.supabase.co/storage/v1/object/public/images/" + fileName;
+            // 使用 getPublicUrl 方法获取标准公开URL
+            const { data: publicUrlData } = sb.storage
+                .from("images")
+                .getPublicUrl(fileName);
+            
+            imageUrl = publicUrlData.publicUrl;
+            
+            console.log("图片URL生成成功:", imageUrl);
         }
     }
 
     /* ===== 插入数据库 ===== */
 
+    const productData = {
+        name: productName,
+        category: document.getElementById("category").value,
+        gsm: document.getElementById("gsm").value,
+        moq: document.getElementById("moq").value,
+        feature: document.getElementById("feature").value,
+        image: imageUrl
+    };
+
+    console.log("准备保存的产品数据:", productData);
+
     const { error: dbError } = await sb
     .from("products")
-    .insert([{
-
-        name: productName,
-
-        category: document.getElementById("category").value,
-
-        gsm: document.getElementById("gsm").value,
-
-        moq: document.getElementById("moq").value,
-
-        feature: document.getElementById("feature").value,
-
-        image: imageUrl
-
-    }]);
+    .insert([productData]);
 
     if(dbError){
 
-        console.log(dbError);
+        console.log("数据库错误:", dbError);
 
         alert("上传失败：" + dbError.message);
 
     }else{
 
-        alert("✅ 产品上传成功");
+        alert("✅ 产品上传成功" + (imageUrl ? "（含图片）" : "（无图片）"));
 
         /* 清空表单 */
-
         document.getElementById("name").value = "";
-
-        document.getElementById("category").value = "";
-
         document.getElementById("gsm").value = "";
-
         document.getElementById("moq").value = "";
-
         document.getElementById("feature").value = "";
-
         document.getElementById("file").value = "";
+        
+        // 重置分类下拉框
+        const categorySelect = document.getElementById("category");
+        if(categorySelect) categorySelect.value = "";
 
         load();
     }
 
 }catch(e){
 
-    console.log(e);
+    console.log("系统异常:", e);
 
     alert("系统错误：" + e.message);
 }
@@ -290,7 +291,9 @@ const { data, error } = await sb
 
 if(error){
 
-    console.log(error);
+    console.log("加载错误:", error);
+
+    alert("加载产品失败：" + error.message);
 
     return;
 }
@@ -305,25 +308,22 @@ if(!data || data.length === 0){
 
     data.forEach(p=>{
 
+        // 调试：打印图片URL
+        if(p.image) console.log("产品图片URL:", p.name, p.image);
+        
         html += `
         <div class="item">
-
-            <b>${p.name || ""}</b><br><br>
-
-            📁 分类：${p.category || ""}<br>
-
-            ⚖️ GSM：${p.gsm || ""}<br>
-
-            📦 MOQ：${p.moq || ""}<br><br>
-
-            📝 ${p.feature || ""}<br>
-
+            <b>${escapeHtml(p.name || "")}</b><br><br>
+            📁 分类：${escapeHtml(p.category || "")}<br>
+            ⚖️ GSM：${escapeHtml(p.gsm || "")}<br>
+            📦 MOQ：${escapeHtml(p.moq || "")}<br><br>
+            📝 ${escapeHtml(p.feature || "")}<br>
             ${
-                p.image
-                ? `<img src="${p.image}" onerror="this.style.display='none'">`
-                : ""
+                p.image && p.image.trim() !== ""
+                ? `<img src="${p.image}" class="item-img" onerror="this.onerror=null; this.style.display='none'; this.insertAdjacentHTML('afterend', '<span style=\"color:red;font-size:12px;\"> 图片加载失败</span>');" 
+                       onload="console.log('图片加载成功: ${p.image}')">`
+                : "<span style='color:#999;font-size:12px;'>📷 无图片</span>"
             }
-
         </div>
         `;
     });
@@ -343,7 +343,7 @@ const { data, error } = await sb
 
 if(error){
 
-    console.log(error);
+    console.log("CRM错误:", error);
 
     return;
 }
@@ -360,13 +360,9 @@ if(!data || data.length === 0){
 
         html += `
         <div class="item">
-
-            <b>${c.name || "匿名客户"}</b><br><br>
-
-            📌 产品：${c.product || ""}<br><br>
-
-            💬 ${c.message || ""}
-
+            <b>${escapeHtml(c.name || "匿名客户")}</b><br><br>
+            📌 产品：${escapeHtml(c.product || "")}<br><br>
+            💬 ${escapeHtml(c.message || "")}
         </div>
         `;
     });
@@ -374,6 +370,17 @@ if(!data || data.length === 0){
 
 document.getElementById("crm").innerHTML = html;
 
+}
+
+/* ===================== 防XSS辅助函数 ===================== */
+function escapeHtml(str){
+    if(!str) return "";
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
 }
 
 /* ===================== 绑定事件 ===================== */
@@ -388,13 +395,14 @@ document.getElementById("crmBtn").onclick = loadCRM;
 
 /* ===== 回车登录 ===== */
 
-document.getElementById("pass").addEventListener("keydown",function(e){
-
-    if(e.key === "Enter"){
-
-        login();
-    }
-});
+const passInput = document.getElementById("pass");
+if(passInput){
+    passInput.addEventListener("keydown", function(e){
+        if(e.key === "Enter"){
+            login();
+        }
+    });
+}
 
 </script>
 
