@@ -81,7 +81,6 @@ button:hover{
     padding:10px;
     border-radius:10px;
     margin-top:10px;
-    position:relative;
 }
 
 .item-img{
@@ -107,7 +106,6 @@ button:hover{
     padding-left: 8px;
 }
 
-/* 多图上传区域 */
 .drop-area {
     border: 2px dashed #4b5563;
     border-radius: 12px;
@@ -179,7 +177,6 @@ button:hover{
     margin-top: 5px;
 }
 
-/* 模态框 */
 .modal {
     display: none;
     position: fixed;
@@ -187,7 +184,7 @@ button:hover{
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.8);
     z-index: 1000;
     justify-content: center;
     align-items: center;
@@ -198,8 +195,8 @@ button:hover{
     border-radius: 16px;
     padding: 24px;
     width: 90%;
-    max-width: 500px;
-    max-height: 80vh;
+    max-width: 600px;
+    max-height: 85vh;
     overflow-y: auto;
 }
 
@@ -240,6 +237,58 @@ button:hover{
     min-height: 80px;
     resize: vertical;
 }
+
+.existing-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 15px 0;
+    padding: 10px;
+    background: #0f1722;
+    border-radius: 8px;
+}
+
+.existing-img-item {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #4b5563;
+}
+
+.existing-img-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.existing-img-remove {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(220,38,38,0.9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.existing-img-remove:hover {
+    background: #dc2626;
+}
+
+.image-hint {
+    font-size: 11px;
+    color: #94a3b8;
+    margin: 8px 0;
+}
 </style>
 </head>
 
@@ -256,9 +305,7 @@ button:hover{
 
 <div class="box">
 <h3>📤 上传产品</h3>
-
 <input id="name" placeholder="产品名称 *">
-
 <select id="category">
     <option value="">请选择产品分类</option>
     <option>Outdoor Functional Fabrics</option>
@@ -274,7 +321,6 @@ button:hover{
     <option>Fashion Fabrics</option>
     <option>Others</option>
 </select>
-
 <input id="gsm" placeholder="GSM (例: 180)">
 <input id="moq" placeholder="MOQ (例: 1000 meters)">
 <textarea id="feature" placeholder="产品描述"></textarea>
@@ -336,6 +382,16 @@ button:hover{
         <input type="text" id="editMoq" class="edit-modal-input" placeholder="MOQ">
         <textarea id="editFeature" class="edit-modal-textarea" placeholder="产品描述"></textarea>
         <input type="text" id="editVideoUrl" class="edit-modal-input" placeholder="视频链接">
+        
+        <div class="section-title" style="margin-top:10px;">🖼️ 现有图片（点击 × 删除）</div>
+        <div id="existingImagesContainer" class="existing-images"></div>
+        
+        <div class="section-title">➕ 添加新图片</div>
+        <div class="drop-area" id="editDropArea" style="padding:12px; margin-top:5px;">
+            📸 点击或拖拽添加新图片
+        </div>
+        <div class="preview-container" id="editPreviewContainer"></div>
+        
         <div class="modal-buttons">
             <button id="saveEditBtn" style="background:#f59e0b;">保存修改</button>
             <button id="cancelEditBtn" style="background:#6c757d;">取消</button>
@@ -367,8 +423,9 @@ const sb = createClient(
 
 // 存储待上传的图片文件列表
 let selectedImages = [];
-let editingProductId = null;
-let deletingProductId = null;
+let editSelectedImages = [];
+let currentProductImages = [];
+let currentProductId = null;
 
 // DOM 元素
 const dropArea = document.getElementById('dropArea');
@@ -376,10 +433,8 @@ const imageInput = document.getElementById('imageInput');
 const previewContainer = document.getElementById('previewContainer');
 const imgCountSpan = document.getElementById('imgCount');
 
-// 打开文件选择
 dropArea.addEventListener('click', () => imageInput.click());
 
-// 拖拽上传
 dropArea.addEventListener('dragover', (e) => {
     e.preventDefault();
     dropArea.classList.add('dragover');
@@ -396,13 +451,11 @@ dropArea.addEventListener('drop', (e) => {
     addImages(files);
 });
 
-// 选择文件
 imageInput.addEventListener('change', (e) => {
     addImages(Array.from(e.target.files));
     imageInput.value = '';
 });
 
-// 添加图片到列表
 function addImages(files) {
     for (const file of files) {
         if (file.size > 10 * 1024 * 1024) {
@@ -414,13 +467,11 @@ function addImages(files) {
     refreshPreview();
 }
 
-// 移除图片
 function removeImage(index) {
     selectedImages.splice(index, 1);
     refreshPreview();
 }
 
-// 刷新预览
 function refreshPreview() {
     previewContainer.innerHTML = '';
     selectedImages.forEach((file, idx) => {
@@ -439,7 +490,6 @@ function refreshPreview() {
     imgCountSpan.innerText = `已选择 ${selectedImages.length} 张图片`;
 }
 
-// 登录
 function login() {
     const pass = document.getElementById("pass").value.trim();
     if (pass === "123456") {
@@ -452,7 +502,6 @@ function login() {
     }
 }
 
-// 上传产品
 async function upload() {
     try {
         const productName = document.getElementById("name").value.trim();
@@ -472,9 +521,7 @@ async function upload() {
             const { error: uploadError } = await sb.storage
                 .from("images")
                 .upload(fileName, file);
-            if (uploadError) {
-                console.error("图片上传错误:", uploadError);
-            } else {
+            if (!uploadError) {
                 const { data: publicUrlData } = sb.storage
                     .from("images")
                     .getPublicUrl(fileName);
@@ -517,7 +564,6 @@ async function upload() {
             alert("上传失败：" + dbError.message);
         } else {
             alert(`✅ 产品上传成功！\n图片：${imageUrls.length}张\n视频：${videoUrl ? "已添加" : "无"}`);
-            
             document.getElementById("name").value = "";
             document.getElementById("gsm").value = "";
             document.getElementById("moq").value = "";
@@ -527,11 +573,9 @@ async function upload() {
             document.getElementById("category").value = "";
             selectedImages = [];
             refreshPreview();
-            
             load();
         }
     } catch (e) {
-        console.error("系统异常:", e);
         alert("系统错误：" + e.message);
     } finally {
         const uploadBtn = document.getElementById("uploadBtn");
@@ -540,7 +584,6 @@ async function upload() {
     }
 }
 
-// 加载产品列表
 async function load() {
     const { data, error } = await sb
         .from("products")
@@ -569,13 +612,13 @@ async function load() {
                 previewImages = `<img src="${p.image}" class="item-img" onerror="this.style.display='none'">`;
             }
             
-            // 安全转义
             const safeName = escapeHtml(p.name || "").replace(/'/g, "\\'");
             const safeCategory = escapeHtml(p.category || "").replace(/'/g, "\\'");
             const safeGsm = escapeHtml(p.gsm || "").replace(/'/g, "\\'");
             const safeMoq = escapeHtml(p.moq || "").replace(/'/g, "\\'");
             const safeFeature = escapeHtml(p.feature || "").replace(/'/g, "\\'");
             const safeVideoUrl = (p.video_url || "").replace(/'/g, "\\'");
+            const imagesJson = JSON.stringify(p.images || []).replace(/'/g, "\\'");
             
             html += `
             <div class="item">
@@ -587,7 +630,7 @@ async function load() {
                 📝 ${escapeHtml((p.feature || "").substring(0, 80))}${p.feature && p.feature.length > 80 ? '...' : ''}<br>
                 <div style="margin-top:5px;">${previewImages}</div>
                 <div style="margin-top:10px; display:flex; gap:10px; justify-content:flex-end;">
-                    <button onclick='editProduct(${p.id}, "${safeName}", "${safeCategory}", "${safeGsm}", "${safeMoq}", "${safeFeature}", "${safeVideoUrl}")' style="background:#f59e0b; padding:6px 12px; font-size:12px; width:auto; margin:0; border:none; border-radius:6px; cursor:pointer;">✏️ 编辑</button>
+                    <button onclick='editProduct(${p.id}, "${safeName}", "${safeCategory}", "${safeGsm}", "${safeMoq}", "${safeFeature}", "${safeVideoUrl}", \`${imagesJson}\`)' style="background:#f59e0b; padding:6px 12px; font-size:12px; width:auto; margin:0; border:none; border-radius:6px; cursor:pointer;">✏️ 编辑</button>
                     <button onclick='deleteProduct(${p.id}, "${safeName}")' style="background:#dc2626; padding:6px 12px; font-size:12px; width:auto; margin:0; border:none; border-radius:6px; cursor:pointer;">🗑️ 删除</button>
                 </div>
             </div>
@@ -597,8 +640,11 @@ async function load() {
     document.getElementById("list").innerHTML = html;
 }
 
-// 编辑产品
-function editProduct(id, name, category, gsm, moq, feature, videoUrl) {
+function editProduct(id, name, category, gsm, moq, feature, videoUrl, imagesJson) {
+    currentProductId = id;
+    currentProductImages = JSON.parse(imagesJson) || [];
+    editSelectedImages = [];
+    
     document.getElementById("editId").value = id;
     document.getElementById("editName").value = name;
     document.getElementById("editCategory").value = category;
@@ -606,19 +652,97 @@ function editProduct(id, name, category, gsm, moq, feature, videoUrl) {
     document.getElementById("editMoq").value = moq;
     document.getElementById("editFeature").value = feature;
     document.getElementById("editVideoUrl").value = videoUrl;
+    
+    renderExistingImages();
+    renderEditPreview();
+    
     document.getElementById("editModal").style.display = "flex";
 }
 
-// 保存编辑
+function renderExistingImages() {
+    const container = document.getElementById("existingImagesContainer");
+    if (currentProductImages.length === 0) {
+        container.innerHTML = '<div style="color:#94a3b8; padding:10px;">暂无图片</div>';
+        return;
+    }
+    container.innerHTML = currentProductImages.map((img, idx) => `
+        <div class="existing-img-item">
+            <img src="${img}" onerror="this.src='https://placehold.co/70x70?text=Error'">
+            <button class="existing-img-remove" onclick="removeExistingImage(${idx})">×</button>
+        </div>
+    `).join('');
+}
+
+function removeExistingImage(index) {
+    currentProductImages.splice(index, 1);
+    renderExistingImages();
+}
+
+function addEditImages(files) {
+    for (const file of files) {
+        if (file.size > 10 * 1024 * 1024) {
+            alert(`图片 ${file.name} 超过10MB，已跳过`);
+            continue;
+        }
+        editSelectedImages.push(file);
+    }
+    renderEditPreview();
+}
+
+function removeEditImage(index) {
+    editSelectedImages.splice(index, 1);
+    renderEditPreview();
+}
+
+function renderEditPreview() {
+    const container = document.getElementById("editPreviewContainer");
+    container.innerHTML = '';
+    editSelectedImages.forEach((file, idx) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const previewDiv = document.createElement('div');
+            previewDiv.className = 'preview-item';
+            previewDiv.innerHTML = `
+                <img src="${e.target.result}">
+                <button class="remove-btn" onclick="removeEditImage(${idx})">×</button>
+            `;
+            container.appendChild(previewDiv);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
 async function saveEdit() {
     const id = document.getElementById("editId").value;
+    
+    // 上传新图片
+    const newImageUrls = [];
+    for (let i = 0; i < editSelectedImages.length; i++) {
+        const file = editSelectedImages[i];
+        const fileName = Date.now() + "_edit_" + i + "_" + file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+        const { error: uploadError } = await sb.storage
+            .from("images")
+            .upload(fileName, file);
+        if (!uploadError) {
+            const { data: publicUrlData } = sb.storage
+                .from("images")
+                .getPublicUrl(fileName);
+            newImageUrls.push(publicUrlData.publicUrl);
+        }
+    }
+    
+    // 合并旧图片和新图片
+    const allImages = [...currentProductImages, ...newImageUrls];
+    
     const updateData = {
         name: document.getElementById("editName").value,
         category: document.getElementById("editCategory").value,
         gsm: document.getElementById("editGsm").value,
         moq: document.getElementById("editMoq").value,
         feature: document.getElementById("editFeature").value,
-        video_url: document.getElementById("editVideoUrl").value || null
+        video_url: document.getElementById("editVideoUrl").value || null,
+        image: allImages[0] || "",
+        images: allImages
     };
     
     try {
@@ -639,23 +763,19 @@ async function saveEdit() {
     }
 }
 
-// 删除产品（弹出确认框）
 function deleteProduct(id, name) {
     deletingProductId = id;
     document.getElementById("deleteProductName").innerText = name;
     document.getElementById("deleteModal").style.display = "flex";
 }
 
-// 执行删除
 async function confirmDelete() {
     if (!deletingProductId) return;
-    
     try {
         const { error } = await sb
             .from("products")
             .delete()
             .eq("id", deletingProductId);
-        
         if (error) {
             alert("删除失败：" + error.message);
         } else {
@@ -670,7 +790,8 @@ async function confirmDelete() {
     }
 }
 
-// 加载CRM
+let deletingProductId = null;
+
 async function loadCRM() {
     const { data, error } = await sb
         .from("inquiries")
@@ -708,12 +829,41 @@ function escapeHtml(str) {
         .replace(/'/g, "&#39;");
 }
 
+// 编辑页面的拖拽上传
+const editDropArea = document.getElementById('editDropArea');
+if (editDropArea) {
+    editDropArea.addEventListener('click', () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.multiple = true;
+        input.accept = 'image/jpeg,image/jpg,image/png,image/webp';
+        input.onchange = (e) => addEditImages(Array.from(e.target.files));
+        input.click();
+    });
+    editDropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        editDropArea.classList.add('dragover');
+    });
+    editDropArea.addEventListener('dragleave', () => {
+        editDropArea.classList.remove('dragover');
+    });
+    editDropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        editDropArea.classList.remove('dragover');
+        const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+        addEditImages(files);
+    });
+}
+
 // 暴露全局函数
 window.removeImage = removeImage;
+window.removeEditImage = removeEditImage;
+window.removeExistingImage = removeExistingImage;
 window.editProduct = editProduct;
 window.deleteProduct = deleteProduct;
+window.confirmDelete = confirmDelete;
+window.addEditImages = addEditImages;
 
-// 绑定事件
 document.getElementById("loginBtn").onclick = login;
 document.getElementById("uploadBtn").onclick = upload;
 document.getElementById("refreshBtn").onclick = load;
