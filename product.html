@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
 <meta charset="UTF-8">
@@ -7,8 +7,7 @@
 
 <title>Product Detail - SummitTex</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 
@@ -37,6 +36,10 @@ body{
     margin-bottom:20px;
 }
 
+.back:hover{
+    text-decoration:underline;
+}
+
 /* LAYOUT */
 .layout{
     display:grid;
@@ -49,6 +52,9 @@ body{
     width:100%;
     border-radius:16px;
     box-shadow:0 10px 25px rgba(0,0,0,.1);
+    background:#f0f0f0;
+    min-height:300px;
+    object-fit:contain;
 }
 
 /* THUMB */
@@ -56,6 +62,7 @@ body{
     display:flex;
     gap:10px;
     margin-top:12px;
+    flex-wrap:wrap;
 }
 
 .thumbs img{
@@ -113,6 +120,7 @@ input, textarea{
     margin-top:10px;
     border-radius:8px;
     border:1px solid #e5e7eb;
+    box-sizing:border-box;
 }
 
 /* TAG */
@@ -123,6 +131,7 @@ input, textarea{
     padding:6px 12px;
     border-radius:999px;
     font-size:13px;
+    margin-bottom:15px;
 }
 
 /* WHATSAPP */
@@ -136,15 +145,36 @@ input, textarea{
     border-radius:50px;
     text-decoration:none;
     font-weight:bold;
+    box-shadow:0 4px 12px rgba(0,0,0,.15);
+    z-index:100;
+}
+
+.wa:hover{
+    background:#128C7E;
+}
+
+/* 加载和错误提示 */
+.loading, .error, .not-found{
+    text-align:center;
+    padding:60px 20px;
+    background:white;
+    border-radius:16px;
+    margin-top:30px;
+}
+
+.error, .not-found{
+    color:#dc2626;
 }
 
 /* MOBILE */
 @media(max-width:768px){
-.layout{
-    grid-template-columns:1fr;
+    .layout{
+        grid-template-columns:1fr;
+    }
+    .container{
+        padding:20px;
+    }
 }
-}
-
 </style>
 
 </head>
@@ -155,7 +185,9 @@ input, textarea{
 
 <a class="back" href="products.html">← Back to Products</a>
 
-<div id="content">Loading...</div>
+<div id="content">
+    <div class="loading">加载产品详情中...</div>
+</div>
 
 </div>
 
@@ -165,181 +197,341 @@ input, textarea{
 <script>
 
 /* ===================== */
-/* SAFE INIT (关键修复) */
+/* SUPABASE 配置（修复版） */
 /* ===================== */
 
-const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co/rest/v1/";
+// 【关键修复】URL 不要加 /rest/v1/
+const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-emailjs.init("YOUR_PUBLIC_KEY");
-
-/* FIX: 避免 content undefined */
-const content = document.getElementById("content");
-
 /* ===================== */
-/* LOAD ID */
+/* 获取 URL 参数 id */
 /* ===================== */
 
-const id = new URLSearchParams(location.search).get("id");
+const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get("id");
 
-let images = [];
-let currentIndex = 0;
-
-/* ===================== */
-/* LOAD PRODUCT */
-/* ===================== */
-
-async function load(){
-
-let { data } = await sb
-.from("products")
-.select("*")
-.eq("id", id)
-.single();
-
-if(!data){
-    content.innerHTML = "<h2>Product Not Found</h2>";
-    return;
-}
-
-/* 多图兼容 */
-images = data.images && data.images.length ? data.images : [data.image];
-
-render(data);
-setupWhatsApp(data);
-
-/* CRM记录（自动写入） */
-sb.from("inquiries").insert([{
-    product: data.name,
-    product_id: id,
-    created_at: new Date()
-}]);
-
-}
-
-load();
+console.log("产品ID:", productId);
 
 /* ===================== */
-/* RENDER */
+/* 全局变量 */
 /* ===================== */
 
-function render(p){
+let productData = null;
+let imagesList = [];
 
-content.innerHTML = `
-<div class="layout">
-
-<!-- LEFT -->
-<div>
-
-    <img id="mainImg" class="main-img" src="${images[0]}">
-
-    <div class="thumbs">
-        ${images.map((img,i)=>`
-            <img src="${img}" onclick="setImage(${i})">
-        `).join("")}
-    </div>
-
-</div>
-
-<!-- RIGHT -->
-<div>
-
-    <span class="tag">${p.category || ""}</span>
-
-    <h1>${p.name || ""}</h1>
-
-    <div class="box">
-        <b>GSM:</b> ${p.gsm || "-"}<br>
-        <b>MOQ:</b> ${p.moq || "-"}
-    </div>
-
-    <div class="box">
-        <h3>Feature</h3>
-        ${p.feature || "N/A"}
-    </div>
-
-    <button onclick="openRFQ()">Request Quotation</button>
-
-    <div class="rfq" id="rfqBox">
-
-        <h3>RFQ Form</h3>
-
-        <input id="name" placeholder="Your Name">
-        <input id="email" placeholder="Email">
-        <input id="qty" placeholder="Quantity">
-        <textarea id="msg" placeholder="Message"></textarea>
-
-        <button onclick="sendRFQ('${p.name}')">Send Inquiry</button>
-
-    </div>
-
-</div>
-
-</div>
-`;
-
+/* ===================== */
+/* 辅助函数：防XSS */
+/* ===================== */
+function escapeHtml(str) {
+    if (!str) return "";
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
 }
 
 /* ===================== */
-/* IMAGE SWITCH */
+/* 格式化文本（保留换行） */
 /* ===================== */
-
-function setImage(i){
-document.getElementById("mainImg").src = images[i];
+function formatText(text) {
+    if (!text) return "暂无描述";
+    return escapeHtml(text).replace(/\n/g, "<br>");
 }
 
 /* ===================== */
-/* RFQ */
+/* 加载产品详情 */
 /* ===================== */
 
-function openRFQ(){
-document.getElementById("rfqBox").style.display = "block";
+async function loadProduct() {
+    const contentDiv = document.getElementById("content");
+    
+    // 验证产品ID
+    if (!productId) {
+        contentDiv.innerHTML = `
+            <div class="not-found">
+                <h2>❌ 无效的产品链接</h2>
+                <p>请从产品列表页重新选择产品</p>
+                <a href="products.html" style="color:#2563eb;">返回产品列表 →</a>
+            </div>
+        `;
+        return;
+    }
+    
+    try {
+        console.log("正在查询产品 ID:", productId);
+        
+        const { data, error } = await sb
+            .from("products")
+            .select("*")
+            .eq("id", productId)
+            .single();
+        
+        if (error) {
+            console.error("查询错误:", error);
+            contentDiv.innerHTML = `
+                <div class="error">
+                    <h2>❌ 产品加载失败</h2>
+                    <p>${escapeHtml(error.message)}</p>
+                    <a href="products.html" style="color:#2563eb;">返回产品列表</a>
+                </div>
+            `;
+            return;
+        }
+        
+        if (!data) {
+            console.warn("未找到产品");
+            contentDiv.innerHTML = `
+                <div class="not-found">
+                    <h2>❌ 产品未找到</h2>
+                    <p>您查找的产品可能已被删除或不存在</p>
+                    <a href="products.html" style="color:#2563eb;">返回产品列表 →</a>
+                </div>
+            `;
+            return;
+        }
+        
+        console.log("找到产品:", data);
+        productData = data;
+        
+        // 处理图片列表
+        if (data.images && Array.isArray(data.images) && data.images.length > 0) {
+            imagesList = data.images.filter(img => img && img.trim() !== "");
+        } else if (data.image && data.image.trim() !== "") {
+            imagesList = [data.image];
+        } else {
+            imagesList = [];
+        }
+        
+        // 渲染页面
+        renderProduct();
+        
+        // 设置 WhatsApp 链接
+        setupWhatsApp();
+        
+        // 【可选】记录询盘访问（如果需要记录访问日志）
+        // 注意：如果 inquiries 表没有 product_id 字段，请注释掉下面的代码
+        /*
+        try {
+            await sb.from("inquiries").insert([{
+                product: data.name,
+                message: "用户查看了产品详情",
+                created_at: new Date().toISOString()
+            }]);
+        } catch(logErr) {
+            console.log("记录访问失败（可忽略）:", logErr.message);
+        }
+        */
+        
+    } catch (err) {
+        console.error("系统异常:", err);
+        contentDiv.innerHTML = `
+            <div class="error">
+                <h2>⚠️ 系统错误</h2>
+                <p>${escapeHtml(err.message)}</p>
+                <a href="products.html" style="color:#2563eb;">返回产品列表</a>
+            </div>
+        `;
+    }
 }
 
 /* ===================== */
-/* EMAIL SEND */
+/* 渲染产品页面 */
 /* ===================== */
 
-function sendRFQ(product){
-
-let name = document.getElementById("name").value;
-let email = document.getElementById("email").value;
-let qty = document.getElementById("qty").value;
-let msg = document.getElementById("msg").value;
-
-if(!name || !email){
-    alert("Please fill required fields");
-    return;
+function renderProduct() {
+    if (!productData) return;
+    
+    const p = productData;
+    const contentDiv = document.getElementById("content");
+    
+    // 生成缩略图 HTML
+    let thumbsHtml = "";
+    if (imagesList.length > 0) {
+        thumbsHtml = `
+            <div class="thumbs">
+                ${imagesList.map((img, idx) => `
+                    <img src="${img}" onclick="setMainImage(${idx})" onerror="this.style.display='none'">
+                `).join("")}
+            </div>
+        `;
+    }
+    
+    // 主图地址
+    const mainImage = imagesList.length > 0 ? imagesList[0] : "";
+    
+    contentDiv.innerHTML = `
+        <div class="layout">
+            
+            <!-- 左侧：图片区 -->
+            <div>
+                ${mainImage ? 
+                    `<img id="mainImg" class="main-img" src="${mainImage}" onerror="this.src='https://placehold.co/600x400?text=Image+Not+Found'">` :
+                    `<div class="main-img" style="display:flex;align-items:center;justify-content:center;background:#f0f0f0;">
+                        📷 暂无产品图片
+                     </div>`
+                }
+                ${thumbsHtml}
+            </div>
+            
+            <!-- 右侧：产品信息 -->
+            <div>
+                <div class="tag">${escapeHtml(p.category || "产品分类")}</div>
+                
+                <h1>${escapeHtml(p.name || "产品名称")}</h1>
+                
+                <div class="box">
+                    <b>⚖️ GSM:</b> ${escapeHtml(p.gsm || "-")}<br>
+                    <b>📦 MOQ:</b> ${escapeHtml(p.moq || "-")}
+                </div>
+                
+                <div class="box">
+                    <h3>📝 产品特性</h3>
+                    <div>${formatText(p.feature)}</div>
+                </div>
+                
+                <button onclick="openRFQ()">📧 获取报价 / Request Quotation</button>
+                
+                <div class="rfq" id="rfqBox">
+                    <h3>📋 询价表单</h3>
+                    <p style="font-size:13px; color:#666;">我们会尽快回复您</p>
+                    
+                    <input type="text" id="inquiryName" placeholder="您的姓名 *">
+                    <input type="email" id="inquiryEmail" placeholder="您的邮箱 *">
+                    <input type="text" id="inquiryCompany" placeholder="公司名称（选填）">
+                    <input type="text" id="inquiryQuantity" placeholder="需求数量">
+                    <textarea id="inquiryMessage" rows="4" placeholder="留言信息..."></textarea>
+                    
+                    <button onclick="sendInquiry()">发送询盘 ✉️</button>
+                    <button onclick="closeRFQ()" style="background:#6c757d; margin-top:10px;">取消</button>
+                </div>
+            </div>
+            
+        </div>
+    `;
 }
 
-emailjs.send(
-"YOUR_SERVICE_ID",
-"YOUR_TEMPLATE_ID",
-{
-    product,
-    name,
-    email,
-    qty,
-    message: msg
+/* ===================== */
+/* 切换主图 */
+/* ===================== */
+
+function setMainImage(index) {
+    if (imagesList && imagesList[index]) {
+        const mainImg = document.getElementById("mainImg");
+        if (mainImg) {
+            mainImg.src = imagesList[index];
+        }
+    }
 }
-).then(()=>{
-    alert("Inquiry sent successfully!");
-}).catch(()=>{
-    alert("Failed to send inquiry");
+
+/* ===================== */
+/* 打开/关闭 RFQ 表单 */
+/* ===================== */
+
+function openRFQ() {
+    const box = document.getElementById("rfqBox");
+    if (box) {
+        box.style.display = "block";
+        box.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+}
+
+function closeRFQ() {
+    const box = document.getElementById("rfqBox");
+    if (box) {
+        box.style.display = "none";
+    }
+}
+
+/* ===================== */
+/* 发送询盘（保存到 Supabase） */
+/* ===================== */
+
+async function sendInquiry() {
+    const name = document.getElementById("inquiryName")?.value.trim();
+    const email = document.getElementById("inquiryEmail")?.value.trim();
+    const company = document.getElementById("inquiryCompany")?.value.trim();
+    const quantity = document.getElementById("inquiryQuantity")?.value.trim();
+    const message = document.getElementById("inquiryMessage")?.value.trim();
+    
+    if (!name) {
+        alert("请填写您的姓名");
+        return;
+    }
+    if (!email) {
+        alert("请填写您的邮箱");
+        return;
+    }
+    if (!message) {
+        alert("请填写留言信息");
+        return;
+    }
+    
+    const sendBtn = event?.target;
+    if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.textContent = "发送中...";
+    }
+    
+    try {
+        // 保存到 inquiries 表
+        const { error } = await sb.from("inquiries").insert([{
+            name: name,
+            email: email,
+            product: productData?.name || "",
+            message: `【公司】${company}\n【数量】${quantity}\n【留言】${message}`,
+            status: "new",
+            created_at: new Date().toISOString()
+        }]);
+        
+        if (error) {
+            console.error("保存失败:", error);
+            alert("发送失败: " + error.message);
+        } else {
+            alert("✅ 询盘已发送！我们会尽快联系您。");
+            closeRFQ();
+            // 清空表单
+            if (document.getElementById("inquiryName")) document.getElementById("inquiryName").value = "";
+            if (document.getElementById("inquiryEmail")) document.getElementById("inquiryEmail").value = "";
+            if (document.getElementById("inquiryCompany")) document.getElementById("inquiryCompany").value = "";
+            if (document.getElementById("inquiryQuantity")) document.getElementById("inquiryQuantity").value = "";
+            if (document.getElementById("inquiryMessage")) document.getElementById("inquiryMessage").value = "";
+        }
+    } catch (err) {
+        console.error("异常:", err);
+        alert("发送异常: " + err.message);
+    } finally {
+        if (sendBtn) {
+            sendBtn.disabled = false;
+            sendBtn.textContent = "发送询盘 ✉️";
+        }
+    }
+}
+
+/* ===================== */
+/* 设置 WhatsApp 链接 */
+/* ===================== */
+
+function setupWhatsApp() {
+    if (!productData) return;
+    const waLink = document.getElementById("wa");
+    if (waLink && productData.name) {
+        const message = `Hello, I'm interested in ${productData.name}. Please provide me with a quotation.`;
+        waLink.href = `https://wa.me/8613800000000?text=${encodeURIComponent(message)}`;
+    }
+}
+
+/* ===================== */
+/* 页面加载 */
+/* ===================== */
+
+window.addEventListener("DOMContentLoaded", () => {
+    loadProduct();
 });
-
-}
-
-/* ===================== */
-/* WHATSAPP */
-/* ===================== */
-
-function setupWhatsApp(p){
-document.getElementById("wa").href =
-`https://wa.me/8613800000000?text=I want quote for ${p.name}`;
-}
 
 </script>
 
