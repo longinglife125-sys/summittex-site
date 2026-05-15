@@ -10,156 +10,462 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
-body{
-    font-family:Arial;
-    margin:0;
-    background:#f5f7fa;
-    color:#111827;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.container{
-    max-width:1100px;
-    margin:auto;
-    padding:30px;
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #f5f7fa;
+    color: #111827;
+    line-height: 1.5;
 }
 
-.back{
-    color:#2563eb;
-    text-decoration:none;
-    display:inline-block;
-    margin-bottom:20px;
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-.back:hover{
-    text-decoration:underline;
+/* ========== HEADER ========== */
+.header {
+    background: white;
+    padding: 16px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
-.layout{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:40px;
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.main-img{
-    width:100%;
-    border-radius:16px;
-    box-shadow:0 10px 25px rgba(0,0,0,.1);
-    background:#f0f0f0;
-    min-height:300px;
-    object-fit:contain;
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2563eb;
+    text-decoration: none;
 }
 
-.thumbs{
-    display:flex;
-    gap:10px;
-    margin-top:12px;
-    flex-wrap:wrap;
+.back-link {
+    color: #4b5563;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.thumbs img{
-    width:70px;
-    height:70px;
-    object-fit:cover;
-    border-radius:8px;
-    cursor:pointer;
-    border:2px solid transparent;
+.back-link:hover {
+    color: #2563eb;
 }
 
-.thumbs img:hover{
-    border:2px solid #2563eb;
+/* ========== LAYOUT ========== */
+.product-main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    margin-top: 30px;
 }
 
-.box{
-    background:white;
-    padding:20px;
-    border-radius:14px;
-    margin-top:20px;
-    box-shadow:0 8px 20px rgba(0,0,0,.06);
-}
-
-button{
-    margin-top:20px;
-    padding:14px;
-    width:100%;
-    border:none;
-    border-radius:10px;
-    background:#2563eb;
-    color:white;
-    font-size:16px;
-    cursor:pointer;
-}
-
-button:hover{
-    background:#1d4ed8;
-}
-
-.rfq{
-    margin-top:25px;
-    background:white;
-    padding:20px;
-    border-radius:14px;
-    display:none;
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
-}
-
-input, textarea{
-    width:100%;
-    padding:12px;
-    margin-top:10px;
-    border-radius:8px;
-    border:1px solid #e5e7eb;
-    box-sizing:border-box;
-    font-family:Arial;
-}
-
-.tag{
-    display:inline-block;
-    background:#e0edff;
-    color:#2563eb;
-    padding:6px 12px;
-    border-radius:999px;
-    font-size:13px;
-    margin-bottom:15px;
-}
-
-.wa{
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    background:#25D366;
-    color:white;
-    padding:14px 18px;
-    border-radius:50px;
-    text-decoration:none;
-    font-weight:bold;
-    box-shadow:0 4px 12px rgba(0,0,0,.15);
-    z-index:100;
-}
-
-.wa:hover{
-    background:#128C7E;
-}
-
-.loading, .error, .not-found{
-    text-align:center;
-    padding:60px 20px;
-    background:white;
-    border-radius:16px;
-    margin-top:30px;
-}
-
-.error, .not-found{
-    color:#dc2626;
-}
-
-@media(max-width:768px){
-    .layout{
-        grid-template-columns:1fr;
+@media (max-width: 768px) {
+    .product-main {
+        grid-template-columns: 1fr;
+        gap: 30px;
     }
-    .container{
-        padding:20px;
+}
+
+/* ========== 图片/视频区域 ========== */
+.media-gallery {
+    position: relative;
+}
+
+.main-media {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    cursor: zoom-in;
+    position: relative;
+}
+
+.main-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    background: #f8fafc;
+    transition: transform 0.3s ease;
+}
+
+.main-video {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: none;
+    background: #000;
+}
+
+/* 放大镜效果 */
+.zoom-lens {
+    position: absolute;
+    border: 2px solid #2563eb;
+    width: 100px;
+    height: 100px;
+    background: rgba(37, 99, 235, 0.1);
+    pointer-events: none;
+    z-index: 10;
+    display: none;
+    border-radius: 4px;
+}
+
+.zoom-result {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 400px;
+    height: 400px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    background-repeat: no-repeat;
+    display: none;
+    z-index: 1000;
+    border: 1px solid #e5e7eb;
+    pointer-events: none;
+}
+
+@media (max-width: 1200px) {
+    .zoom-result {
+        display: none !important;
     }
+}
+
+/* 缩略图区域 */
+.thumbnails {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+}
+
+.thumbnail {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+    object-fit: cover;
+    background: white;
+    flex-shrink: 0;
+}
+
+.thumbnail.active {
+    border-color: #2563eb;
+    box-shadow: 0 4px 12px rgba(37,99,235,0.2);
+}
+
+.thumbnail.video-thumb {
+    position: relative;
+}
+
+.thumbnail.video-thumb::after {
+    content: "▶";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.6);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+/* 导航箭头 */
+.gallery-nav {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.nav-btn {
+    flex: 1;
+    padding: 10px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.nav-btn:hover {
+    background: #f3f4f6;
+    border-color: #2563eb;
+}
+
+/* ========== 产品信息 ========== */
+.product-info {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+}
+
+.category-tag {
+    display: inline-block;
+    background: #e0edff;
+    color: #2563eb;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
+.product-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 16px;
+    line-height: 1.3;
+}
+
+.sku {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* 规格表格 */
+.specs-table {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 16px;
+    margin: 20px 0;
+}
+
+.spec-row {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.spec-row:last-child {
+    border-bottom: none;
+}
+
+.spec-label {
+    width: 100px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.spec-value {
+    flex: 1;
+    color: #1e293b;
+}
+
+/* 产品特性 */
+.features {
+    margin: 24px 0;
+}
+
+.features h3 {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #1e293b;
+}
+
+.features-content {
+    color: #4b5563;
+    line-height: 1.7;
+}
+
+/* 询盘按钮 */
+.rfq-btn {
+    width: 100%;
+    padding: 16px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 40px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s;
+    margin-top: 24px;
+}
+
+.rfq-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+.whatsapp-btn {
+    width: 100%;
+    padding: 14px;
+    background: #25D366;
+    color: white;
+    border: none;
+    border-radius: 40px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+    text-decoration: none;
+}
+
+.whatsapp-btn:hover {
+    background: #128C7E;
+}
+
+/* 询盘表单 */
+.inquiry-form {
+    margin-top: 30px;
+    background: #f8fafc;
+    border-radius: 20px;
+    padding: 20px;
+    display: none;
+}
+
+.inquiry-form.show {
+    display: block;
+}
+
+.inquiry-form h3 {
+    margin-bottom: 16px;
+    font-size: 18px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+.send-btn {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+}
+
+.cancel-btn {
+    background: #e5e7eb;
+    color: #374151;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 40px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* 加载状态 */
+.loading {
+    text-align: center;
+    padding: 80px;
+    color: #6b7280;
+}
+
+.error {
+    text-align: center;
+    padding: 60px;
+    background: white;
+    border-radius: 20px;
+    margin-top: 30px;
+    color: #dc2626;
+}
+
+/* ========== 底部推荐 ========== */
+.related-section {
+    margin-top: 60px;
+    padding-top: 30px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.related-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.related-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: inherit;
+}
+
+.related-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.related-card img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.related-card .info {
+    padding: 12px;
+}
+
+.related-card .name {
+    font-weight: 500;
+    font-size: 14px;
 }
 </style>
 
@@ -167,43 +473,46 @@ input, textarea{
 
 <body>
 
+<header class="header">
+    <div class="container">
+        <a href="products.html" class="logo">🏭 SummitTex</a>
+        <a href="products.html" class="back-link">← Back to Products</a>
+    </div>
+</header>
+
 <div class="container">
-
-<a class="back" href="products.html">← Back to Products</a>
-
-<div id="content">
-    <div class="loading">Loading product details...</div>
+    <div id="product-content">
+        <div class="loading">Loading product details...</div>
+    </div>
 </div>
 
-</div>
-
-<a class="wa" id="wa" target="_blank">💬 WhatsApp</a>
+<!-- 放大镜结果区域 -->
+<div class="zoom-result" id="zoomResult"></div>
 
 <script>
 
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
-
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const urlParams = new URLSearchParams(window.location.search);
 let productId = urlParams.get("id");
-
 if (productId && !isNaN(parseInt(productId))) {
     productId = parseInt(productId);
 }
 
 let productData = null;
-let imagesList = [];
+let mediaList = [];      // { type: 'image', url: '...' } 或 { type: 'video', url: '...' }
+let currentMediaIndex = 0;
 
 function escapeHtml(str) {
     if (!str) return "";
-    return str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
 }
 
 function formatText(text) {
@@ -211,223 +520,358 @@ function formatText(text) {
     return escapeHtml(text).replace(/\n/g, "<br>");
 }
 
+// 检测是否是视频URL
+function isVideoUrl(url) {
+    if (!url) return false;
+    const youtubePattern = /(youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)/i;
+    const vimeoPattern = /vimeo\.com\//i;
+    const mp4Pattern = /\.(mp4|webm|mov)(\?|$)/i;
+    return youtubePattern.test(url) || vimeoPattern.test(url) || mp4Pattern.test(url);
+}
+
+// 获取视频嵌入URL
+function getEmbedUrl(url) {
+    // YouTube
+    let match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    if (match) {
+        return `https://www.youtube.com/embed/${match[1]}`;
+    }
+    // Vimeo
+    match = url.match(/vimeo\.com\/(\d+)/);
+    if (match) {
+        return `https://player.vimeo.com/video/${match[1]}`;
+    }
+    // 直接 mp4
+    return url;
+}
+
+// 构建媒体列表
+function buildMediaList(product) {
+    const list = [];
+    
+    // 添加图片
+    if (product.images && Array.isArray(product.images)) {
+        product.images.forEach(img => {
+            if (img && img.trim()) {
+                list.push({ type: 'image', url: img });
+            }
+        });
+    } else if (product.image && product.image.trim()) {
+        list.push({ type: 'image', url: product.image });
+    }
+    
+    // 添加视频（如果有 video_url 字段）
+    if (product.video_url && product.video_url.trim()) {
+        list.push({ type: 'video', url: product.video_url });
+    }
+    
+    return list;
+}
+
+// 渲染主媒体
+function renderMainMedia() {
+    const media = mediaList[currentMediaIndex];
+    const mainMediaDiv = document.getElementById('mainMedia');
+    if (!mainMediaDiv) return;
+    
+    if (!media) {
+        mainMediaDiv.innerHTML = '<div class="main-image" style="display:flex;align-items:center;justify-content:center;">📷 No Media</div>';
+        return;
+    }
+    
+    if (media.type === 'video') {
+        const embedUrl = getEmbedUrl(media.url);
+        mainMediaDiv.innerHTML = `<iframe class="main-video" src="${embedUrl}" frameborder="0" allowfullscreen></iframe>`;
+    } else {
+        mainMediaDiv.innerHTML = `<img id="mainImage" class="main-image" src="${media.url}" alt="Product image" onerror="this.src='https://placehold.co/800x800?text=Image+Not+Found'">`;
+        
+        // 设置放大镜效果
+        setTimeout(setupZoom, 100);
+    }
+}
+
+// 放大镜效果
+function setupZoom() {
+    const mainImage = document.getElementById('mainImage');
+    const zoomResult = document.getElementById('zoomResult');
+    if (!mainImage || !zoomResult) return;
+    
+    let lens = document.querySelector('.zoom-lens');
+    if (!lens) {
+        lens = document.createElement('div');
+        lens.className = 'zoom-lens';
+        mainImage.parentElement.style.position = 'relative';
+        mainImage.parentElement.appendChild(lens);
+    }
+    
+    mainImage.addEventListener('mousemove', (e) => {
+        const rect = mainImage.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
+            lens.style.display = 'none';
+            zoomResult.style.display = 'none';
+            return;
+        }
+        
+        lens.style.display = 'block';
+        zoomResult.style.display = 'block';
+        
+        const lensWidth = 100;
+        const lensHeight = 100;
+        let lensX = x - lensWidth / 2;
+        let lensY = y - lensHeight / 2;
+        
+        lensX = Math.max(0, Math.min(lensX, rect.width - lensWidth));
+        lensY = Math.max(0, Math.min(lensY, rect.height - lensHeight));
+        
+        lens.style.left = lensX + 'px';
+        lens.style.top = lensY + 'px';
+        
+        const zoomX = (lensX / (rect.width - lensWidth)) * 100;
+        const zoomY = (lensY / (rect.height - lensHeight)) * 100;
+        
+        zoomResult.style.backgroundImage = `url(${mainImage.src})`;
+        zoomResult.style.backgroundSize = `${rect.width * 2}px ${rect.height * 2}px`;
+        zoomResult.style.backgroundPosition = `${zoomX}% ${zoomY}%`;
+    });
+    
+    mainImage.addEventListener('mouseleave', () => {
+        lens.style.display = 'none';
+        zoomResult.style.display = 'none';
+    });
+}
+
+// 渲染缩略图
+function renderThumbnails() {
+    const container = document.getElementById('thumbnails');
+    if (!container) return;
+    
+    if (mediaList.length <= 1) {
+        container.style.display = 'none';
+        return;
+    }
+    
+    container.style.display = 'flex';
+    container.innerHTML = mediaList.map((media, idx) => {
+        const isActive = idx === currentMediaIndex;
+        const isVideo = media.type === 'video';
+        let thumbUrl = media.url;
+        if (isVideo && media.url.includes('youtube')) {
+            const match = media.url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+            if (match) {
+                thumbUrl = `https://img.youtube.com/vi/${match[1]}/default.jpg`;
+            }
+        }
+        return `<img src="${thumbUrl}" class="thumbnail ${isActive ? 'active' : ''} ${isVideo ? 'video-thumb' : ''}" onclick="switchMedia(${idx})" onerror="this.src='https://placehold.co/80x80?text=No+Image'">`;
+    }).join('');
+}
+
+// 切换媒体
+function switchMedia(index) {
+    currentMediaIndex = index;
+    renderMainMedia();
+    renderThumbnails();
+}
+
+function nextMedia() {
+    if (mediaList.length > 0) {
+        currentMediaIndex = (currentMediaIndex + 1) % mediaList.length;
+        renderMainMedia();
+        renderThumbnails();
+    }
+}
+
+function prevMedia() {
+    if (mediaList.length > 0) {
+        currentMediaIndex = (currentMediaIndex - 1 + mediaList.length) % mediaList.length;
+        renderMainMedia();
+        renderThumbnails();
+    }
+}
+
+// 渲染产品详情
+function renderProduct() {
+    if (!productData) return;
+    
+    const p = productData;
+    mediaList = buildMediaList(p);
+    
+    const html = `
+        <div class="product-main">
+            <!-- 左侧媒体区 -->
+            <div class="media-gallery">
+                <div class="main-media" id="mainMedia"></div>
+                <div class="thumbnails" id="thumbnails"></div>
+                ${mediaList.length > 1 ? `
+                <div class="gallery-nav">
+                    <button class="nav-btn" onclick="prevMedia()">← Previous</button>
+                    <button class="nav-btn" onclick="nextMedia()">Next →</button>
+                </div>
+                ` : ''}
+            </div>
+            
+            <!-- 右侧产品信息 -->
+            <div class="product-info">
+                <div class="category-tag">${escapeHtml(p.category || "Fabric")}</div>
+                <h1 class="product-title">${escapeHtml(p.name || "Product Name")}</h1>
+                <div class="sku">SKU: ${escapeHtml(p.sku || p.id || "N/A")}</div>
+                
+                <div class="specs-table">
+                    <div class="spec-row">
+                        <div class="spec-label">⚖️ GSM</div>
+                        <div class="spec-value">${escapeHtml(p.gsm || "-")}</div>
+                    </div>
+                    <div class="spec-row">
+                        <div class="spec-label">📦 MOQ</div>
+                        <div class="spec-value">${escapeHtml(p.moq || "-")}</div>
+                    </div>
+                    ${p.width ? `<div class="spec-row"><div class="spec-label">📏 Width</div><div class="spec-value">${escapeHtml(p.width)}</div></div>` : ''}
+                    ${p.composition ? `<div class="spec-row"><div class="spec-label">🧵 Composition</div><div class="spec-value">${escapeHtml(p.composition)}</div></div>` : ''}
+                </div>
+                
+                <div class="features">
+                    <h3>📝 Product Features</h3>
+                    <div class="features-content">${formatText(p.feature)}</div>
+                </div>
+                
+                <button class="rfq-btn" onclick="toggleInquiryForm()">📧 Request Quotation</button>
+                <a href="#" class="whatsapp-btn" id="whatsappLink" target="_blank">💬 WhatsApp Inquiry</a>
+                
+                <div class="inquiry-form" id="inquiryForm">
+                    <h3>📋 Inquiry Form</h3>
+                    <div class="form-group">
+                        <input type="text" id="inqName" placeholder="Full Name *">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="inqEmail" placeholder="Email Address *">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="inqCompany" placeholder="Company Name">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="inqQuantity" placeholder="Quantity (meters/rolls)">
+                    </div>
+                    <div class="form-group">
+                        <textarea id="inqMessage" rows="4" placeholder="Your message or specific requirements..."></textarea>
+                    </div>
+                    <button class="send-btn" onclick="sendInquiry()">Send Inquiry ✉️</button>
+                    <button class="cancel-btn" onclick="toggleInquiryForm()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('product-content').innerHTML = html;
+    
+    // 渲染媒体内容
+    renderMainMedia();
+    renderThumbnails();
+    
+    // 设置 WhatsApp 链接
+    const waLink = document.getElementById('whatsappLink');
+    if (waLink && p.name) {
+        const msg = `Hello, I'm interested in ${p.name}. Please provide me with a quotation.`;
+        waLink.href = `https://wa.me/8613800000000?text=${encodeURIComponent(msg)}`;
+    }
+}
+
+// 切换询盘表单
+function toggleInquiryForm() {
+    const form = document.getElementById('inquiryForm');
+    if (form) {
+        form.classList.toggle('show');
+    }
+}
+
+// 发送询盘
+async function sendInquiry() {
+    const name = document.getElementById('inqName')?.value.trim();
+    const email = document.getElementById('inqEmail')?.value.trim();
+    const message = document.getElementById('inqMessage')?.value.trim();
+    
+    if (!name) { alert('Please enter your name'); return; }
+    if (!email) { alert('Please enter your email'); return; }
+    if (!message) { alert('Please enter your message'); return; }
+    
+    const company = document.getElementById('inqCompany')?.value.trim() || '';
+    const quantity = document.getElementById('inqQuantity')?.value.trim() || '';
+    
+    const sendBtn = event?.target;
+    if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.textContent = 'Sending...';
+    }
+    
+    try {
+        const { error } = await sb.from('inquiries').insert([{
+            name: name,
+            email: email,
+            product: productData?.name || '',
+            message: `Company: ${company}\nQuantity: ${quantity}\nMessage: ${message}`,
+            status: 'new',
+            created_at: new Date().toISOString()
+        }]);
+        
+        if (error) {
+            alert('Failed to send: ' + error.message);
+        } else {
+            alert('✅ Inquiry sent successfully! We will contact you soon.');
+            toggleInquiryForm();
+            ['inqName', 'inqEmail', 'inqCompany', 'inqQuantity', 'inqMessage'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+        }
+    } catch (err) {
+        alert('Error: ' + err.message);
+    } finally {
+        if (sendBtn) {
+            sendBtn.disabled = false;
+            sendBtn.textContent = 'Send Inquiry ✉️';
+        }
+    }
+}
+
+// 加载产品数据
 async function loadProduct() {
-    const contentDiv = document.getElementById("content");
+    const contentDiv = document.getElementById('product-content');
     
     if (!productId) {
-        contentDiv.innerHTML = `
-            <div class="not-found">
-                <h2>❌ Invalid Product Link</h2>
-                <p>Please select a product from the products page</p>
-                <a href="products.html" style="color:#2563eb;">← Back to Products</a>
-            </div>
-        `;
+        contentDiv.innerHTML = '<div class="error">❌ Invalid Product Link</div>';
         return;
     }
     
     try {
         const { data, error } = await sb
-            .from("products")
-            .select("*")
-            .eq("id", productId)
+            .from('products')
+            .select('*')
+            .eq('id', productId)
             .single();
         
         if (error || !data) {
-            contentDiv.innerHTML = `
-                <div class="not-found">
-                    <h2>❌ Product Not Found</h2>
-                    <p>The product you're looking for may have been removed</p>
-                    <a href="products.html" style="color:#2563eb;">← Back to Products</a>
-                </div>
-            `;
+            contentDiv.innerHTML = '<div class="error">❌ Product Not Found</div>';
             return;
         }
         
         productData = data;
-        
-        if (data.images && Array.isArray(data.images) && data.images.length > 0) {
-            imagesList = data.images.filter(img => img && img.trim() !== "");
-        } else if (data.image && data.image.trim() !== "") {
-            imagesList = [data.image];
-        } else {
-            imagesList = [];
-        }
-        
         renderProduct();
-        setupWhatsApp();
         
     } catch (err) {
-        console.error("Error:", err);
-        contentDiv.innerHTML = `
-            <div class="error">
-                <h2>⚠️ System Error</h2>
-                <p>${escapeHtml(err.message)}</p>
-                <a href="products.html" style="color:#2563eb;">← Back to Products</a>
-            </div>
-        `;
+        contentDiv.innerHTML = `<div class="error">⚠️ Error: ${escapeHtml(err.message)}</div>`;
     }
 }
 
-function renderProduct() {
-    if (!productData) return;
-    
-    const p = productData;
-    const contentDiv = document.getElementById("content");
-    
-    let thumbsHtml = "";
-    if (imagesList.length > 1) {
-        thumbsHtml = `
-            <div class="thumbs">
-                ${imagesList.map((img, idx) => `
-                    <img src="${img}" onclick="setMainImage(${idx})" onerror="this.style.display='none'">
-                `).join("")}
-            </div>
-        `;
-    }
-    
-    const mainImage = imagesList.length > 0 ? imagesList[0] : "";
-    
-    contentDiv.innerHTML = `
-        <div class="layout">
-            <div>
-                ${mainImage ? 
-                    `<img id="mainImg" class="main-img" src="${mainImage}" onerror="this.src='https://placehold.co/600x400?text=Image+Not+Found'">` :
-                    `<div class="main-img" style="display:flex;align-items:center;justify-content:center;background:#f0f0f0;min-height:300px;">
-                        📷 No Image Available
-                     </div>`
-                }
-                ${thumbsHtml}
-            </div>
-            
-            <div>
-                <div class="tag">${escapeHtml(p.category || "Fabric")}</div>
-                
-                <h1>${escapeHtml(p.name || "Product Name")}</h1>
-                
-                <div class="box">
-                    <b>⚖️ GSM:</b> ${escapeHtml(p.gsm || "-")}<br>
-                    <b>📦 MOQ:</b> ${escapeHtml(p.moq || "-")}
-                </div>
-                
-                <div class="box">
-                    <h3>📝 Product Features</h3>
-                    <div>${formatText(p.feature)}</div>
-                </div>
-                
-                <button onclick="openRFQ()">📧 Request Quotation</button>
-                
-                <div class="rfq" id="rfqBox">
-                    <h3>📋 Inquiry Form</h3>
-                    <p style="font-size:13px; color:#666;">We'll get back to you within 24 hours</p>
-                    
-                    <input type="text" id="inquiryName" placeholder="Full Name *">
-                    <input type="email" id="inquiryEmail" placeholder="Email Address *">
-                    <input type="text" id="inquiryCompany" placeholder="Company Name">
-                    <input type="text" id="inquiryQuantity" placeholder="Quantity (meters/rolls)">
-                    <textarea id="inquiryMessage" rows="4" placeholder="Your message or specific requirements..."></textarea>
-                    
-                    <button onclick="sendInquiry()">Send Inquiry ✉️</button>
-                    <button onclick="closeRFQ()" style="background:#6c757d; margin-top:10px;">Cancel</button>
-                </div>
-            </div>
-        </div>
-    `;
-}
+// 暴露全局函数
+window.switchMedia = switchMedia;
+window.prevMedia = prevMedia;
+window.nextMedia = nextMedia;
+window.toggleInquiryForm = toggleInquiryForm;
+window.sendInquiry = sendInquiry;
 
-function setMainImage(index) {
-    if (imagesList && imagesList[index]) {
-        const mainImg = document.getElementById("mainImg");
-        if (mainImg) {
-            mainImg.src = imagesList[index];
-        }
-    }
-}
-
-function openRFQ() {
-    const box = document.getElementById("rfqBox");
-    if (box) {
-        box.style.display = "block";
-        box.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-}
-
-function closeRFQ() {
-    const box = document.getElementById("rfqBox");
-    if (box) {
-        box.style.display = "none";
-    }
-}
-
-async function sendInquiry() {
-    const name = document.getElementById("inquiryName")?.value.trim();
-    const email = document.getElementById("inquiryEmail")?.value.trim();
-    const message = document.getElementById("inquiryMessage")?.value.trim();
-    
-    if (!name) {
-        alert("Please enter your name");
-        return;
-    }
-    if (!email) {
-        alert("Please enter your email address");
-        return;
-    }
-    if (!message) {
-        alert("Please enter your message");
-        return;
-    }
-    
-    const sendBtn = event?.target;
-    if (sendBtn) {
-        sendBtn.disabled = true;
-        sendBtn.textContent = "Sending...";
-    }
-    
-    try {
-        const company = document.getElementById("inquiryCompany")?.value.trim() || "";
-        const quantity = document.getElementById("inquiryQuantity")?.value.trim() || "";
-        
-        const { error } = await sb.from("inquiries").insert([{
-            name: name,
-            email: email,
-            product: productData?.name || "",
-            message: `Company: ${company}\nQuantity: ${quantity}\nMessage: ${message}`,
-            status: "new",
-            created_at: new Date().toISOString()
-        }]);
-        
-        if (error) {
-            alert("Failed to send: " + error.message);
-        } else {
-            alert("✅ Inquiry sent successfully! We'll contact you soon.");
-            closeRFQ();
-            document.getElementById("inquiryName").value = "";
-            document.getElementById("inquiryEmail").value = "";
-            document.getElementById("inquiryCompany").value = "";
-            document.getElementById("inquiryQuantity").value = "";
-            document.getElementById("inquiryMessage").value = "";
-        }
-    } catch (err) {
-        alert("Error: " + err.message);
-    } finally {
-        if (sendBtn) {
-            sendBtn.disabled = false;
-            sendBtn.textContent = "Send Inquiry ✉️";
-        }
-    }
-}
-
-function setupWhatsApp() {
-    if (!productData) return;
-    const waLink = document.getElementById("wa");
-    if (waLink && productData.name) {
-        const message = `Hello, I'm interested in ${productData.name}. Please provide me with a quotation.`;
-        waLink.href = `https://wa.me/8613800000000?text=${encodeURIComponent(message)}`;
-    }
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-    loadProduct();
-});
+// 启动
+loadProduct();
 
 </script>
 
