@@ -125,7 +125,7 @@
     </div>
 </header>
 
-<!-- Hero Section - 背景图从数据库动态加载 -->
+<!-- Hero Section -->
 <section class="hero" id="heroSection">
     <div class="container">
         <div class="hero-content">
@@ -158,7 +158,6 @@
     </div>
 </section>
 
-<!-- 模态框 -->
 <div id="industryModal" class="detail-modal">
     <div class="detail-modal-content">
         <h3 id="modalTitle"></h3>
@@ -203,16 +202,44 @@
     const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // 加载首页背景图
+    // 加载首页背景图（带错误处理和备用背景）
     async function loadHeroBackground() {
-        const { data } = await sb.from("site_settings").select("setting_value").eq("setting_key", "hero_background").single();
         const heroSection = document.getElementById("heroSection");
-        if (data && data.setting_value && data.setting_value !== 'https://placehold.co/1920x800/0f3b5c/white?text=Hero+Background') {
-            heroSection.style.background = `linear-gradient(rgba(15,59,92,0.7), rgba(15,59,92,0.65)), url('${data.setting_value}')`;
-            heroSection.style.backgroundSize = "cover";
-            heroSection.style.backgroundPosition = "center";
-        } else {
-            heroSection.style.background = "linear-gradient(135deg, #0f3b5c 0%, #1e4a6f 100%)";
+        // 先设置默认背景（渐变）
+        heroSection.style.background = "linear-gradient(135deg, #0f3b5c 0%, #1e4a6f 100%)";
+        
+        try {
+            const { data, error } = await sb
+                .from("site_settings")
+                .select("setting_value")
+                .eq("setting_key", "hero_background")
+                .maybeSingle();  // 使用 maybeSingle 避免报错
+            
+            if (error) {
+                console.log("读取背景图失败:", error.message);
+                return;
+            }
+            
+            if (data && data.setting_value && data.setting_value.trim() !== "") {
+                const imgUrl = data.setting_value;
+                // 测试图片是否能加载
+                const testImg = new Image();
+                testImg.onload = function() {
+                    heroSection.style.background = `linear-gradient(rgba(15,59,92,0.65), rgba(15,59,92,0.6)), url('${imgUrl}')`;
+                    heroSection.style.backgroundSize = "cover";
+                    heroSection.style.backgroundPosition = "center";
+                    console.log("背景图加载成功");
+                };
+                testImg.onerror = function() {
+                    console.log("背景图加载失败，使用默认渐变");
+                    heroSection.style.background = "linear-gradient(135deg, #0f3b5c 0%, #1e4a6f 100%)";
+                };
+                testImg.src = imgUrl;
+            } else {
+                console.log("未找到背景图设置，使用默认渐变");
+            }
+        } catch (err) {
+            console.log("加载背景图异常:", err);
         }
     }
 
@@ -247,10 +274,12 @@
     function closeModal() { document.getElementById("industryModal").style.display = "none"; }
 
     async function loadFeaturedProducts() {
-        const { data } = await sb.from("products").select("id, name, gsm, moq, image, category").not("image", "is", null).limit(3);
-        const container = document.getElementById("featured-products");
-        if (!data || data.length === 0) { container.innerHTML = '<div>暂无产品</div>'; return; }
-        container.innerHTML = data.map(p => `<div class="product-card" onclick="location.href='product.html?id=${p.id}'"><img src="${p.image}" onerror="this.src='https://placehold.co/400x220'"><div class="product-info"><h3>${escapeHtml(p.name)}</h3><p>${p.category || "Composite Fabric"} · GSM ${p.gsm || "—"} / MOQ ${p.moq || "Contact"}</p></div></div>`).join('');
+        try {
+            const { data } = await sb.from("products").select("id, name, gsm, moq, image, category").not("image", "is", null).limit(3);
+            const container = document.getElementById("featured-products");
+            if (!data || data.length === 0) { container.innerHTML = '<div>暂无产品</div>'; return; }
+            container.innerHTML = data.map(p => `<div class="product-card" onclick="location.href='product.html?id=${p.id}'"><img src="${p.image}" onerror="this.src='https://placehold.co/400x220'"><div class="product-info"><h3>${escapeHtml(p.name)}</h3><p>${p.category || "Composite Fabric"} · GSM ${p.gsm || "—"} / MOQ ${p.moq || "Contact"}</p></div></div>`).join('');
+        } catch(e) { console.log(e); }
     }
 
     function escapeHtml(str) { if (!str) return ""; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
