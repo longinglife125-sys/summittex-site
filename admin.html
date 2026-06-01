@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>SummitTex 后台管理系统</title>
+<title>Siyin 后台管理系统</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 * { box-sizing: border-box; }
@@ -55,8 +55,8 @@ button:hover { background:#1d4ed8; }
 
 <div class="tab-buttons">
     <button class="tab-btn active" data-tab="products">📦 产品管理</button>
-    <button class="tab-btn" data-tab="slides">🖼️ 轮播图管理</button>
     <button class="tab-btn" data-tab="factory">🏭 工厂管理</button>
+    <button class="tab-btn" data-tab="apps">📱 应用管理</button>
 </div>
 
 <!-- 产品管理 -->
@@ -85,20 +85,6 @@ button:hover { background:#1d4ed8; }
         <h3>📦 产品列表</h3>
         <button id="refreshBtn">刷新</button>
         <div id="productList"></div>
-    </div>
-</div>
-
-<!-- 轮播图管理 -->
-<div id="slidesTab" class="tab-content">
-    <div class="box">
-        <h3>🖼️ 轮播图管理</h3>
-        <div class="upload-box" id="slideUploadBox">📸 点击选择轮播图图片</div>
-        <input type="file" id="slideFile" accept="image/*" style="display:none">
-        <div id="slidePreview"></div>
-        <input type="text" id="slideTitle" placeholder="图片标题">
-        <input type="number" id="slideOrder" placeholder="排序" value="0">
-        <button id="addSlideBtn">添加轮播图</button>
-        <div id="slidesList" style="margin-top:20px;"></div>
     </div>
 </div>
 
@@ -142,6 +128,26 @@ button:hover { background:#1d4ed8; }
     </div>
 </div>
 
+<!-- 应用管理 -->
+<div id="appsTab" class="tab-content">
+    <div class="box">
+        <h3>📱 应用领域管理</h3>
+        <div style="background:#0f1722; padding:15px; border-radius:8px; margin-bottom:20px;">
+            <h4>➕ 添加新应用</h4>
+            <div class="upload-box" id="appUploadBox">📸 点击选择应用图片</div>
+            <input type="file" id="appFile" accept="image/*" style="display:none">
+            <div id="appPreview"></div>
+            <input type="text" id="appName" placeholder="应用名称（如：Wetsuit & Diving）">
+            <input type="text" id="appIcon" placeholder="图标（如：🏄‍♂️）">
+            <textarea id="appDesc" placeholder="应用描述" rows="2"></textarea>
+            <input type="number" id="appOrder" placeholder="排序（数字越小越靠前）" value="0">
+            <button id="addAppBtn">添加应用</button>
+        </div>
+        <h4>📋 现有应用列表</h4>
+        <div id="appsList">加载中...</div>
+    </div>
+</div>
+
 </div>
 
 <!-- 编辑产品模态框 -->
@@ -180,9 +186,10 @@ const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // 全局变量
-let currentSlideFile = null, currentFactoryFile = null, currentCertFile = null, currentVideoFile = null;
+let currentFactoryFile = null, currentCertFile = null, currentVideoFile = null;
 let currentEditImages = [], currentNewImages = [], editingProductId = null;
 let productFiles = [];
+let currentAppFile = null;
 
 // 产品上传图片预览
 document.getElementById("productUploadBox").onclick = () => document.getElementById("productFile").click();
@@ -203,7 +210,7 @@ document.getElementById("loginBtn").onclick = function() {
     if (document.getElementById("pass").value === "123456") {
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("panelBox").style.display = "block";
-        loadProducts(); loadSlides(); loadFactoryPhotos(); loadCertificates(); loadFactorySettings();
+        loadProducts(); loadFactoryPhotos(); loadCertificates(); loadFactorySettings(); loadApplications();
     } else alert("密码错误");
 };
 document.getElementById("pass").addEventListener("keypress", (e) => { if (e.key === "Enter") document.getElementById("loginBtn").click(); });
@@ -216,8 +223,8 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
         let tab = this.dataset.tab;
         document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
         if (tab === "products") document.getElementById("productsTab").classList.add("active");
-        if (tab === "slides") { document.getElementById("slidesTab").classList.add("active"); loadSlides(); }
         if (tab === "factory") { document.getElementById("factoryTab").classList.add("active"); loadFactoryPhotos(); loadCertificates(); loadFactorySettings(); }
+        if (tab === "apps") { document.getElementById("appsTab").classList.add("active"); loadApplications(); }
     };
 });
 
@@ -239,7 +246,7 @@ document.getElementById("uploadBtn").onclick = async function() {
     btn.disabled = false; btn.innerText = "上传产品";
 };
 
-// 加载产品列表（带预览按钮）
+// 加载产品列表
 async function loadProducts() {
     let { data } = await sb.from("products").select("*").order("id", { ascending: false });
     let html = "";
@@ -326,24 +333,7 @@ async function deleteProduct(id) { if (confirm("确定删除？")) { await sb.fr
 document.getElementById("saveEditBtn").onclick = saveEdit;
 document.getElementById("cancelEditBtn").onclick = () => document.getElementById("editModal").style.display = "none";
 
-// 轮播图、工厂照片、证书等简化函数
-document.getElementById("slideUploadBox").onclick = () => document.getElementById("slideFile").click();
-document.getElementById("slideFile").onchange = (e) => { if (e.target.files[0]) { currentSlideFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("slidePreview").innerHTML = `<img src="${ev.target.result}" class="preview-img">`; reader.readAsDataURL(currentSlideFile); } };
-document.getElementById("addSlideBtn").onclick = async function() {
-    if (!currentSlideFile) { alert("请先选择图片"); return; }
-    let fn = "slides/" + Date.now() + "_" + currentSlideFile.name;
-    await sb.storage.from("images").upload(fn, currentSlideFile);
-    let { data } = sb.storage.from("images").getPublicUrl(fn);
-    await sb.from("home_slides").insert([{ image_url: data.publicUrl, title: document.getElementById("slideTitle").value, sort_order: parseInt(document.getElementById("slideOrder").value) || 0 }]);
-    alert("添加成功"); location.reload();
-};
-async function loadSlides() {
-    let { data } = await sb.from("home_slides").select("*").order("sort_order");
-    let html = ""; (data || []).forEach(s => { html += `<div class="media-item"><img src="${s.image_url}" class="media-img"><div>${s.title || "无标题"}</div><button onclick="deleteSlide(${s.id})" style="background:#dc2626;">删除</button></div>`; });
-    document.getElementById("slidesList").innerHTML = html || "<div>暂无</div>";
-}
-async function deleteSlide(id) { if (confirm("删除？")) { await sb.from("home_slides").delete().eq("id", id); loadSlides(); } }
-
+// 工厂照片管理
 document.getElementById("factoryUploadBox").onclick = () => document.getElementById("factoryFile").click();
 document.getElementById("factoryFile").onchange = (e) => { if (e.target.files[0]) { currentFactoryFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("factoryPreview").innerHTML = `<img src="${ev.target.result}" class="preview-img">`; reader.readAsDataURL(currentFactoryFile); } };
 document.getElementById("addFactoryBtn").onclick = async function() {
@@ -361,6 +351,7 @@ async function loadFactoryPhotos() {
 }
 async function deleteFactoryPhoto(id) { if (confirm("删除？")) { await sb.from("factory_photos").delete().eq("id", id); loadFactoryPhotos(); } }
 
+// 证书管理
 document.getElementById("certUploadBox").onclick = () => document.getElementById("certFile").click();
 document.getElementById("certFile").onchange = (e) => { if (e.target.files[0]) { currentCertFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("certPreview").innerHTML = `<img src="${ev.target.result}" class="preview-img">`; reader.readAsDataURL(currentCertFile); } };
 document.getElementById("addCertBtn").onclick = async function() {
@@ -378,6 +369,7 @@ async function loadCertificates() {
 }
 async function deleteCertificate(id) { if (confirm("删除？")) { await sb.from("factory_certificates").delete().eq("id", id); loadCertificates(); } }
 
+// 工厂设置
 document.getElementById("videoUploadBox").onclick = () => document.getElementById("videoFileUpload").click();
 document.getElementById("videoFileUpload").onchange = (e) => { if (e.target.files[0]) { currentVideoFile = e.target.files[0]; let url = URL.createObjectURL(currentVideoFile); document.getElementById("videoPreviewArea").innerHTML = `<video src="${url}" controls style="max-width:200px;"></video><button onclick="clearVideoFile()">取消</button>`; } };
 function clearVideoFile() { currentVideoFile = null; document.getElementById("videoFileUpload").value = ""; document.getElementById("videoPreviewArea").innerHTML = ""; }
@@ -402,15 +394,65 @@ document.getElementById("saveSettingsBtn").onclick = async function() {
     alert("设置已保存"); location.reload();
 };
 
+// 应用管理
+document.getElementById("appUploadBox").onclick = () => document.getElementById("appFile").click();
+document.getElementById("appFile").onchange = (e) => {
+    if (e.target.files[0]) { currentAppFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("appPreview").innerHTML = `<img src="${ev.target.result}" class="preview-img"><button onclick="clearAppFile()">取消</button>`; reader.readAsDataURL(currentAppFile); }
+};
+function clearAppFile() { currentAppFile = null; document.getElementById("appFile").value = ""; document.getElementById("appPreview").innerHTML = ""; }
+
+document.getElementById("addAppBtn").onclick = async function() {
+    let name = document.getElementById("appName").value.trim();
+    if (!name) { alert("请输入应用名称"); return; }
+    let imageUrl = "";
+    if (currentAppFile) {
+        let fn = "apps/" + Date.now() + "_" + currentAppFile.name;
+        let { error } = await sb.storage.from("images").upload(fn, currentAppFile);
+        if (error) { alert("图片上传失败：" + error.message); return; }
+        let { data } = sb.storage.from("images").getPublicUrl(fn);
+        imageUrl = data.publicUrl;
+    } else {
+        alert("请先选择图片");
+        return;
+    }
+    let { error } = await sb.from("applications").insert([{
+        name: name,
+        description: document.getElementById("appDesc").value,
+        image_url: imageUrl,
+        icon: document.getElementById("appIcon").value || "📦",
+        sort_order: parseInt(document.getElementById("appOrder").value) || 0,
+        is_active: true
+    }]);
+    if (error) alert("添加失败：" + error.message);
+    else { alert("添加成功"); clearAppFile(); document.getElementById("appName").value = ""; document.getElementById("appDesc").value = ""; document.getElementById("appIcon").value = ""; document.getElementById("appOrder").value = "0"; loadApplications(); }
+};
+
+async function loadApplications() {
+    let { data } = await sb.from("applications").select("*").order("sort_order");
+    let html = "";
+    (data || []).forEach(app => {
+        html += `<div class="media-item"><img src="${app.image_url}" class="media-img"><div><b>${app.name}</b><br><small>排序: ${app.sort_order}</small></div><button onclick="deleteApp(${app.id})" style="background:#dc2626;">删除</button></div>`;
+    });
+    document.getElementById("appsList").innerHTML = html || "<div>暂无应用</div>";
+}
+
+async function deleteApp(id) {
+    if (confirm("删除这个应用？")) {
+        await sb.from("applications").delete().eq("id", id);
+        loadApplications();
+    }
+}
+
 window.openEditModal = openEditModal;
 window.deleteProduct = deleteProduct;
-window.deleteSlide = deleteSlide;
 window.deleteFactoryPhoto = deleteFactoryPhoto;
 window.deleteCertificate = deleteCertificate;
+window.deleteApp = deleteApp;
 window.removeNewImage = removeNewImage;
 window.removeExistingImage = removeExistingImage;
 window.removeProductFile = removeProductFile;
 window.clearVideoFile = clearVideoFile;
+window.clearAppFile = clearAppFile;
 </script>
 
 </body>
