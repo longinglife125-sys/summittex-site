@@ -57,6 +57,7 @@ button:hover { background:#1d4ed8; }
     <button class="tab-btn active" data-tab="products">📦 产品管理</button>
     <button class="tab-btn" data-tab="factory">🏭 工厂管理</button>
     <button class="tab-btn" data-tab="apps">📱 应用管理</button>
+    <button class="tab-btn" data-tab="settings">⚙️ 网站设置</button>
 </div>
 
 <!-- 产品管理 -->
@@ -137,14 +138,26 @@ button:hover { background:#1d4ed8; }
             <div class="upload-box" id="appUploadBox">📸 点击选择应用图片</div>
             <input type="file" id="appFile" accept="image/*" style="display:none">
             <div id="appPreview"></div>
-            <input type="text" id="appName" placeholder="应用名称（如：Wetsuit & Diving）">
+            <input type="text" id="appName" placeholder="应用名称">
             <input type="text" id="appIcon" placeholder="图标（如：🏄‍♂️）">
             <textarea id="appDesc" placeholder="应用描述" rows="2"></textarea>
-            <input type="number" id="appOrder" placeholder="排序（数字越小越靠前）" value="0">
+            <input type="number" id="appOrder" placeholder="排序" value="0">
             <button id="addAppBtn">添加应用</button>
         </div>
         <h4>📋 现有应用列表</h4>
         <div id="appsList">加载中...</div>
+    </div>
+</div>
+
+<!-- 网站设置（背景图管理） -->
+<div id="settingsTab" class="tab-content">
+    <div class="box">
+        <h3>🏠 首页 Hero 背景图</h3>
+        <div class="upload-box" id="heroBgUploadBox">📸 点击上传背景图（推荐尺寸：1920x800）</div>
+        <input type="file" id="heroBgFile" accept="image/*" style="display:none">
+        <div id="heroBgPreview"></div>
+        <button id="saveHeroBgBtn">保存背景图</button>
+        <div id="heroBgStatus" style="margin-top:10px; font-size:12px;"></div>
     </div>
 </div>
 
@@ -190,6 +203,7 @@ let currentFactoryFile = null, currentCertFile = null, currentVideoFile = null;
 let currentEditImages = [], currentNewImages = [], editingProductId = null;
 let productFiles = [];
 let currentAppFile = null;
+let currentHeroBgFile = null;
 
 // 产品上传图片预览
 document.getElementById("productUploadBox").onclick = () => document.getElementById("productFile").click();
@@ -210,10 +224,20 @@ document.getElementById("loginBtn").onclick = function() {
     if (document.getElementById("pass").value === "123456") {
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("panelBox").style.display = "block";
-        loadProducts(); loadFactoryPhotos(); loadCertificates(); loadFactorySettings(); loadApplications();
+        loadProducts(); loadFactoryPhotos(); loadCertificates(); loadFactorySettings(); loadApplications(); loadCurrentBackground();
     } else alert("密码错误");
 };
 document.getElementById("pass").addEventListener("keypress", (e) => { if (e.key === "Enter") document.getElementById("loginBtn").click(); });
+
+// 加载当前背景图预览
+async function loadCurrentBackground() {
+    const { data } = await sb.from("site_settings").select("setting_value").eq("setting_key", "hero_background").single();
+    if (data && data.setting_value && data.setting_value !== 'https://placehold.co/1920x800/0f3b5c/white?text=Hero+Background') {
+        document.getElementById("heroBgPreview").innerHTML = `<img src="${data.setting_value}" class="preview-img"><div style="color:#4ade80; margin-top:5px;">当前背景图已设置</div>`;
+    } else {
+        document.getElementById("heroBgPreview").innerHTML = '<div style="color:#94a3b8;">暂无自定义背景图，使用默认背景</div>';
+    }
+}
 
 // 标签页切换
 document.querySelectorAll(".tab-btn").forEach(btn => {
@@ -225,6 +249,7 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
         if (tab === "products") document.getElementById("productsTab").classList.add("active");
         if (tab === "factory") { document.getElementById("factoryTab").classList.add("active"); loadFactoryPhotos(); loadCertificates(); loadFactorySettings(); }
         if (tab === "apps") { document.getElementById("appsTab").classList.add("active"); loadApplications(); }
+        if (tab === "settings") { document.getElementById("settingsTab").classList.add("active"); loadCurrentBackground(); }
     };
 });
 
@@ -256,16 +281,10 @@ async function loadProducts() {
         if (p.images && p.images.length) { preview = p.images.slice(0,2).map(img => `<img src="${img}" class="item-img">`).join(''); if (p.images.length > 2) preview += `<span> +${p.images.length-2}</span>`; }
         else if (p.image) preview = `<img src="${p.image}" class="item-img">`;
         let safeName = (p.name || "").replace(/'/g, "\\'");
-        html += `<div class="item">
-            <b>${p.name}</b> <span style="font-size:11px; color:#666;">(${imgCount}张图片)</span><br>
-            📁 ${p.category}<br>⚖️ ${p.gsm || "-"} | 📦 ${p.moq || "-"}<br>
-            <div>${preview}</div>
-            <div class="item-actions">
-                <button class="edit-btn" onclick='openEditModal(${p.id}, "${safeName}", "${(p.category||"").replace(/'/g,"\\'")}", "${(p.gsm||"").replace(/'/g,"\\'")}", "${(p.moq||"").replace(/'/g,"\\'")}", "${(p.feature||"").replace(/'/g,"\\'")}", "${(p.video_url||"").replace(/'/g,"\\'")}", ${JSON.stringify(p.images || [])})'>✏️ 编辑</button>
-                <button class="preview-btn" onclick='window.open("product.html?id=${p.id}", "_blank")'>👁️ 预览</button>
-                <button class="delete-btn" onclick="deleteProduct(${p.id})">🗑️ 删除</button>
-            </div>
-        </div>`;
+        html += `<div class="item"><b>${p.name}</b> <span style="font-size:11px; color:#666;">(${imgCount}张图片)</span><br>📁 ${p.category}<br>⚖️ ${p.gsm || "-"} | 📦 ${p.moq || "-"}<br><div>${preview}</div>
+        <div class="item-actions"><button class="edit-btn" onclick='openEditModal(${p.id}, "${safeName}", "${(p.category||"").replace(/'/g,"\\'")}", "${(p.gsm||"").replace(/'/g,"\\'")}", "${(p.moq||"").replace(/'/g,"\\'")}", "${(p.feature||"").replace(/'/g,"\\'")}", "${(p.video_url||"").replace(/'/g,"\\'")}", ${JSON.stringify(p.images || [])})'>✏️ 编辑</button>
+        <button class="preview-btn" onclick='window.open("product.html?id=${p.id}", "_blank")'>👁️ 预览</button>
+        <button class="delete-btn" onclick="deleteProduct(${p.id})">🗑️ 删除</button></div></div>`;
     });
     document.getElementById("productList").innerHTML = html || "<div>暂无产品</div>";
 }
@@ -400,7 +419,6 @@ document.getElementById("appFile").onchange = (e) => {
     if (e.target.files[0]) { currentAppFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("appPreview").innerHTML = `<img src="${ev.target.result}" class="preview-img"><button onclick="clearAppFile()">取消</button>`; reader.readAsDataURL(currentAppFile); }
 };
 function clearAppFile() { currentAppFile = null; document.getElementById("appFile").value = ""; document.getElementById("appPreview").innerHTML = ""; }
-
 document.getElementById("addAppBtn").onclick = async function() {
     let name = document.getElementById("appName").value.trim();
     if (!name) { alert("请输入应用名称"); return; }
@@ -411,37 +429,36 @@ document.getElementById("addAppBtn").onclick = async function() {
         if (error) { alert("图片上传失败：" + error.message); return; }
         let { data } = sb.storage.from("images").getPublicUrl(fn);
         imageUrl = data.publicUrl;
-    } else {
-        alert("请先选择图片");
-        return;
-    }
-    let { error } = await sb.from("applications").insert([{
-        name: name,
-        description: document.getElementById("appDesc").value,
-        image_url: imageUrl,
-        icon: document.getElementById("appIcon").value || "📦",
-        sort_order: parseInt(document.getElementById("appOrder").value) || 0,
-        is_active: true
-    }]);
+    } else { alert("请先选择图片"); return; }
+    let { error } = await sb.from("applications").insert([{ name: name, description: document.getElementById("appDesc").value, image_url: imageUrl, icon: document.getElementById("appIcon").value || "📦", sort_order: parseInt(document.getElementById("appOrder").value) || 0, is_active: true }]);
     if (error) alert("添加失败：" + error.message);
     else { alert("添加成功"); clearAppFile(); document.getElementById("appName").value = ""; document.getElementById("appDesc").value = ""; document.getElementById("appIcon").value = ""; document.getElementById("appOrder").value = "0"; loadApplications(); }
 };
-
 async function loadApplications() {
     let { data } = await sb.from("applications").select("*").order("sort_order");
-    let html = "";
-    (data || []).forEach(app => {
-        html += `<div class="media-item"><img src="${app.image_url}" class="media-img"><div><b>${app.name}</b><br><small>排序: ${app.sort_order}</small></div><button onclick="deleteApp(${app.id})" style="background:#dc2626;">删除</button></div>`;
-    });
+    let html = ""; (data || []).forEach(app => { html += `<div class="media-item"><img src="${app.image_url}" class="media-img"><div><b>${app.name}</b><br><small>排序: ${app.sort_order}</small></div><button onclick="deleteApp(${app.id})" style="background:#dc2626;">删除</button></div>`; });
     document.getElementById("appsList").innerHTML = html || "<div>暂无应用</div>";
 }
+async function deleteApp(id) { if (confirm("删除这个应用？")) { await sb.from("applications").delete().eq("id", id); loadApplications(); } }
 
-async function deleteApp(id) {
-    if (confirm("删除这个应用？")) {
-        await sb.from("applications").delete().eq("id", id);
-        loadApplications();
-    }
-}
+// ========== 首页背景图管理 ==========
+document.getElementById("heroBgUploadBox").onclick = () => document.getElementById("heroBgFile").click();
+document.getElementById("heroBgFile").onchange = (e) => {
+    if (e.target.files[0]) { currentHeroBgFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("heroBgPreview").innerHTML = `<img src="${ev.target.result}" class="preview-img"><button onclick="clearHeroBgFile()">取消选择</button>`; reader.readAsDataURL(currentHeroBgFile); }
+};
+function clearHeroBgFile() { currentHeroBgFile = null; document.getElementById("heroBgFile").value = ""; document.getElementById("heroBgPreview").innerHTML = ""; loadCurrentBackground(); }
+document.getElementById("saveHeroBgBtn").onclick = async function() {
+    if (!currentHeroBgFile) { alert("请先选择图片"); return; }
+    let status = document.getElementById("heroBgStatus");
+    status.innerHTML = "⏳ 上传中...";
+    let fn = "settings/" + Date.now() + "_hero." + currentHeroBgFile.name.split('.').pop();
+    let { error: uploadError } = await sb.storage.from("images").upload(fn, currentHeroBgFile);
+    if (uploadError) { status.innerHTML = "❌ 上传失败：" + uploadError.message; return; }
+    let { data } = sb.storage.from("images").getPublicUrl(fn);
+    let { error } = await sb.from("site_settings").upsert({ setting_key: "hero_background", setting_value: data.publicUrl }, { onConflict: "setting_key" });
+    if (error) { status.innerHTML = "❌ 保存失败：" + error.message; }
+    else { status.innerHTML = "✅ 背景图已更新！刷新首页查看效果。"; clearHeroBgFile(); }
+};
 
 window.openEditModal = openEditModal;
 window.deleteProduct = deleteProduct;
@@ -453,6 +470,7 @@ window.removeExistingImage = removeExistingImage;
 window.removeProductFile = removeProductFile;
 window.clearVideoFile = clearVideoFile;
 window.clearAppFile = clearAppFile;
+window.clearHeroBgFile = clearHeroBgFile;
 </script>
 
 </body>
