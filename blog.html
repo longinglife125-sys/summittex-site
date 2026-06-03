@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Industry News & Knowledge | Siyin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f6f8fa;
+    color: #1f2937;
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 32px;
+}
+
+/* ================= 导航栏 ================= */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #e5e7eb;
+    background: rgba(255,255,255,0.98);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0aa699;
+}
+
+.logo span {
+    font-size: 10px;
+    font-weight: 400;
+    color: #6b7280;
+}
+
+.nav-links {
+    display: flex;
+    gap: 32px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #6b7280;
+    font-weight: 500;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: #0aa699;
+}
+
+/* ================= 页面头部 ================= */
+.page-header {
+    background: linear-gradient(135deg, #0f3b5c 0%, #1e4a6f 100%);
+    color: white;
+    padding: 80px 0 50px;
+    text-align: center;
+}
+
+.page-header h1 {
+    font-size: 42px;
+    margin-bottom: 16px;
+}
+
+.page-header p {
+    font-size: 18px;
+    color: #cbd5e1;
+}
+
+/* ================= 筛选栏 ================= */
+.filter-bar {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 40px 0;
+}
+
+.filter-btn {
+    padding: 8px 20px;
+    border-radius: 40px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background: #0aa699;
+    color: white;
+    border-color: #0aa699;
+}
+
+/* ================= 文章网格 ================= */
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+.post-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.post-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 30px -12px rgba(0,0,0,0.15);
+}
+
+.post-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.post-card .content {
+    padding: 24px;
+}
+
+.post-category {
+    display: inline-block;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 30px;
+    background: #eef2ff;
+    color: #0aa699;
+    margin-bottom: 12px;
+}
+
+.post-card h3 {
+    font-size: 18px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+    color: #1f2937;
+}
+
+.post-card .excerpt {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.read-more {
+    color: #0aa699;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* ================= 分页 ================= */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 40px 0 60px;
+}
+
+.pagination button {
+    padding: 8px 16px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pagination button:hover,
+.pagination button.active {
+    background: #0aa699;
+    color: white;
+    border-color: #0aa699;
+}
+
+/* ================= Footer ================= */
+.footer {
+    background: #111827;
+    color: #9ca3af;
+    padding: 48px 0;
+    text-align: center;
+}
+
+.footer-logo {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: white;
+}
+
+/* ================= 响应式 ================= */
+@media (max-width: 1024px) {
+    .posts-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .posts-grid {
+        grid-template-columns: 1fr;
+    }
+    .nav-links {
+        display: none;
+    }
+    .page-header h1 {
+        font-size: 32px;
+    }
+    .container {
+        padding: 0 20px;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- 导航栏 -->
+<nav class="container navbar">
+    <div class="logo">SY<span>siyin</span></div>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="applications.html">Applications</a>
+        <a href="factory.html">Factory</a>
+        <a href="blog.html" class="active">Blog</a>
+        <a href="contact.html">Contact</a>
+        <a href="admin.html">Admin</a>
+    </div>
+</nav>
+
+<!-- 页面头部 -->
+<section class="page-header">
+    <div class="container">
+        <h1>Industry News & Knowledge</h1>
+        <p>Expert insights, technical guides, and company updates</p>
+    </div>
+</section>
+
+<!-- 筛选栏 -->
+<section class="container">
+    <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" data-category="all">All</button>
+        <button class="filter-btn" data-category="guide">Technical Guides</button>
+        <button class="filter-btn" data-category="article">Industry Articles</button>
+        <button class="filter-btn" data-category="news">Company News</button>
+        <button class="filter-btn" data-category="video">Videos</button>
+    </div>
+</section>
+
+<!-- 文章列表 -->
+<section class="container">
+    <div class="posts-grid" id="postsGrid"></div>
+    <div class="pagination" id="pagination"></div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-logo">SY<span>siyin</span></div>
+        <p>Dongguan Siyin Sports Goods Co., Ltd.</p>
+        <p>© 2025 Siyin. All rights reserved.</p>
+    </div>
+</footer>
+
+<script>
+const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
+const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let allPosts = [];
+let currentCategory = "all";
+let currentPage = 1;
+const postsPerPage = 6;
+
+async function loadPosts() {
+    const { data, error } = await sb
+        .from("posts")
+        .select("*")
+        .eq("is_published", true)
+        .order("published_at", { ascending: false });
+    
+    if (error) {
+        console.error("加载失败:", error);
+        return;
+    }
+    allPosts = data;
+    renderPosts();
+}
+
+function renderPosts() {
+    let filtered = allPosts;
+    if (currentCategory !== "all") {
+        filtered = allPosts.filter(p => p.category === currentCategory);
+    }
+    
+    const start = (currentPage - 1) * postsPerPage;
+    const paginated = filtered.slice(start, start + postsPerPage);
+    
+    const container = document.getElementById("postsGrid");
+    if (paginated.length === 0) {
+        container.innerHTML = '<div style="text-align:center; grid-column:1/-1; padding:60px;">No posts found</div>';
+        document.getElementById("pagination").innerHTML = "";
+        return;
+    }
+    
+    container.innerHTML = paginated.map(post => `
+        <div class="post-card" onclick="location.href='post.html?id=${post.id}'">
+            <img src="${post.image_url || 'https://placehold.co/600x400'}" onerror="this.src='https://placehold.co/600x400'">
+            <div class="content">
+                <span class="post-category">${getCategoryLabel(post.category)}</span>
+                <h3>${escapeHtml(post.title)}</h3>
+                <p class="excerpt">${escapeHtml(post.excerpt || (post.content || "").substring(0, 120))}...</p>
+                <div class="post-meta">
+                    <span>📅 ${formatDate(post.published_at)}</span>
+                    <a href="post.html?id=${post.id}" class="read-more">Read More →</a>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    
+    renderPagination(filtered.length);
+}
+
+function renderPagination(total) {
+    const totalPages = Math.ceil(total / postsPerPage);
+    if (totalPages <= 1) {
+        document.getElementById("pagination").innerHTML = "";
+        return;
+    }
+    
+    let html = "";
+    for (let i = 1; i <= totalPages; i++) {
+        html += `<button class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+    }
+    document.getElementById("pagination").innerHTML = html;
+}
+
+function goToPage(page) {
+    currentPage = page;
+    renderPosts();
+    window.scrollTo({ top: 400, behavior: "smooth" });
+}
+
+function setupFilters() {
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            currentCategory = btn.dataset.category;
+            currentPage = 1;
+            renderPosts();
+        });
+    });
+}
+
+function getCategoryLabel(cat) {
+    const labels = {
+        guide: "📘 Technical Guide",
+        article: "📄 Industry Article",
+        news: "📰 Company News",
+        video: "🎥 Video"
+    };
+    return labels[cat] || "📄 Article";
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+}
+
+function escapeHtml(str) {
+    if (!str) return "";
+    return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]);
+}
+
+loadPosts();
+setupFilters();
+window.goToPage = goToPage;
+</script>
+</body>
+</html>
