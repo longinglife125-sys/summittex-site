@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Article | Siyin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #ffffff;
+    color: #1f2937;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 32px;
+}
+
+/* 导航栏 */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 32px;
+    border-bottom: 1px solid #e5e7eb;
+    background: rgba(255,255,255,0.98);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0aa699;
+}
+
+.nav-links {
+    display: flex;
+    gap: 32px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #6b7280;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.nav-links a:hover {
+    color: #0aa699;
+}
+
+/* 文章内容 */
+.post-header {
+    padding: 60px 0 30px;
+    text-align: center;
+}
+
+.post-category {
+    display: inline-block;
+    font-size: 14px;
+    padding: 4px 16px;
+    border-radius: 30px;
+    background: #eef2ff;
+    color: #0aa699;
+    margin-bottom: 20px;
+}
+
+.post-header h1 {
+    font-size: 42px;
+    margin-bottom: 16px;
+    line-height: 1.2;
+}
+
+.post-meta {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.post-image {
+    width: 100%;
+    border-radius: 20px;
+    margin: 30px 0;
+}
+
+.post-content {
+    font-size: 17px;
+    line-height: 1.8;
+    color: #374151;
+}
+
+.post-content h2, .post-content h3 {
+    margin: 30px 0 15px;
+    color: #1f2937;
+}
+
+.post-content p {
+    margin-bottom: 20px;
+}
+
+.post-content ul, .post-content ol {
+    margin: 20px 0;
+    padding-left: 25px;
+}
+
+.post-content li {
+    margin: 8px 0;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 40px;
+    color: #0aa699;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.loading {
+    text-align: center;
+    padding: 100px;
+    color: #6b7280;
+}
+
+.footer {
+    background: #111827;
+    color: #9ca3af;
+    padding: 48px 0;
+    text-align: center;
+    margin-top: 60px;
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+    .post-header h1 {
+        font-size: 28px;
+    }
+    .container {
+        padding: 0 20px;
+    }
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">SY<span>siyin</span></div>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="applications.html">Applications</a>
+        <a href="factory.html">Factory</a>
+        <a href="blog.html">Blog</a>
+        <a href="contact.html">Contact</a>
+    </div>
+</nav>
+
+<div class="container" id="postContainer">
+    <div class="loading">Loading...</div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <div class="logo" style="color:white; margin-bottom:16px;">SY<span>siyin</span></div>
+        <p>Dongguan Siyin Sports Goods Co., Ltd.</p>
+        <p>© 2025 Siyin. All rights reserved.</p>
+    </div>
+</footer>
+
+<script>
+const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
+const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const urlParams = new URLSearchParams(window.location.search);
+const postId = urlParams.get("id");
+
+async function loadPost() {
+    if (!postId) {
+        document.getElementById("postContainer").innerHTML = "<div class='loading'>Invalid post ID</div>";
+        return;
+    }
+    
+    const { data, error } = await sb
+        .from("posts")
+        .select("*")
+        .eq("id", postId)
+        .eq("is_published", true)
+        .single();
+    
+    if (error || !data) {
+        document.getElementById("postContainer").innerHTML = "<div class='loading'>Post not found</div>";
+        return;
+    }
+    
+    await sb.from("posts").update({ view_count: (data.view_count || 0) + 1 }).eq("id", postId);
+    
+    const categoryLabels = {
+        guide: "📘 Technical Guide",
+        article: "📄 Industry Article",
+        news: "📰 Company News",
+        video: "🎥 Video"
+    };
+    
+    document.getElementById("postContainer").innerHTML = `
+        <div class="post-header">
+            <span class="post-category">${categoryLabels[data.category] || "Article"}</span>
+            <h1>${escapeHtml(data.title)}</h1>
+            <div class="post-meta">📅 ${formatDate(data.published_at)} | 👁️ ${data.view_count || 0} views</div>
+        </div>
+        ${data.image_url ? `<img src="${data.image_url}" class="post-image" onerror="this.style.display='none'">` : ""}
+        <div class="post-content">${data.content || "No content available."}</div>
+        <a href="blog.html" class="back-link">← Back to Blog</a>
+    `;
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+}
+
+function escapeHtml(str) {
+    if (!str) return "";
+    return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]);
+}
+
+loadPost();
+</script>
+</body>
+</html>
