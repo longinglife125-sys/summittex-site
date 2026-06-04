@@ -3,666 +3,112 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Our Products | Neoprene & Laminated Fabric Supplier | Siyin</title>
-<meta name="description" content="High-performance neoprene, laminated & functional fabrics for bags, shoes, wetsuits, and protective gear. OEM/ODM services available.">
+<title>Neoprene & Technical Materials | Siyin</title>
+<meta name="description" content="Wetsuit neoprene, sports, medical, outdoor & industrial foam materials. OEM/ODM manufacturer.">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+body { font-family:Inter; margin:0; background:#fff; padding-top:80px; color:#1f2937; }
+
+.container { max-width:1200px; margin:auto; padding:0 20px; }
+
+.grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+
+.card {
+  border:1px solid #eef2ff;
+  border-radius:16px;
+  overflow:hidden;
+  transition:0.3s;
+  cursor:pointer;
+}
+.card:hover { transform:translateY(-6px); box-shadow:0 20px 40px rgba(0,0,0,0.08); }
+
+.card img { width:100%; height:200px; object-fit:cover; }
+
+.content { padding:16px; }
+
+.title { font-weight:600; font-size:16px; color:#0f3b5c; margin-bottom:6px; }
+
+.category { font-size:12px; color:#00bfff; margin-bottom:8px; }
+
+.tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+
+.tag {
+  font-size:11px;
+  padding:3px 8px;
+  border-radius:20px;
+  background:#f1f5f9;
+  color:#475569;
 }
 
-body {
-    font-family: 'Inter', sans-serif;
-    background: #ffffff;
-    color: #1f2937;
-    line-height: 1.5;
-    padding-top: 70px;
+.business {
+  background:#fff7ed;
+  color:#c2410c;
 }
 
-.container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 32px;
-}
+.spec { font-size:12px; color:#6b7280; margin-top:8px; }
 
-/* ================= 导航栏 ================= */
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 40px;
-    background: white;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-}
+a { text-decoration:none; }
 
-.logo {
-    font-size: 24px;
-    font-weight: 700;
-    color: #0f3b5c;
-    letter-spacing: -0.5px;
-}
-
-.logo span {
-    color: #00bfff;
-}
-
-.nav-links {
-    display: flex;
-    gap: 32px;
-}
-
-.nav-links a {
-    text-decoration: none;
-    color: #475569;
-    font-weight: 500;
-    font-size: 14px;
-    transition: color 0.2s;
-}
-
-.nav-links a:hover,
-.nav-links a.active {
-    color: #00bfff;
-}
-
-/* ================= 页面头部 ================= */
-.page-header {
-    background: linear-gradient(135deg, #0f3b5c 0%, #1e4a6f 100%);
-    color: white;
-    padding: 60px 0 40px;
-    text-align: center;
-}
-
-.page-header h1 {
-    font-size: 42px;
-    margin-bottom: 16px;
-}
-
-.page-header p {
-    font-size: 18px;
-    color: #cbd5e1;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-/* ================= 筛选区域 ================= */
-.filter-bar {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-    margin: 30px 0 20px;
-}
-
-.filter-tab {
-    padding: 8px 20px;
-    border-radius: 40px;
-    background: white;
-    border: 1px solid #e2e8f0;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
-    transition: all 0.2s;
-}
-
-.filter-tab:hover {
-    border-color: #00bfff;
-    background: #f0f9ff;
-}
-
-.filter-tab.active {
-    background: #00bfff;
-    color: white;
-    border-color: #00bfff;
-}
-
-/* 筛选面板 */
-.filter-panel {
-    background: #f8fafc;
-    border-radius: 20px;
-    padding: 24px;
-    margin-bottom: 40px;
-}
-
-.filter-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    margin-bottom: 20px;
-}
-
-.filter-group {
-    flex: 1;
-    min-width: 180px;
-}
-
-.filter-group label {
-    font-weight: 600;
-    font-size: 13px;
-    color: #0f3b5c;
-    margin-bottom: 10px;
-    display: block;
-}
-
-.filter-group select {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    font-size: 14px;
-    background: white;
-    cursor: pointer;
-}
-
-/* 多选标签组 */
-.tag-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.filter-tag {
-    padding: 6px 14px;
-    border: 1px solid #e2e8f0;
-    border-radius: 30px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: white;
-}
-
-.filter-tag:hover {
-    border-color: #00bfff;
-}
-
-.filter-tag.active {
-    background: #00bfff;
-    color: white;
-    border-color: #00bfff;
-}
-
-/* 厚度按钮组 */
-.thickness-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.thickness-btn {
-    padding: 6px 14px;
-    border: 1px solid #e2e8f0;
-    border-radius: 30px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: white;
-}
-
-.thickness-btn:hover {
-    border-color: #00bfff;
-}
-
-.thickness-btn.active {
-    background: #00bfff;
-    color: white;
-    border-color: #00bfff;
-}
-
-.reset-btn {
-    padding: 8px 20px;
-    background: #e2e8f0;
-    border: none;
-    border-radius: 30px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 10px;
-}
-
-.reset-btn:hover {
-    background: #cbd5e1;
-}
-
-/* ================= 产品网格 ================= */
-.products-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-    margin-bottom: 40px;
-}
-
-.product-card {
-    background: white;
-    border: 1px solid #eef2ff;
-    border-radius: 20px;
-    overflow: hidden;
-    transition: all 0.3s;
-    cursor: pointer;
-}
-
-.product-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 30px -12px rgba(0,0,0,0.15);
-    border-color: #00bfff;
-}
-
-.product-card img {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-}
-
-.product-info {
-    padding: 20px;
-}
-
-.product-category {
-    display: inline-block;
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 30px;
-    background: #eef2ff;
-    color: #00bfff;
-    margin-bottom: 10px;
-    font-weight: 500;
-}
-
-.perf-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 8px;
-}
-
-.perf-tag {
-    font-size: 10px;
-    padding: 2px 8px;
-    border-radius: 20px;
-    background: #f1f5f9;
-    color: #475569;
-}
-
-.product-card h3 {
-    font-size: 16px;
-    font-weight: 600;
-    color: #0f3b5c;
-    margin-bottom: 6px;
-}
-
-.product-spec {
-    font-size: 12px;
-    color: #6b7280;
-    margin-bottom: 10px;
-}
-
-.quote-link {
-    display: inline-block;
-    margin-top: 10px;
-    color: #00bfff;
-    font-weight: 600;
-    font-size: 12px;
-    text-decoration: none;
-}
-
-/* ================= 分页 ================= */
-.pagination {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin: 40px 0 60px;
-}
-
-.pagination button {
-    padding: 8px 16px;
-    border: 1px solid #e2e8f0;
-    background: white;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.pagination button:hover,
-.pagination button.active {
-    background: #00bfff;
-    color: white;
-    border-color: #00bfff;
-}
-
-/* ================= Footer ================= */
-.footer {
-    background: #0f172a;
-    color: #94a3b8;
-    padding: 48px 0;
-    text-align: center;
-}
-
-.footer-logo {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    color: white;
-}
-
-.footer-logo span {
-    color: #00bfff;
-}
-
-/* ================= 响应式 ================= */
-@media (max-width: 1024px) {
-    .products-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 768px) {
-    .products-grid {
-        grid-template-columns: 1fr;
-    }
-    .nav-links {
-        display: none;
-    }
-    .page-header h1 {
-        font-size: 32px;
-    }
-    .container {
-        padding: 0 20px;
-    }
-    .navbar {
-        padding: 12px 20px;
-    }
-    .filter-row {
-        flex-direction: column;
-    }
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
+
 <body>
 
-<!-- 导航栏 -->
-<nav class="navbar">
-    <div class="logo">SY<span>siyin</span></div>
-    <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="products.html" class="active">Products</a>
-        <a href="applications.html">Applications</a>
-        <a href="factory.html">Factory</a>
-        <a href="contact.html">Contact</a>
-        <a href="admin.html">Admin</a>
-    </div>
-</nav>
-
-<!-- 页面头部 -->
-<section class="page-header">
-    <div class="container">
-        <h1>Our Products</h1>
-        <p>High-performance neoprene, laminated & functional fabrics for bags, shoes, wetsuits, and protective gear. OEM/ODM services available.</p>
-    </div>
-</section>
-
-<!-- 快捷标签栏 -->
-<section class="container">
-    <div class="filter-bar" id="quickFilterBar">
-        <button class="filter-tab active" data-quick="all">All</button>
-        <button class="filter-tab" data-quick="Neoprene">🧵 Neoprene</button>
-        <button class="filter-tab" data-quick="Laminated">🔗 Laminated</button>
-        <button class="filter-tab" data-quick="Foam">🛡️ Foam</button>
-        <button class="filter-tab" data-quick="Functional">📐 Functional</button>
-    </div>
-</section>
-
-<!-- 高级筛选面板 -->
-<section class="container">
-    <div class="filter-panel">
-        <div class="filter-row">
-            <div class="filter-group">
-                <label>📁 Material Type</label>
-                <select id="filterCategory">
-                    <option value="all">All Products</option>
-                    <option value="Neoprene Fabrics">Neoprene Fabrics</option>
-                    <option value="Laminated Neoprene">Laminated Neoprene</option>
-                    <option value="Foam & Protective">Foam & Protective</option>
-                    <option value="Functional Fabrics">Functional Fabrics</option>
-                    <option value="Sustainable">Sustainable Materials</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>📏 Thickness (Purpose-based)</label>
-                <div class="thickness-group" id="thicknessGroup">
-                    <div class="thickness-btn" data-thickness="all">All</div>
-                    <div class="thickness-btn" data-thickness="light">Light (1-2mm) – Shoes, Lining</div>
-                    <div class="thickness-btn" data-thickness="medium">Medium (3mm) – Bags, Wetsuits</div>
-                    <div class="thickness-btn" data-thickness="thick">Thick (5mm+) – Protective, Mats</div>
-                </div>
-            </div>
-        </div>
-        <div class="filter-row">
-            <div class="filter-group">
-                <label>⚡ Performance Features</label>
-                <div class="tag-group" id="perfGroup">
-                    <div class="filter-tag" data-perf="Waterproof">💧 Waterproof</div>
-                    <div class="filter-tag" data-perf="Shockproof">🛡️ Shockproof</div>
-                    <div class="filter-tag" data-perf="Thermal">🔥 Thermal</div>
-                    <div class="filter-tag" data-perf="Stretch">🔄 Stretch</div>
-                    <div class="filter-tag" data-perf="Breathable">🌬️ Breathable</div>
-                </div>
-            </div>
-            <div class="filter-group">
-                <label>🎯 Applications (Multi-select)</label>
-                <div class="tag-group" id="appGroup">
-                    <div class="filter-tag" data-app="Wetsuits">🏄 Wetsuits</div>
-                    <div class="filter-tag" data-app="Bags">🎒 Bags & Coolers</div>
-                    <div class="filter-tag" data-app="Shoes">👟 Shoes</div>
-                    <div class="filter-tag" data-app="Protective">🛡️ Protective</div>
-                    <div class="filter-tag" data-app="Outdoor">🏕️ Outdoor</div>
-                </div>
-            </div>
-        </div>
-        <div>
-            <button class="reset-btn" id="resetFilters">Reset All Filters</button>
-        </div>
-    </div>
-</section>
-
-<!-- 产品列表 -->
-<section class="container">
-    <div class="products-grid" id="productsGrid"><div style="text-align:center; grid-column:1/-1; padding:60px;">Loading...</div></div>
-    <div class="pagination" id="pagination"></div>
-</section>
-
-<!-- Footer -->
-<footer class="footer">
-    <div class="container">
-        <div class="footer-logo">SY<span>siyin</span></div>
-        <p>Dongguan Siyin Sports Goods Co., Ltd.</p>
-        <p>© 2025 Siyin. All rights reserved.</p>
-    </div>
-</footer>
+<div class="container">
+  <h1 style="margin-bottom:20px;">Products</h1>
+  <div id="grid" class="grid"></div>
+</div>
 
 <script>
-const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
-const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = supabase.createClient(
+  "https://tpcxaelljrudshchuzia.supabase.co",
+  "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt"
+);
 
-let allProducts = [];
-let currentCategory = "all";
-let currentThickness = "all";
-let selectedPerfs = [];
-let selectedApps = [];
-let currentPage = 1;
-let totalPages = 1;
-const productsPerPage = 9;
+async function load(){
+  const {data} = await sb.from("products").select("*").order("id",{ascending:false});
 
-// 示例产品数据
-const fallbackProducts = [
-    { id: 1, name: "Neoprene Fabric 2mm", category: "Neoprene Fabrics", thickness: "light", features: ["Waterproof", "Flexible"], applications: ["Wetsuits", "Shoes"], image: "https://placehold.co/400x220/0f3b5c/white?text=Neoprene+2mm", moq: "100m", color: "Black/Custom" },
-    { id: 2, name: "Neoprene Fabric 3mm", category: "Neoprene Fabrics", thickness: "medium", features: ["Waterproof", "Thermal"], applications: ["Wetsuits", "Protective"], image: "https://placehold.co/400x220/0f3b5c/white?text=Neoprene+3mm", moq: "100m", color: "Black/Custom" },
-    { id: 3, name: "Laminated Neoprene 3mm", category: "Laminated Neoprene", thickness: "medium", features: ["Waterproof", "Shockproof", "Stretch"], applications: ["Wetsuits", "Bags", "Shoes"], image: "https://placehold.co/400x220/2c7da0/white?text=Laminated+3mm", moq: "100m", color: "Black/Custom" },
-    { id: 4, name: "Laminated Neoprene 5mm", category: "Laminated Neoprene", thickness: "thick", features: ["Shockproof", "Thermal"], applications: ["Protective", "Bags"], image: "https://placehold.co/400x220/2c7da0/white?text=Laminated+5mm", moq: "100m", color: "Black/Custom" },
-    { id: 5, name: "EVA Foam 2mm", category: "Foam & Protective", thickness: "light", features: ["Shockproof", "Lightweight"], applications: ["Shoes", "Bags", "Protective"], image: "https://placehold.co/400x220/0f3b5c/white?text=EVA+Foam", moq: "100m", color: "Black/White" },
-    { id: 6, name: "Mesh Lining Fabric", category: "Functional Fabrics", thickness: "light", features: ["Breathable", "Lightweight"], applications: ["Bags", "Shoes"], image: "https://placehold.co/400x220/2c7da0/white?text=Mesh+Fabric", moq: "100m", color: "Black" },
-    { id: 7, name: "Recycled Neoprene", category: "Sustainable", thickness: "medium", features: ["Eco-friendly", "Waterproof", "Flexible"], applications: ["Wetsuits", "Bags", "Shoes"], image: "https://placehold.co/400x220/0aa699/white?text=Recycled", moq: "200m", color: "Black/Gray" }
-];
+  const grid = document.getElementById("grid");
 
-async function loadProducts() {
-    const { data, error } = await sb.from("products").select("*").order("id", { ascending: false });
-    allProducts = (error || !data || data.length === 0) ? fallbackProducts : data;
-    renderProducts();
-}
+  grid.innerHTML = (data||[]).map(p=>`
 
-function filterProducts() {
-    return allProducts.filter(p => {
-        if (currentCategory !== "all" && p.category !== currentCategory) return false;
-        if (currentThickness !== "all" && p.thickness !== currentThickness) return false;
-        if (selectedPerfs.length > 0 && !selectedPerfs.some(perf => (p.features || []).includes(perf))) return false;
-        if (selectedApps.length > 0 && !selectedApps.some(app => (p.applications || []).includes(app))) return false;
-        return true;
-    });
-}
+    <a href="product.html?id=${p.id}">
+    <div class="card">
 
-function renderProducts() {
-    let filtered = filterProducts();
-    totalPages = Math.ceil(filtered.length / productsPerPage);
-    if (currentPage > totalPages) currentPage = 1;
-    const paginated = filtered.slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage);
-    
-    const container = document.getElementById("productsGrid");
-    if (paginated.length === 0) {
-        container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:60px;">No products found. Try changing filters.</div>';
-        document.getElementById("pagination").innerHTML = "";
-        return;
-    }
-    
-    container.innerHTML = paginated.map(p => `
-        <div class="product-card" onclick="location.href='product.html?id=${p.id}'">
-            <img src="${p.image || 'https://placehold.co/400x220'}" onerror="this.src='https://placehold.co/400x220'">
-            <div class="product-info">
-                <div class="product-category">${p.category || "Materials"}</div>
-                <div class="perf-tags">${(p.features || []).slice(0,3).map(f => `<span class="perf-tag">${f}</span>`).join('')}</div>
-                <h3>${escapeHtml(p.name)}</h3>
-                <div class="product-spec">MOQ: ${p.moq || "100m"} | Color: ${p.color || "Custom"}</div>
-                <a href="product.html?id=${p.id}" class="quote-link">View Details →</a>
-            </div>
+      <img src="${p.image||''}" onerror="this.src='https://placehold.co/400x300'">
+
+      <div class="content">
+
+        <div class="category">🏷️ ${p.category||''}</div>
+
+        <div class="title">${p.name}</div>
+
+        <div class="spec">
+          ${p.thickness||'Custom'} | MOQ: ${p.moq||'Contact'}
         </div>
-    `).join('');
-    renderPagination();
+
+        <div class="tags">
+          ${(p.features||[]).slice(0,3).map(t=>`<span class="tag">${t}</span>`).join('')}
+        </div>
+
+        <div class="tags">
+          ${(p.applications||[]).slice(0,2).map(t=>`<span class="tag business">${t}</span>`).join('')}
+        </div>
+
+      </div>
+
+    </div>
+    </a>
+
+  `).join('');
 }
 
-function renderPagination() {
-    if (totalPages <= 1) { document.getElementById("pagination").innerHTML = ""; return; }
-    let html = `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>‹ Prev</button>`;
-    for (let i = 1; i <= totalPages; i++) html += `<button class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
-    html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next ›</button>`;
-    document.getElementById("pagination").innerHTML = html;
-}
-
-function goToPage(page) {
-    if (page < 1 || page > totalPages) return;
-    currentPage = page;
-    renderProducts();
-    window.scrollTo({ top: 400, behavior: "smooth" });
-}
-
-// 快捷标签切换
-function setupQuickFilters() {
-    document.querySelectorAll("#quickFilterBar .filter-tab").forEach(btn => {
-        btn.addEventListener("click", () => {
-            document.querySelectorAll("#quickFilterBar .filter-tab").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            const quick = btn.dataset.quick;
-            if (quick === "all") currentCategory = "all";
-            else if (quick === "Neoprene") currentCategory = "Neoprene Fabrics";
-            else if (quick === "Laminated") currentCategory = "Laminated Neoprene";
-            else if (quick === "Foam") currentCategory = "Foam & Protective";
-            else if (quick === "Functional") currentCategory = "Functional Fabrics";
-            document.getElementById("filterCategory").value = currentCategory;
-            currentPage = 1;
-            renderProducts();
-        });
-    });
-}
-
-function setupFilters() {
-    // 材料分类
-    document.getElementById("filterCategory").addEventListener("change", (e) => {
-        currentCategory = e.target.value;
-        currentPage = 1;
-        renderProducts();
-        updateQuickFilterTab();
-    });
-    
-    // 厚度
-    document.querySelectorAll(".thickness-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            document.querySelectorAll(".thickness-btn").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            currentThickness = btn.dataset.thickness;
-            currentPage = 1;
-            renderProducts();
-        });
-    });
-    
-    // 性能标签（多选）
-    document.querySelectorAll("#perfGroup .filter-tag").forEach(btn => {
-        btn.addEventListener("click", () => {
-            btn.classList.toggle("active");
-            selectedPerfs = Array.from(document.querySelectorAll("#perfGroup .filter-tag.active")).map(b => b.dataset.perf);
-            currentPage = 1;
-            renderProducts();
-        });
-    });
-    
-    // 应用场景（多选）
-    document.querySelectorAll("#appGroup .filter-tag").forEach(btn => {
-        btn.addEventListener("click", () => {
-            btn.classList.toggle("active");
-            selectedApps = Array.from(document.querySelectorAll("#appGroup .filter-tag.active")).map(b => b.dataset.app);
-            currentPage = 1;
-            renderProducts();
-        });
-    });
-    
-    // 重置按钮
-    document.getElementById("resetFilters").addEventListener("click", () => {
-        currentCategory = "all";
-        currentThickness = "all";
-        selectedPerfs = [];
-        selectedApps = [];
-        currentPage = 1;
-        document.getElementById("filterCategory").value = "all";
-        document.querySelectorAll(".thickness-btn").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".thickness-btn[data-thickness='all']").forEach(b => b.classList.add("active"));
-        document.querySelectorAll("#perfGroup .filter-tag").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll("#appGroup .filter-tag").forEach(b => b.classList.remove("active"));
-        updateQuickFilterTab();
-        renderProducts();
-    });
-}
-
-function updateQuickFilterTab() {
-    document.querySelectorAll("#quickFilterBar .filter-tab").forEach(b => b.classList.remove("active"));
-    if (currentCategory === "all") document.querySelector("#quickFilterBar .filter-tab[data-quick='all']")?.classList.add("active");
-    else if (currentCategory === "Neoprene Fabrics") document.querySelector("#quickFilterBar .filter-tab[data-quick='Neoprene']")?.classList.add("active");
-    else if (currentCategory === "Laminated Neoprene") document.querySelector("#quickFilterBar .filter-tab[data-quick='Laminated']")?.classList.add("active");
-    else if (currentCategory === "Foam & Protective") document.querySelector("#quickFilterBar .filter-tab[data-quick='Foam']")?.classList.add("active");
-    else if (currentCategory === "Functional Fabrics") document.querySelector("#quickFilterBar .filter-tab[data-quick='Functional']")?.classList.add("active");
-}
-
-function escapeHtml(str) {
-    if (!str) return "";
-    return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]);
-}
-
-loadProducts();
-setupFilters();
-setupQuickFilters();
-window.goToPage = goToPage;
+load();
 </script>
+
 </body>
 </html>
