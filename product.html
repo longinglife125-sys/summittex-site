@@ -2,253 +2,661 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title id="pageTitle">Product Detail | Siyin</title>
-<meta id="pageDescription" name="description" content="High-performance neoprene and laminated fabrics for wetsuits, bags, medical supports, and protective gear. OEM/ODM available.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+<title>Product Details | Neoprene & Technical Fabrics | Siyin</title>
+<meta name="description" content="Professional neoprene fabric, laminated composite, and functional textiles supplier. OEM/ODM services for wetsuits, bags, medical supports, and protective gear.">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Inter', sans-serif; background: #ffffff; color: #1f2937; line-height: 1.5; padding-top: 70px; }
-.container { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
-
-.navbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 40px; background: white; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-.logo { font-size: 24px; font-weight: 700; color: #0f3b5c; letter-spacing: -0.5px; }
-.logo span { color: #00bfff; }
-.nav-links { display: flex; gap: 32px; }
-.nav-links a { text-decoration: none; color: #475569; font-weight: 500; font-size: 14px; transition: color 0.2s; }
-.nav-links a:hover { color: #00bfff; }
-
-.back-link { display: inline-flex; align-items: center; gap: 6px; color: #00bfff; text-decoration: none; margin-bottom: 20px; }
-.back-link:hover { gap: 10px; }
-
-.product-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; padding: 40px 0 60px; }
-.product-image img { width: 100%; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-
-.product-title { font-size: 32px; font-weight: 700; color: #0f3b5c; margin-bottom: 16px; }
-.product-slogan { font-size: 18px; color: #4b5563; margin-bottom: 20px; }
-
-.specs-table { background: #f8fafc; border-radius: 20px; padding: 24px; margin: 24px 0; width: 100%; border-collapse: collapse; }
-.specs-table td { padding: 12px 0; border-bottom: 1px solid #e2e8f0; }
-.specs-table tr:last-child td { border-bottom: none; }
-.spec-label { font-weight: 600; color: #0f3b5c; width: 35%; }
-
-.tags-section { margin: 24px 0; }
-.tags-title { font-size: 16px; font-weight: 600; color: #0f3b5c; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-.tags-list { display: flex; flex-wrap: wrap; gap: 10px; }
-.tag { padding: 6px 16px; background: #eef2ff; color: #00bfff; border-radius: 30px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
-.tag:hover { background: #00bfff; color: white; }
-.business-tag { background: #fef3c7; color: #d97706; }
-.business-tag:hover { background: #d97706; color: white; }
-
-.quote-form { background: #f8fafc; border-radius: 20px; padding: 24px; margin-top: 30px; }
-.quote-form h3 { margin-bottom: 16px; color: #0f3b5c; }
-.quote-form input, .quote-form textarea, .quote-form select { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-family: inherit; }
-
-.btn { display: inline-block; padding: 14px 32px; border-radius: 40px; font-weight: 600; text-decoration: none; transition: all 0.2s; cursor: pointer; border: none; }
-.btn-primary { background: #00bfff; color: #0f172a; }
-.btn-primary:hover { background: #0099cc; transform: translateY(-2px); }
-
-.footer { background: #0f172a; color: #94a3b8; padding: 48px 0; text-align: center; margin-top: 50px; }
-.footer-logo { font-size: 20px; font-weight: 700; margin-bottom: 16px; color: white; }
-.footer-logo span { color: #00bfff; }
-
-.whatsapp { position: fixed; bottom: 24px; right: 24px; background: #25D366; color: white; padding: 12px 18px; border-radius: 50px; text-decoration: none; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-.whatsapp:hover { background: #128C7E; transform: scale(1.05); }
-
-@media (max-width: 768px) { 
-  .product-detail { grid-template-columns: 1fr; gap: 30px; } 
-  .nav-links { display: none; } 
-  .container { padding: 0 20px; } 
-  .product-title { font-size: 24px; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f5f7fc;
+    color: #1a2a3a;
+    line-height: 1.5;
+}
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 32px;
+}
+/* 导航栏 */
+.navbar {
+    background: #0f2b3d;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo {
+    font-size: 22px;
+    font-weight: 700;
+    color: white;
+}
+.logo span {
+    color: #00bfff;
+}
+.nav-links {
+    display: flex;
+    gap: 32px;
+}
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 20px 0;
+    transition: color 0.2s;
+}
+.nav-links a:hover {
+    color: #00bfff;
+}
+.back-link {
+    background: #f1f5f9;
+    padding: 12px 0;
+}
+.back-link a {
+    color: #00bfff;
+    text-decoration: none;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.back-link a:hover {
+    text-decoration: underline;
+}
+/* 商品详情主布局 */
+.product-detail {
+    background: white;
+    border-radius: 32px;
+    margin: 32px 0;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    padding: 40px;
+}
+/* 图片区域 */
+.image-gallery {
+    position: relative;
+}
+.main-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 24px;
+    background: #f1f5f9;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.thumbnail-list {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    overflow-x: auto;
+}
+.thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+}
+.thumbnail.active {
+    border-color: #00bfff;
+    box-shadow: 0 0 0 2px rgba(0,191,255,0.2);
+}
+/* 产品信息区域 */
+.product-info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.product-name {
+    font-size: 28px;
+    font-weight: 700;
+    color: #0f2b3d;
+    line-height: 1.3;
+}
+.sku {
+    font-size: 12px;
+    color: #94a3b8;
+    font-family: monospace;
+}
+.performance-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.perf-tag {
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 500;
+    background: #eef2ff;
+    color: #00bfff;
+}
+.business-signals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 0;
+    border-top: 1px solid #eef2ff;
+    border-bottom: 1px solid #eef2ff;
+}
+.signal-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f8fafc;
+    padding: 8px 16px;
+    border-radius: 40px;
+    font-size: 13px;
+    font-weight: 500;
+}
+.signal-item span:first-child {
+    font-size: 18px;
+}
+.moq-lead {
+    display: flex;
+    gap: 24px;
+    background: #f1f5f9;
+    padding: 16px 20px;
+    border-radius: 20px;
+}
+.moq-lead-item {
+    flex: 1;
+}
+.moq-lead-label {
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+.moq-lead-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f2b3d;
+}
+.cta-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+}
+.btn-quote-lg {
+    flex: 1;
+    background: #00bfff;
+    color: #0f172a;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 40px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-quote-lg:hover {
+    background: #0099cc;
+    transform: translateY(-2px);
+}
+.btn-wa-lg {
+    background: #25D366;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 40px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+.btn-wa-lg:hover {
+    background: #128C7E;
+    transform: translateY(-2px);
+}
+/* 详情标签页 */
+.detail-tabs {
+    padding: 0 40px 40px;
+}
+.tab-headers {
+    display: flex;
+    gap: 32px;
+    border-bottom: 2px solid #eef2ff;
+    margin-bottom: 24px;
+}
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+.tab-btn.active {
+    color: #00bfff;
+}
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #00bfff;
+}
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+.tab-content.active {
+    display: block;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* 规格表 */
+.specs-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.specs-table tr {
+    border-bottom: 1px solid #eef2ff;
+}
+.specs-table td {
+    padding: 14px 0;
+}
+.specs-table td:first-child {
+    width: 160px;
+    font-weight: 600;
+    color: #0f2b3d;
+}
+.specs-table td:last-child {
+    color: #475569;
+}
+.cert-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+}
+.cert-badge {
+    background: #f1f5f9;
+    padding: 8px 20px;
+    border-radius: 40px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #0f2b3d;
+}
+.app-scene-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+}
+.app-scene {
+    background: #eef2ff;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 13px;
+    color: #00bfff;
+    font-weight: 500;
+}
+/* 相关产品 */
+.related-products {
+    margin: 48px 0;
+}
+.related-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #0f2b3d;
+}
+.related-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+.related-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+.related-card:hover {
+    transform: translateY(-4px);
+    border-color: #00bfff;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+.related-img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+}
+.related-info {
+    padding: 12px;
+}
+.related-name {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+.footer {
+    background: #0f2b3d;
+    color: #94a3b8;
+    padding: 48px 0;
+    text-align: center;
+    margin-top: 60px;
+}
+.loading-state {
+    text-align: center;
+    padding: 80px;
+    font-size: 18px;
+    color: #64748b;
+}
+@media (max-width: 1024px) {
+    .detail-grid { grid-template-columns: 1fr; gap: 32px; padding: 24px; }
+    .related-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+    .container { padding: 0 20px; }
+    .detail-grid { padding: 20px; }
+    .product-name { font-size: 22px; }
+    .moq-lead-value { font-size: 16px; }
+    .tab-headers { gap: 20px; }
+    .tab-btn { font-size: 14px; }
+    .related-grid { grid-template-columns: 1fr; }
+    .cta-row { flex-direction: column; }
 }
 </style>
 </head>
 <body>
 
 <nav class="navbar">
-    <div class="logo">SY<span>siyin</span></div>
-    <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="products.html">Products</a>
-        <a href="applications.html">Applications</a>
-        <a href="factory.html">Factory</a>
-        <a href="contact.html">Contact</a>
-        <a href="admin.html">Admin</a>
+    <div class="nav-container">
+        <div class="logo">SY<span>siyin</span></div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="products.html">Products</a>
+            <a href="factory.html">Factory</a>
+            <a href="contact.html">Contact</a>
+            <a href="admin.html">Admin</a>
+        </div>
     </div>
 </nav>
 
-<div class="container" id="productContainer"><div style="text-align:center; padding:60px;">Loading...</div></div>
+<div class="back-link">
+    <div class="container">
+        <a href="products.html">← Back to Products</a>
+    </div>
+</div>
 
-<footer class="footer"><div class="container"><div class="footer-logo">SY<span>siyin</span></div><p>Dongguan Siyin Sports Goods Co., Ltd.</p><p>© 2025 Siyin. All rights reserved.</p></div></footer>
+<section class="container">
+    <div id="productDetail" class="product-detail">
+        <div class="loading-state">Loading product details...</div>
+    </div>
+</section>
 
-<a href="https://wa.me/8613800000000?text=Hello, I'm interested in your neoprene products" class="whatsapp" target="_blank">💬 WhatsApp</a>
+<footer class="footer">
+    <div class="container">
+        <div class="footer-logo">SY<span>siyin</span></div>
+        <p>Dongguan Siyin Sports Goods Co., Ltd.</p>
+        <p>© 2025 Siyin. All rights reserved.</p>
+    </div>
+</footer>
 
 <script>
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const urlParams = new URLSearchParams(window.location.search);
-const productId = urlParams.get("id");
-let productData = null;
+let currentProduct = null;
+let allProducts = [];
 
-// 分类图标映射
-const categoryIcons = {
-  "Wetsuit & Water Sports Materials": "🏄",
-  "Sports & Fitness Materials": "🏃",
-  "Bags & Daily Use Materials": "🎒",
-  "Outdoor & Camping Materials": "🏕️",
-  "Medical & Support Materials": "🏥",
-  "Industrial & Protective Materials": "🛡️",
-  "Eco-Friendly Materials": "🌱",
-  "Finished Products (OEM/Custom)": "📦"
-};
+// 获取URL参数
+function getUrlParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
 
 async function loadProduct() {
-    if (!productId) { 
-        document.getElementById("productContainer").innerHTML = "<div style='text-align:center; padding:60px;'>Invalid product ID</div>"; 
-        return; 
+    const productId = getUrlParam('id');
+    if (!productId) {
+        document.getElementById('productDetail').innerHTML = '<div class="loading-state">Product not found.</div>';
+        return;
     }
+    
+    // 先加载所有产品用于相关推荐
+    const { data: allData } = await sb.from("products").select("*").order("id", { ascending: false });
+    if (allData) allProducts = allData;
     
     const { data, error } = await sb.from("products").select("*").eq("id", productId).single();
-    
     if (error || !data) {
-        document.getElementById("productContainer").innerHTML = "<div style='text-align:center; padding:60px;'>Product not found</div>";
+        document.getElementById('productDetail').innerHTML = '<div class="loading-state">Product not found.</div>';
         return;
     }
-    
-    productData = data;
-    document.title = `${productData.name} | Siyin Supplier`;
-    renderProduct();
+    currentProduct = data;
+    renderProductDetail();
+    renderRelatedProducts();
 }
 
-function filterByTag(type, value) {
-    window.location.href = `products.html?${type}=${encodeURIComponent(value)}`;
-}
-
-async function sendInquiry() {
-    const name = document.getElementById("inqName")?.value.trim();
-    const email = document.getElementById("inqEmail")?.value.trim();
-    const message = document.getElementById("inqMessage")?.value.trim();
+function renderProductDetail() {
+    const container = document.getElementById('productDetail');
+    const p = currentProduct;
     
-    if (!name || !email || !message) {
-        alert("Please fill in name, email and message");
-        return;
-    }
+    const features = p.features || [];
+    const applications = p.applications || [];
+    const certifications = p.certifications || [];
+    const businessTags = p.business_tags || [];
+    const productForms = p.product_forms || [];
     
-    const company = document.getElementById("inqCompany")?.value.trim() || "";
-    const inquiryType = document.getElementById("inqType")?.value || "";
-    const fullMessage = `Inquiry Type: ${inquiryType}\nProduct: ${productData?.name}\nCompany: ${company}\nMessage: ${message}`;
+    // 判断是否有多个图片（这里用主图模拟，实际可扩展）
+    const mainImage = p.image || 'https://placehold.co/800x800/1a2a3a/white?text=Product';
     
-    try {
-        const { error } = await sb.from("inquiries").insert([{ 
-            name, email, 
-            product: productData?.name, 
-            message: fullMessage, 
-            status: "new", 
-            created_at: new Date().toISOString() 
-        }]);
-        
-        if (error) {
-            alert("Failed: " + error.message);
-        } else {
-            document.getElementById("inqSuccess").style.display = "block";
-            setTimeout(() => { document.getElementById("inqSuccess").style.display = "none"; }, 3000);
-            document.getElementById("inqName").value = "";
-            document.getElementById("inqEmail").value = "";
-            document.getElementById("inqCompany").value = "";
-            document.getElementById("inqType").value = "Sample";
-            document.getElementById("inqMessage").value = "";
-        }
-    } catch(e) { 
-        alert("Error: " + e.message); 
-    }
-}
-
-function renderProduct() {
-    const p = productData;
-    const categoryIcon = categoryIcons[p.category] || "📦";
+    // 商务信号标签
+    const hasLowMOQ = businessTags.includes('Low MOQ');
+    const hasFastDelivery = businessTags.includes('Fast Delivery');
+    const hasOEM = businessTags.includes('OEM Available') || p.oem_level === 'OEM';
+    const hasSample = businessTags.includes('Sample Service') || businessTags.includes('Sample Available');
     
-    document.getElementById("productContainer").innerHTML = `
-        <a href="products.html" class="back-link">← Back to Products</a>
-        <div class="product-detail">
-            <div class="product-image">
-                <img src="${p.image || 'https://placehold.co/600x400'}" onerror="this.src='https://placehold.co/600x400'">
+    const moq = p.moq || 'Contact us';
+    const leadTime = p.lead_time === 'fast' ? '7-15 days' : (p.lead_time === 'custom' ? 'Custom' : '20-30 days');
+    
+    const html = `
+        <div class="detail-grid">
+            <div class="image-gallery">
+                <img src="${mainImage}" class="main-image" id="mainImage" onclick="openImageModal('${mainImage}')" onerror="this.src='https://placehold.co/800x800/1a2a3a/white?text=Product'">
+                <div class="thumbnail-list" id="thumbnailList">
+                    <img src="${mainImage}" class="thumbnail active" onclick="changeMainImage('${mainImage}')">
+                    ${p.image2 ? `<img src="${p.image2}" class="thumbnail" onclick="changeMainImage('${p.image2}')">` : ''}
+                    ${p.image3 ? `<img src="${p.image3}" class="thumbnail" onclick="changeMainImage('${p.image3}')">` : ''}
+                </div>
             </div>
-            <div>
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                    <span style="font-size: 14px; color: #00bfff;">${categoryIcon} ${escapeHtml(p.category || "Materials")}</span>
-                </div>
-                <h1 class="product-title">${escapeHtml(p.name)}</h1>
-                ${p.slogan ? `<div class="product-slogan">${escapeHtml(p.slogan)}</div>` : ''}
-                
-                <table class="specs-table">
-                    ${p.subcategory ? `<tr><td class="spec-label">Subcategory</td><td>${escapeHtml(p.subcategory)}</td></tr>` : ''}
-                    ${p.thickness ? `<tr><td class="spec-label">Thickness</td><td>${escapeHtml(p.thickness)}</td></tr>` : ''}
-                    ${p.width ? `<tr><td class="spec-label">Width</td><td>${escapeHtml(p.width)}</td></tr>` : ''}
-                    ${p.gsm ? `<tr><td class="spec-label">GSM</td><td>${escapeHtml(p.gsm)}</td></tr>` : ''}
-                    ${p.color ? `<tr><td class="spec-label">Color</td><td>${escapeHtml(p.color)}</td></tr>` : ''}
-                    ${p.moq ? `<tr><td class="spec-label">MOQ</td><td>${escapeHtml(p.moq)}</td></tr>` : ''}
-                    ${p.material ? `<tr><td class="spec-label">Material Structure</td><td>${escapeHtml(p.material)}</td></tr>` : ''}
-                </table>
-                
-                ${p.business_tags?.length ? `
-                <div class="tags-section">
-                    <div class="tags-title">💰 Business Tags</div>
-                    <div class="tags-list">
-                        ${p.business_tags.map(t => `<span class="tag business-tag" onclick="filterByTag('business', '${escapeHtml(t)}')">${escapeHtml(t)}</span>`).join('')}
-                    </div>
-                </div>` : ''}
-                
-                ${p.features?.length ? `
-                <div class="tags-section">
-                    <div class="tags-title">⚡ Performance Features</div>
-                    <div class="tags-list">
-                        ${p.features.map(f => `<span class="tag" onclick="filterByTag('feature', '${escapeHtml(f)}')">${escapeHtml(f)}</span>`).join('')}
-                    </div>
-                </div>` : ''}
-                
-                ${p.applications?.length ? `
-                <div class="tags-section">
-                    <div class="tags-title">🎯 Applications</div>
-                    <div class="tags-list">
-                        ${p.applications.map(a => `<span class="tag" onclick="filterByTag('app', '${escapeHtml(a)}')">${escapeHtml(a)}</span>`).join('')}
-                    </div>
-                </div>` : ''}
-                
-                <div class="tags-section">
-                    <div class="tags-title">📝 Description</div>
-                    <p>${escapeHtml(p.description || "Contact us for more details and samples. OEM/ODM services available.")}</p>
+            <div class="product-info-section">
+                <div>
+                    <h1 class="product-name">${escapeHtml(p.name)}</h1>
+                    <div class="sku">SKU: ${escapeHtml(p.sku || p.id || 'N/A')}</div>
                 </div>
                 
-                <div class="quote-form">
-                    <h3>Get Free Sample / Request Quote</h3>
-                    <input type="text" id="inqName" placeholder="Your Name *">
-                    <input type="email" id="inqEmail" placeholder="Your Email *">
-                    <input type="text" id="inqCompany" placeholder="Company Name">
-                    <select id="inqType">
-                        <option value="Sample">Free Sample</option>
-                        <option value="Quote">Price Quotation</option>
-                        <option value="Technical">Technical Support</option>
-                    </select>
-                    <textarea id="inqMessage" rows="4" placeholder="Tell us about your requirements... *"></textarea>
-                    <button class="btn btn-primary" onclick="sendInquiry()">Send Inquiry →</button>
-                    <div id="inqSuccess" style="display:none; margin-top:12px; padding:10px; background:#4ade80; border-radius:8px; text-align:center;">✅ Inquiry sent! We'll contact you soon.</div>
+                <div class="performance-tags">
+                    ${features.slice(0, 5).map(f => `<span class="perf-tag">${escapeHtml(f)}</span>`).join('')}
+                </div>
+                
+                <div class="business-signals">
+                    ${hasLowMOQ ? '<div class="signal-item"><span>📦</span><span>Low MOQ</span></div>' : ''}
+                    ${hasFastDelivery ? '<div class="signal-item"><span>⚡</span><span>Fast Delivery</span></div>' : ''}
+                    ${hasOEM ? '<div class="signal-item"><span>🔧</span><span>OEM Available</span></div>' : ''}
+                    ${hasSample ? '<div class="signal-item"><span>📋</span><span>Sample Available</span></div>' : ''}
+                </div>
+                
+                <div class="moq-lead">
+                    <div class="moq-lead-item">
+                        <div class="moq-lead-label">Minimum Order Quantity</div>
+                        <div class="moq-lead-value">${escapeHtml(moq)}</div>
+                    </div>
+                    <div class="moq-lead-item">
+                        <div class="moq-lead-label">Lead Time</div>
+                        <div class="moq-lead-value">${escapeHtml(leadTime)}</div>
+                    </div>
+                </div>
+                
+                <div class="cta-row">
+                    <button class="btn-quote-lg" onclick="goToQuote()">💰 Get Quote →</button>
+                    <a href="https://wa.me/8613800000000?text=Hello%2C%20I'm%20interested%20in%20${encodeURIComponent(p.name)}" class="btn-wa-lg" target="_blank">💬 WhatsApp Inquiry</a>
                 </div>
             </div>
         </div>
+        
+        <div class="detail-tabs">
+            <div class="tab-headers">
+                <button class="tab-btn active" data-tab="specs">📋 Specifications</button>
+                <button class="tab-btn" data-tab="description">📝 Description</button>
+                <button class="tab-btn" data-tab="applications">🎯 Applications</button>
+                <button class="tab-btn" data-tab="certifications">✅ Certifications</button>
+            </div>
+            
+            <div class="tab-content active" id="tab-specs">
+                <table class="specs-table">
+                    <tr><td>Material Type</td><td>${escapeHtml(p.category || 'Neoprene Fabric')}</td></tr>
+                    <tr><td>Subcategory</td><td>${escapeHtml(p.subcategory || '-')}</td></tr>
+                    <tr><td>Thickness</td><td>${p.thickness ? p.thickness + 'mm' : 'Custom'}</td></tr>
+                    <tr><td>GSM</td><td>${p.gsm ? p.gsm + 'gsm' : 'Custom'}</td></tr>
+                    <tr><td>Base Fabric</td><td>${escapeHtml(p.base_fabric || 'N cloth / T cloth / Terry cloth')}</td></tr>
+                    <tr><td>Product Form</td><td>${productForms.length ? productForms.join(', ') : 'Rolls / Sheets / Cut Pieces'}</td></tr>
+                    <tr><td>Width</td><td>${p.width || 'Standard 140cm / Custom'}</td></tr>
+                    <tr><td>Color</td><td>${p.color || 'Black / Custom'}</td></tr>
+                </table>
+            </div>
+            
+            <div class="tab-content" id="tab-description">
+                <div style="line-height: 1.8; color: #334155;">
+                    <h4 style="margin-bottom: 16px; color: #0f2b3d;">✨ Key Features</h4>
+                    <ul style="margin-left: 20px; margin-bottom: 24px;">
+                        ${features.map(f => `<li style="margin-bottom: 8px;">${escapeHtml(f)}</li>`).join('')}
+                    </ul>
+                    <h4 style="margin-bottom: 12px; color: #0f2b3d;">📦 Packaging & Shipping</h4>
+                    <p>Packaged in rolls or sheets with protective wrapping. Standard export carton or pallet. Samples available upon request.</p>
+                    <p style="margin-top: 12px;">● MOQ: ${escapeHtml(moq)}<br>
+                    ● Lead Time: ${escapeHtml(leadTime)}<br>
+                    ● Shipping: Sea / Air / Express (DHL, FedEx, UPS)</p>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="tab-applications">
+                <h4 style="margin-bottom: 16px; color: #0f2b3d;">🎯 Suitable Applications</h4>
+                <div class="app-scene-list">
+                    ${applications.length ? applications.map(app => `<span class="app-scene">${escapeHtml(app)}</span>`).join('') : '<span>Wetsuits, Sportswear, Bags, Medical Supports, Outdoor Gear</span>'}
+                </div>
+                <div style="margin-top: 24px;">
+                    <img src="https://placehold.co/600x300/f1f5f9/64748b?text=Application+Scenes" style="width: 100%; border-radius: 20px; margin-top: 16px;" alt="Application examples">
+                </div>
+            </div>
+            
+            <div class="tab-content" id="tab-certifications">
+                <h4 style="margin-bottom: 16px; color: #0f2b3d;">✅ Quality Certifications</h4>
+                <div class="cert-badges">
+                    ${certifications.length ? certifications.map(cert => `<span class="cert-badge">${escapeHtml(cert)}</span>`).join('') : '<span class="cert-badge">REACH</span><span class="cert-badge">ROHS</span><span class="cert-badge">OEKO-TEX</span><span class="cert-badge">ISO9001</span>'}
+                </div>
+                <p style="margin-top: 20px; color: #475569;">All products comply with international standards for safety and environmental compliance. Third-party testing available upon request.</p>
+            </div>
+        </div>
     `;
+    
+    container.innerHTML = html;
+    
+    // 绑定tab切换事件
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.dataset.tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        });
+    });
 }
 
-function escapeHtml(str) { 
-    if (!str) return ""; 
-    return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[m]); 
+function renderRelatedProducts() {
+    if (!currentProduct || !allProducts.length) return;
+    
+    // 推荐同分类的产品，排除当前产品
+    const related = allProducts
+        .filter(p => p.id !== currentProduct.id && p.category === currentProduct.category)
+        .slice(0, 4);
+    
+    if (related.length === 0) return;
+    
+    const relatedHtml = `
+        <div class="related-products">
+            <h3 class="related-title">You May Also Like</h3>
+            <div class="related-grid">
+                ${related.map(p => `
+                    <div class="related-card" onclick="location.href='product.html?id=${p.id}'">
+                        <img src="${p.image || 'https://placehold.co/400x260/1a2a3a/white?text=Product'}" class="related-img" onerror="this.src='https://placehold.co/400x260/1a2a3a/white?text=Product'">
+                        <div class="related-info">
+                            <div class="related-name">${escapeHtml(p.name)}</div>
+                            <div style="font-size: 11px; color: #00bfff;">${p.features?.slice(0,2).join(' · ') || ''}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+    
+    const container = document.getElementById('productDetail');
+    container.insertAdjacentHTML('beforeend', relatedHtml);
 }
 
+function changeMainImage(src) {
+    const mainImage = document.getElementById('mainImage');
+    if (mainImage) mainImage.src = src;
+    document.querySelectorAll('.thumbnail').forEach(th => th.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function openImageModal(src) {
+    window.open(src, '_blank');
+}
+
+function goToQuote() {
+    if (currentProduct) {
+        window.location.href = `contact.html?product=${encodeURIComponent(currentProduct.name)}`;
+    } else {
+        window.location.href = 'contact.html';
+    }
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[m]);
+}
+
+// 页面加载
 loadProduct();
-window.filterByTag = filterByTag;
-window.sendInquiry = sendInquiry;
 </script>
 </body>
 </html>
