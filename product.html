@@ -2,131 +2,543 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Product Details - Debug</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+<title>Product Details | Neoprene & Technical Fabrics | Siyin</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-body { font-family: monospace; background: #0a0a0a; color: #0f0; padding: 20px; }
-.container { max-width: 900px; margin: 0 auto; background: #111; padding: 20px; border-radius: 8px; }
-.loading { color: #ff0; }
-.error { color: #f00; }
-.success { color: #0f0; }
-pre { background: #222; padding: 10px; overflow: auto; font-size: 12px; color: #0f0; }
-.product-img { max-width: 300px; border-radius: 8px; }
-.row { display: flex; gap: 20px; flex-wrap: wrap; }
-button { background: #00bfff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f5f7fc;
+    color: #1a2a3a;
+    line-height: 1.5;
+}
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 32px;
+}
+/* 导航栏 */
+.navbar {
+    background: #0f2b3d;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo {
+    font-size: 22px;
+    font-weight: 700;
+    color: white;
+}
+.logo span {
+    color: #00bfff;
+}
+.nav-links {
+    display: flex;
+    gap: 32px;
+}
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 20px 0;
+    transition: color 0.2s;
+}
+.nav-links a:hover {
+    color: #00bfff;
+}
+.back-link {
+    padding: 16px 0;
+}
+.back-link a {
+    color: #00bfff;
+    text-decoration: none;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.back-link a:hover {
+    text-decoration: underline;
+}
+/* 商品详情主布局 */
+.product-detail {
+    background: white;
+    border-radius: 32px;
+    margin: 20px 0 40px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    padding: 40px;
+}
+/* 图片区域 */
+.main-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 24px;
+    background: #f1f5f9;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+/* 产品信息区域 */
+.product-name {
+    font-size: 28px;
+    font-weight: 700;
+    color: #0f2b3d;
+    line-height: 1.3;
+    margin-bottom: 12px;
+}
+.sku {
+    font-size: 12px;
+    color: #94a3b8;
+    font-family: monospace;
+    margin-bottom: 16px;
+}
+.performance-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0;
+}
+.perf-tag {
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 500;
+    background: #eef2ff;
+    color: #00bfff;
+}
+.business-signals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 0;
+    border-top: 1px solid #eef2ff;
+    border-bottom: 1px solid #eef2ff;
+    margin: 16px 0;
+}
+.signal-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f8fafc;
+    padding: 8px 16px;
+    border-radius: 40px;
+    font-size: 13px;
+    font-weight: 500;
+}
+.moq-lead {
+    display: flex;
+    gap: 24px;
+    background: #f1f5f9;
+    padding: 16px 20px;
+    border-radius: 20px;
+    margin: 16px 0;
+}
+.moq-lead-item {
+    flex: 1;
+}
+.moq-lead-label {
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+.moq-lead-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f2b3d;
+}
+.cta-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+}
+.btn-quote-lg {
+    flex: 1;
+    background: #00bfff;
+    color: #0f172a;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 40px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-quote-lg:hover {
+    background: #0099cc;
+    transform: translateY(-2px);
+}
+.btn-wa-lg {
+    background: #25D366;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 40px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+.btn-wa-lg:hover {
+    background: #128C7E;
+    transform: translateY(-2px);
+}
+/* 详情标签页 */
+.detail-tabs {
+    padding: 0 40px 40px;
+}
+.tab-headers {
+    display: flex;
+    gap: 32px;
+    border-bottom: 2px solid #eef2ff;
+    margin-bottom: 24px;
+}
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+.tab-btn.active {
+    color: #00bfff;
+}
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #00bfff;
+}
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+.tab-content.active {
+    display: block;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.specs-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.specs-table tr {
+    border-bottom: 1px solid #eef2ff;
+}
+.specs-table td {
+    padding: 14px 0;
+}
+.specs-table td:first-child {
+    width: 160px;
+    font-weight: 600;
+    color: #0f2b3d;
+}
+.specs-table td:last-child {
+    color: #475569;
+}
+.cert-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+}
+.cert-badge {
+    background: #f1f5f9;
+    padding: 8px 20px;
+    border-radius: 40px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #0f2b3d;
+}
+.app-scene-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+}
+.app-scene {
+    background: #eef2ff;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 13px;
+    color: #00bfff;
+    font-weight: 500;
+}
+.loading-state {
+    text-align: center;
+    padding: 80px;
+    font-size: 18px;
+    color: #64748b;
+}
+.error-state {
+    text-align: center;
+    padding: 80px;
+    font-size: 18px;
+    color: #dc2626;
+}
+.footer {
+    background: #0f2b3d;
+    color: #94a3b8;
+    padding: 48px 0;
+    text-align: center;
+    margin-top: 60px;
+}
+@media (max-width: 1024px) {
+    .detail-grid { grid-template-columns: 1fr; gap: 32px; padding: 24px; }
+}
+@media (max-width: 768px) {
+    .container { padding: 0 20px; }
+    .detail-grid { padding: 20px; }
+    .product-name { font-size: 22px; }
+    .tab-headers { gap: 20px; overflow-x: auto; }
+    .tab-btn { font-size: 14px; white-space: nowrap; }
+    .cta-row { flex-direction: column; }
+}
 </style>
 </head>
 <body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo">SY<span>siyin</span></div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="products.html">Products</a>
+            <a href="factory.html">Factory</a>
+            <a href="contact.html">Contact</a>
+            <a href="admin.html">Admin</a>
+        </div>
+    </div>
+</nav>
+
 <div class="container">
-    <h2>🔍 Product Detail Debugger</h2>
-    <div id="log"></div>
-    <div id="content" class="loading">Loading...</div>
+    <div class="back-link">
+        <a href="products.html">← Back to Products</a>
+    </div>
+    <div id="productDetail" class="product-detail">
+        <div class="loading-state">Loading product details...</div>
+    </div>
 </div>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-logo">SY<span>siyin</span></div>
+        <p>Dongguan Siyin Sports Goods Co., Ltd.</p>
+        <p>© 2025 Siyin. All rights reserved.</p>
+    </div>
+</footer>
 
 <script>
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-function log(msg, type = 'info') {
-    const logDiv = document.getElementById('log');
-    const color = type === 'error' ? '#f00' : (type === 'success' ? '#0f0' : '#ff0');
-    logDiv.innerHTML += `<div style="color:${color}; border-bottom:1px solid #333; padding:4px 0;">${new Date().toLocaleTimeString()} | ${msg}</div>`;
-    console.log(msg);
+// 安全的字符串转义函数
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+}
+
+// 安全获取数组
+function safeArray(arr) {
+    if (!arr) return [];
+    if (Array.isArray(arr)) return arr;
+    return [];
 }
 
 async function loadProduct() {
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
     
-    log(`📍 URL: ${window.location.href}`);
-    log(`📦 Product ID from URL: ${productId}`);
-    
     if (!productId) {
-        log('❌ No product ID provided. Use ?id=1', 'error');
-        document.getElementById('content').innerHTML = '<div class="error">❌ No product ID. Try: product.html?id=1</div>';
+        document.getElementById('productDetail').innerHTML = '<div class="error-state">Product not found. Please go back to products page.</div>';
         return;
     }
     
     try {
-        // 测试1: 检查 Supabase 连接
-        log('🔌 Testing Supabase connection...');
-        const { data: health, error: healthErr } = await sb.from('products').select('count', { count: 'exact', head: true });
-        if (healthErr) {
-            log(`❌ Connection failed: ${healthErr.message}`, 'error');
-        } else {
-            log(`✅ Supabase connected! Total products: ${health?.count || 0}`, 'success');
-        }
-        
-        // 测试2: 获取所有产品 ID（调试用）
-        log('📋 Fetching all product IDs...');
-        const { data: allIds, error: idsErr } = await sb.from('products').select('id, name').limit(10);
-        if (idsErr) {
-            log(`❌ Failed to fetch IDs: ${idsErr.message}`, 'error');
-        } else {
-            log(`✅ Available products: ${JSON.stringify(allIds)}`, 'success');
-        }
-        
-        // 测试3: 获取指定产品
-        log(`🔍 Fetching product with ID = ${productId}...`);
         const { data, error } = await sb
-            .from('products')
-            .select('*')
-            .eq('id', parseInt(productId))
+            .from("products")
+            .select("*")
+            .eq("id", parseInt(productId))
             .maybeSingle();
         
-        if (error) {
-            log(`❌ Query error: ${error.message}`, 'error');
-            document.getElementById('content').innerHTML = `<div class="error">❌ Database Error: ${error.message}</div>`;
+        if (error || !data) {
+            document.getElementById('productDetail').innerHTML = '<div class="error-state">Product not found.</div>';
             return;
         }
         
-        if (!data) {
-            log(`❌ Product ID ${productId} not found`, 'error');
-            document.getElementById('content').innerHTML = `
-                <div class="error">
-                    ❌ Product ID ${productId} not found.<br><br>
-                    Available IDs: ${JSON.stringify(allIds?.map(p => ({id: p.id, name: p.name})) || [])}
-                </div>`;
-            return;
-        }
-        
-        log(`✅ Product found: ${data.name}`, 'success');
-        
-        // 显示产品信息
-        const p = data;
-        document.getElementById('content').innerHTML = `
-            <div class="row">
-                <img src="${p.image || 'https://placehold.co/400x400/1a2a3a/white?text=No+Image'}" class="product-img" onerror="this.src='https://placehold.co/400x400/1a2a3a/white?text=Image+Error'">
-                <div>
-                    <h1 style="color:white;">${escapeHtml(p.name)}</h1>
-                    <p><strong>ID:</strong> ${p.id}</p>
-                    <p><strong>Category:</strong> ${escapeHtml(p.category || '-')}</p>
-                    <p><strong>Thickness:</strong> ${p.thickness || '-'} mm</p>
-                    <p><strong>GSM:</strong> ${p.gsm || '-'}</p>
-                    <p><strong>MOQ:</strong> ${p.moq || 'Contact us'}</p>
-                    <p><strong>Features:</strong> ${(p.features || []).join(', ') || '-'}</p>
-                    <p><strong>Applications:</strong> ${(p.applications || []).join(', ') || '-'}</p>
-                    <button onclick="location.href='contact.html?product=${encodeURIComponent(p.name)}'">💰 Get Quote</button>
-                </div>
-            </div>
-            <hr style="margin: 20px 0; border-color:#333;">
-            <h3 style="color:white;">📄 Raw Database Record:</h3>
-            <pre>${JSON.stringify(p, null, 2)}</pre>
-        `;
-        
-        log('✅ Page rendered successfully', 'success');
+        renderProductDetail(data);
         
     } catch (err) {
-        log(`❌ Exception: ${err.message}`, 'error');
-        document.getElementById('content').innerHTML = `<div class="error">❌ Exception: ${err.message}</div>`;
+        console.error("Error:", err);
+        document.getElementById('productDetail').innerHTML = '<div class="error-state">Failed to load product. Please try again later.</div>';
     }
 }
 
-function escapeHtml(str) {
-    if (!str) return '';
-    return String(str).replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[m]);
+function renderProductDetail(p) {
+    const features = safeArray(p.features);
+    const applications = safeArray(p.applications);
+    const certifications = safeArray(p.certifications);
+    const businessTags = safeArray(p.business_tags);
+    const productForms = safeArray(p.product_forms);
+    
+    const mainImage = p.image || 'https://placehold.co/800x800/1a2a3a/white?text=Product';
+    const moq = p.moq || 'Contact us';
+    const leadTime = p.lead_time === 'fast' ? '7-15 days' : (p.lead_time === 'custom' ? 'Custom' : '20-30 days');
+    const oemLevel = p.oem_level || 'OEM';
+    const sku = p.sku || 'N/A';
+    
+    // 商务信号
+    const hasLowMOQ = businessTags.includes('Low MOQ');
+    const hasFastDelivery = businessTags.includes('Fast Delivery');
+    const hasOEM = businessTags.includes('OEM Available') || p.oem_level === 'OEM';
+    const hasSample = businessTags.includes('Sample Available') || businessTags.includes('Sample Service');
+    
+    const html = `
+        <div class="detail-grid">
+            <div class="image-gallery">
+                <img src="${mainImage}" class="main-image" onclick="window.open('${mainImage}', '_blank')" onerror="this.src='https://placehold.co/800x800/1a2a3a/white?text=Product'">
+            </div>
+            <div class="product-info-section">
+                <h1 class="product-name">${escapeHtml(p.name)}</h1>
+                <div class="sku">SKU: ${escapeHtml(sku)}</div>
+                
+                <div class="performance-tags">
+                    ${features.slice(0, 5).map(f => `<span class="perf-tag">${escapeHtml(f)}</span>`).join('')}
+                </div>
+                
+                <div class="business-signals">
+                    ${hasLowMOQ ? '<div class="signal-item"><span>📦</span><span>Low MOQ</span></div>' : ''}
+                    ${hasFastDelivery ? '<div class="signal-item"><span>⚡</span><span>Fast Delivery</span></div>' : ''}
+                    ${hasOEM ? '<div class="signal-item"><span>🔧</span><span>OEM Available</span></div>' : ''}
+                    ${hasSample ? '<div class="signal-item"><span>📋</span><span>Sample Available</span></div>' : ''}
+                </div>
+                
+                <div class="moq-lead">
+                    <div class="moq-lead-item">
+                        <div class="moq-lead-label">Minimum Order Quantity</div>
+                        <div class="moq-lead-value">${escapeHtml(moq)}</div>
+                    </div>
+                    <div class="moq-lead-item">
+                        <div class="moq-lead-label">Lead Time</div>
+                        <div class="moq-lead-value">${escapeHtml(leadTime)}</div>
+                    </div>
+                </div>
+                
+                <div class="cta-row">
+                    <button class="btn-quote-lg" onclick="goToQuote('${escapeHtml(p.name)}')">💰 Get Quote →</button>
+                    <a href="https://wa.me/8613800000000?text=Hello%2C%20I'm%20interested%20in%20${encodeURIComponent(p.name)}" class="btn-wa-lg" target="_blank">💬 WhatsApp Inquiry</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="detail-tabs">
+            <div class="tab-headers">
+                <button class="tab-btn active" data-tab="specs">📋 Specifications</button>
+                <button class="tab-btn" data-tab="description">📝 Description</button>
+                <button class="tab-btn" data-tab="applications">🎯 Applications</button>
+                <button class="tab-btn" data-tab="certifications">✅ Certifications</button>
+            </div>
+            
+            <div class="tab-content active" id="tab-specs">
+                <table class="specs-table">
+                    <tr><td>Material Type</td><td>${escapeHtml(p.category || 'Neoprene Fabric')}</td></tr>
+                    <tr><td>Subcategory</td><td>${escapeHtml(p.subcategory || '-')}</td></tr>
+                    <tr><td>Thickness</td><td>${p.thickness ? p.thickness + 'mm' : 'Custom'}</td></tr>
+                    <tr><td>GSM</td><td>${p.gsm ? p.gsm + 'gsm' : 'Custom'}</td></tr>
+                    <tr><td>Base Fabric</td><td>${escapeHtml(p.base_fabric || 'N cloth / T cloth / Terry cloth')}</td></tr>
+                    <tr><td>Product Form</td><td>${productForms.length ? productForms.join(', ') : 'Rolls / Sheets / Cut Pieces'}</td></tr>
+                    <tr><td>Width</td><td>${escapeHtml(p.width || 'Standard 140cm / Custom')}</td></tr>
+                    <tr><td>Color</td><td>${escapeHtml(p.color || 'Black / Custom')}</td></tr>
+                </table>
+            </div>
+            
+            <div class="tab-content" id="tab-description">
+                <div style="line-height: 1.8; color: #334155;">
+                    <h4 style="margin-bottom: 16px; color: #0f2b3d;">✨ Key Features</h4>
+                    <ul style="margin-left: 20px; margin-bottom: 24px;">
+                        ${features.map(f => `<li style="margin-bottom: 8px;">${escapeHtml(f)}</li>`).join('')}
+                    </ul>
+                    <h4 style="margin-bottom: 12px; color: #0f2b3d;">📦 Packaging & Shipping</h4>
+                    <p>Packaged in rolls or sheets with protective wrapping. Standard export carton or pallet. Samples available upon request.</p>
+                    <p style="margin-top: 12px;">● MOQ: ${escapeHtml(moq)}<br>
+                    ● Lead Time: ${escapeHtml(leadTime)}<br>
+                    ● Shipping: Sea / Air / Express (DHL, FedEx, UPS)</p>
+                    <p style="margin-top: 12px;">${escapeHtml(p.description || 'Professional neoprene fabric suitable for various applications. OEM/ODM services available.')}</p>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="tab-applications">
+                <h4 style="margin-bottom: 16px; color: #0f2b3d;">🎯 Suitable Applications</h4>
+                <div class="app-scene-list">
+                    ${applications.length ? applications.map(app => `<span class="app-scene">${escapeHtml(app)}</span>`).join('') : '<span>Wetsuits, Sportswear, Bags, Medical Supports, Outdoor Gear</span>'}
+                </div>
+            </div>
+            
+            <div class="tab-content" id="tab-certifications">
+                <h4 style="margin-bottom: 16px; color: #0f2b3d;">✅ Quality Certifications</h4>
+                <div class="cert-badges">
+                    ${certifications.length ? certifications.map(cert => `<span class="cert-badge">${escapeHtml(cert)}</span>`).join('') : '<span class="cert-badge">REACH</span><span class="cert-badge">ROHS</span><span class="cert-badge">OEKO-TEX</span><span class="cert-badge">ISO9001</span>'}
+                </div>
+                <p style="margin-top: 20px; color: #475569;">All products comply with international standards for safety and environmental compliance. Third-party testing available upon request.</p>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('productDetail').innerHTML = html;
+    
+    // 绑定tab切换事件
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tabId = this.dataset.tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+            const targetTab = document.getElementById(`tab-${tabId}`);
+            if (targetTab) targetTab.classList.add('active');
+        });
+    });
+}
+
+function goToQuote(productName) {
+    window.location.href = `contact.html?product=${encodeURIComponent(productName)}`;
 }
 
 // 页面加载
