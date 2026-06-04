@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Premium Neoprene & Laminated Fabric Products | Siyin</title>
-<meta name="description" content="Supplier of neoprene and laminated fabrics for industrial and consumer applications including wetsuits, cooler bags, shoes, backpacks, and protective gear. OEM & ODM services available.">
+<title>Our Products | Neoprene & Laminated Fabric Supplier | Siyin</title>
+<meta name="description" content="High-performance neoprene, laminated & functional fabrics for bags, shoes, wetsuits, and protective gear. OEM/ODM services available.">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -72,39 +72,6 @@ body {
     color: #00bfff;
 }
 
-/* ================= 按钮 ================= */
-.btn {
-    display: inline-block;
-    padding: 12px 28px;
-    border-radius: 40px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.2s;
-    cursor: pointer;
-    border: none;
-}
-
-.btn-primary {
-    background: #00bfff;
-    color: #0f172a;
-}
-
-.btn-primary:hover {
-    background: #0099cc;
-    transform: translateY(-2px);
-}
-
-.btn-outline {
-    border: 1px solid #00bfff;
-    color: #00bfff;
-    background: transparent;
-}
-
-.btn-outline:hover {
-    background: rgba(0,191,255,0.1);
-    transform: translateY(-2px);
-}
-
 /* ================= 页面头部 ================= */
 .page-header {
     background: linear-gradient(135deg, #0f3b5c 0%, #1e4a6f 100%);
@@ -121,35 +88,42 @@ body {
 .page-header p {
     font-size: 18px;
     color: #cbd5e1;
-    max-width: 700px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
-/* ================= 分类筛选 ================= */
-.category-filter {
+/* ================= 分类筛选区域 ================= */
+.filter-section {
     display: flex;
-    justify-content: center;
-    gap: 12px;
     flex-wrap: wrap;
+    gap: 30px;
     margin: 40px 0;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 20px;
 }
 
-.filter-btn {
-    padding: 8px 24px;
-    border-radius: 40px;
-    background: white;
+.filter-group {
+    flex: 1;
+    min-width: 180px;
+}
+
+.filter-group label {
+    font-weight: 600;
+    font-size: 13px;
+    color: #0f3b5c;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.filter-group select {
+    width: 100%;
+    padding: 10px 14px;
     border: 1px solid #e2e8f0;
-    cursor: pointer;
+    border-radius: 12px;
     font-size: 14px;
-    font-weight: 500;
-    transition: all 0.2s;
-}
-
-.filter-btn:hover,
-.filter-btn.active {
-    background: #00bfff;
-    color: white;
-    border-color: #00bfff;
+    background: white;
+    cursor: pointer;
 }
 
 /* ================= 产品网格 ================= */
@@ -167,11 +141,12 @@ body {
     overflow: hidden;
     transition: all 0.3s;
     cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .product-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 20px 30px -12px rgba(0,0,0,0.12);
+    box-shadow: 0 20px 30px -12px rgba(0,0,0,0.15);
     border-color: #00bfff;
 }
 
@@ -185,30 +160,44 @@ body {
     padding: 20px;
 }
 
+.product-category {
+    display: inline-block;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 30px;
+    background: #eef2ff;
+    color: #00bfff;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
 .product-info h3 {
     font-size: 18px;
     margin-bottom: 8px;
     color: #0f3b5c;
 }
 
-.product-info .spec {
+.product-spec {
     font-size: 13px;
     color: #64748b;
     margin-bottom: 12px;
 }
 
-.product-info .desc {
-    font-size: 14px;
+.product-desc {
+    font-size: 13px;
     color: #64748b;
-    margin-bottom: 12px;
     line-height: 1.5;
+    margin-bottom: 16px;
 }
 
-.product-info .price {
-    font-size: 14px;
-    font-weight: 600;
+.quote-link {
     color: #00bfff;
-    margin-bottom: 12px;
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
 /* ================= 分页 ================= */
@@ -216,7 +205,7 @@ body {
     display: flex;
     justify-content: center;
     gap: 10px;
-    margin: 40px 0;
+    margin: 40px 0 60px;
 }
 
 .pagination button {
@@ -241,7 +230,6 @@ body {
     color: #94a3b8;
     padding: 48px 0;
     text-align: center;
-    border-top: 1px solid #1e293b;
 }
 
 .footer-logo {
@@ -278,6 +266,10 @@ body {
     .navbar {
         padding: 12px 20px;
     }
+    .filter-section {
+        flex-direction: column;
+        gap: 15px;
+    }
 }
 </style>
 </head>
@@ -300,18 +292,45 @@ body {
 <section class="page-header">
     <div class="container">
         <h1>Our Products</h1>
-        <p>High-quality neoprene and laminated composite materials for wetsuits, bags, shoes, and protective gear</p>
+        <p>High-performance neoprene, laminated & functional fabrics for bags, shoes, wetsuits, and protective gear. OEM/ODM services available.</p>
     </div>
 </section>
 
-<!-- 分类筛选 -->
+<!-- 分类筛选区域 -->
 <section class="container">
-    <div class="category-filter" id="categoryFilter">
-        <button class="filter-btn active" data-category="all">All Products</button>
-        <button class="filter-btn" data-category="Neoprene Fabrics">🧵 Neoprene Fabrics</button>
-        <button class="filter-btn" data-category="Laminated Neoprene">🔗 Laminated Neoprene</button>
-        <button class="filter-btn" data-category="Foam & Protective">🛡️ Foam & Protective</button>
-        <button class="filter-btn" data-category="Functional Fabrics">📐 Functional Fabrics</button>
+    <div class="filter-section">
+        <div class="filter-group">
+            <label>📁 Material Type</label>
+            <select id="filterCategory">
+                <option value="all">All Products</option>
+                <option value="Neoprene Fabrics">🧵 Neoprene Fabrics</option>
+                <option value="Laminated Neoprene">🔗 Laminated Neoprene</option>
+                <option value="Foam & Protective">🛡️ Foam & Protective</option>
+                <option value="Functional Fabrics">📐 Functional Fabrics</option>
+                <option value="Sustainable">🌱 Sustainable Materials</option>
+                <option value="Others">📦 Others / Custom</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>📏 Thickness</label>
+            <select id="filterThickness">
+                <option value="all">All Thickness</option>
+                <option value="1-2mm">1-2 mm</option>
+                <option value="3mm">3 mm</option>
+                <option value="5mm">5 mm</option>
+                <option value="8mm+">8 mm+</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>🎯 Application</label>
+            <select id="filterApplication">
+                <option value="all">All Applications</option>
+                <option value="Wetsuits">🏄 Wetsuits</option>
+                <option value="Bags">🎒 Bags & Coolers</option>
+                <option value="Shoes">👟 Shoes</option>
+                <option value="Protective">🛡️ Protective Gear</option>
+            </select>
+        </div>
     </div>
 </section>
 
@@ -336,32 +355,27 @@ const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let allProducts = [];
-let currentCategory = "all";
 let currentPage = 1;
 const productsPerPage = 9;
 
-// 产品分类映射
-const categoryMap = {
-    "Neoprene Fabrics": ["Neoprene", "Neoprene Fabrics"],
-    "Laminated Neoprene": ["Laminated", "Laminated Neoprene"],
-    "Foam & Protective": ["EVA", "Foam", "Protective", "Shockproof"],
-    "Functional Fabrics": ["Mesh", "Brushed", "Lining", "Functional"]
-};
+// 产品数据（一级+二级分类映射）
+const productData = [
+    { id: 1, name: "Neoprene Fabric 2mm", category: "Neoprene Fabrics", subcategory: "Single-layer Neoprene", thickness: "2mm", gsm: "200", moq: "100m", image: "https://placehold.co/400x220/0f3b5c/white?text=Neoprene+2mm", description: "Soft, flexible, and waterproof single-layer neoprene.", color: "Black", application: ["Wetsuits", "Bags"], features: ["Waterproof", "Flexible", "Thermal Insulation"] },
+    { id: 2, name: "Neoprene Fabric 3mm", category: "Neoprene Fabrics", subcategory: "Single-layer Neoprene", thickness: "3mm", gsm: "300", moq: "100m", image: "https://placehold.co/400x220/0f3b5c/white?text=Neoprene+3mm", description: "Medium thickness neoprene for sports gear.", color: "Black", application: ["Wetsuits", "Protective"], features: ["Waterproof", "Durable", "Comfortable"] },
+    { id: 3, name: "Laminated Neoprene 3mm", category: "Laminated Neoprene", subcategory: "Neoprene + Polyester", thickness: "3mm", gsm: "350", moq: "100m", image: "https://placehold.co/400x220/2c7da0/white?text=Laminated+3mm", description: "Polyester-backed laminated neoprene, waterproof & flexible.", color: "Black", application: ["Wetsuits", "Bags", "Shoes"], features: ["Waterproof & Shockproof", "Flexible & Durable", "Thermal Insulation"] },
+    { id: 4, name: "Laminated Neoprene + Jersey 5mm", category: "Laminated Neoprene", subcategory: "Neoprene + Jersey", thickness: "5mm", gsm: "500", moq: "100m", image: "https://placehold.co/400x220/2c7da0/white?text=Neoprene+Jersey", description: "Soft jersey bonding for comfortable wear applications.", color: "Black/Custom", application: ["Wetsuits", "Bags", "Protective"], features: ["Soft Touch", "Breathable", "High Elasticity"] },
+    { id: 5, name: "EVA Foam 2mm", category: "Foam & Protective", subcategory: "Shockproof", thickness: "2mm", gsm: "180", moq: "100m", image: "https://placehold.co/400x220/0f3b5c/white?text=EVA+Foam", description: "Lightweight EVA foam for impact protection.", color: "Black/White", application: ["Shoes", "Bags", "Protective"], features: ["Shockproof", "Lightweight", "Insulation"] },
+    { id: 6, name: "EVA Foam 5mm", category: "Foam & Protective", subcategory: "Shockproof", thickness: "5mm", gsm: "400", moq: "100m", image: "https://placehold.co/400x220/0f3b5c/white?text=EVA+5mm", description: "Thick EVA foam for maximum protection.", color: "Black", application: ["Protective", "Shoes"], features: ["High Impact Protection", "Durable"] },
+    { id: 7, name: "Mesh Lining Fabric", category: "Functional Fabrics", subcategory: "Mesh", thickness: "0.5mm", gsm: "120", moq: "100m", image: "https://placehold.co/400x220/2c7da0/white?text=Mesh+Fabric", description: "Breathable mesh fabric for reinforcement and lining.", color: "Black", application: ["Bags", "Shoes"], features: ["Breathable", "Lightweight", "Reinforcement"] },
+    { id: 8, name: "Recycled Neoprene", category: "Sustainable", subcategory: "Eco-friendly", thickness: "3mm", gsm: "300", moq: "200m", image: "https://placehold.co/400x220/0aa699/white?text=Recycled", description: "Eco-friendly neoprene made from recycled materials.", color: "Black/Gray", application: ["Wetsuits", "Bags", "Shoes"], features: ["Sustainable", "High Performance"] }
+];
 
 async function loadProducts() {
-    const { data, error } = await sb
-        .from("products")
-        .select("*")
-        .order("id", { ascending: false });
+    // 先从 Supabase 获取真实产品
+    const { data, error } = await sb.from("products").select("*").order("id", { ascending: false });
     
-    if (error) {
-        console.error("加载失败:", error);
-        return;
-    }
-    
-    // 如果没有产品数据，使用示例数据
-    if (!data || data.length === 0) {
-        allProducts = getSampleProducts();
+    if (error || !data || data.length === 0) {
+        allProducts = productData;
     } else {
         allProducts = data;
     }
@@ -369,32 +383,29 @@ async function loadProducts() {
     renderProducts();
 }
 
-function getSampleProducts() {
-    return [
-        { id: 1, name: "Neoprene Fabric 2mm", category: "Neoprene Fabrics", gsm: "200", moq: "100m", image: "https://placehold.co/400x220/0f3b5c/white?text=Neoprene+2mm", description: "Soft, flexible, and waterproof single-layer neoprene for wetsuits and bags.", thickness: "2mm", width: "1.3m", color: "Black" },
-        { id: 2, name: "Neoprene Fabric 3mm", category: "Neoprene Fabrics", gsm: "300", moq: "100m", image: "https://placehold.co/400x220/0f3b5c/white?text=Neoprene+3mm", description: "Medium thickness neoprene for sports gear and protective equipment.", thickness: "3mm", width: "1.3m", color: "Black" },
-        { id: 3, name: "Laminated Neoprene 3mm Black", category: "Laminated Neoprene", gsm: "350", moq: "100m", image: "https://placehold.co/400x220/2c7da0/white?text=Laminated+3mm", description: "Polyester-backed laminated neoprene, waterproof & flexible.", thickness: "3mm", width: "1.5m", color: "Black" },
-        { id: 4, name: "Laminated Neoprene + Jersey 5mm", category: "Laminated Neoprene", gsm: "500", moq: "100m", image: "https://placehold.co/400x220/2c7da0/white?text=Neoprene+Jersey", description: "Soft jersey bonding for comfortable wear applications.", thickness: "5mm", width: "1.5m", color: "Black/Custom" },
-        { id: 5, name: "EVA Foam 2mm Shockproof", category: "Foam & Protective", gsm: "180", moq: "100m", image: "https://placehold.co/400x220/0f3b5c/white?text=EVA+Foam", description: "Lightweight EVA foam for impact protection and cushioning.", thickness: "2mm", width: "1.3m", color: "Black/White" },
-        { id: 6, name: "Mesh Lining Fabric", category: "Functional Fabrics", gsm: "120", moq: "100m", image: "https://placehold.co/400x220/2c7da0/white?text=Mesh+Fabric", description: "Breathable mesh fabric for reinforcement and lining.", thickness: "0.5mm", width: "1.5m", color: "Black" },
-        { id: 7, name: "EVA Foam 5mm", category: "Foam & Protective", gsm: "400", moq: "100m", image: "https://placehold.co/400x220/0f3b5c/white?text=EVA+5mm", description: "Thick EVA foam for maximum protection and insulation.", thickness: "5mm", width: "1.3m", color: "Black" },
-        { id: 8, name: "Brushed Lining Fabric", category: "Functional Fabrics", gsm: "150", moq: "100m", image: "https://placehold.co/400x220/2c7da0/white?text=Brushed+Lining", description: "Soft brushed fabric for comfortable inner lining.", thickness: "0.8mm", width: "1.5m", color: "Black/Gray" }
-    ];
-}
-
 function filterProducts() {
-    if (currentCategory === "all") return allProducts;
+    const category = document.getElementById("filterCategory").value;
+    const thickness = document.getElementById("filterThickness").value;
+    const application = document.getElementById("filterApplication").value;
     
-    const keywords = categoryMap[currentCategory] || [currentCategory];
     return allProducts.filter(p => {
-        const productCategory = p.category || "";
-        return keywords.some(keyword => productCategory.includes(keyword));
+        if (category !== "all" && p.category !== category) return false;
+        if (thickness !== "all") {
+            if (thickness === "1-2mm" && !p.thickness?.includes("2mm")) return false;
+            if (thickness === "3mm" && !p.thickness?.includes("3mm")) return false;
+            if (thickness === "5mm" && !p.thickness?.includes("5mm")) return false;
+            if (thickness === "8mm+" && parseInt(p.thickness) < 8) return false;
+        }
+        if (application !== "all") {
+            const apps = p.application || [];
+            if (!apps.includes(application)) return false;
+        }
+        return true;
     });
 }
 
 function renderProducts() {
     let filtered = filterProducts();
-    
     const start = (currentPage - 1) * productsPerPage;
     const paginated = filtered.slice(start, start + productsPerPage);
     
@@ -409,11 +420,11 @@ function renderProducts() {
         <div class="product-card" onclick="location.href='product.html?id=${p.id}'">
             <img src="${p.image || 'https://placehold.co/400x220'}" onerror="this.src='https://placehold.co/400x220'">
             <div class="product-info">
+                <div class="product-category">${p.category || "Materials"}</div>
                 <h3>${escapeHtml(p.name)}</h3>
-                <div class="spec">${p.thickness ? `Thickness: ${p.thickness} | ` : ""}Width: ${p.width || "1.3-1.5m"} | Color: ${p.color || "Black/Custom"}</div>
-                <div class="desc">${escapeHtml(p.description || p.feature || (p.category + " material for various applications"))}</div>
-                <div class="spec">📦 MOQ: ${p.moq || "100 meters"}</div>
-                <div class="price">Get Quote →</div>
+                <div class="product-spec">${p.thickness ? `${p.thickness} | ` : ""}${p.color || "Black/Custom"} | MOQ: ${p.moq || "100m"}</div>
+                <div class="product-desc">${escapeHtml(p.description || p.feature || "High-quality material for various applications").substring(0, 80)}...</div>
+                <a href="product.html?id=${p.id}" class="quote-link">Get Quote →</a>
             </div>
         </div>
     `).join('');
@@ -442,11 +453,9 @@ function goToPage(page) {
 }
 
 function setupFilters() {
-    document.querySelectorAll(".filter-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            currentCategory = btn.dataset.category;
+    const filters = ["filterCategory", "filterThickness", "filterApplication"];
+    filters.forEach(id => {
+        document.getElementById(id).addEventListener("change", () => {
             currentPage = 1;
             renderProducts();
         });
