@@ -153,7 +153,7 @@ body {
     margin: 40px 0;
 }
 
-/* ================= 左侧筛选面板 - 现代化升级 ================= */
+/* ================= 左侧筛选面板 ================= */
 .filter-sidebar {
     width: 300px;
     flex-shrink: 0;
@@ -260,7 +260,7 @@ body {
 }
 .products-count { font-size: 14px; color: #6b7280; }
 
-/* ================= 产品卡片 - 外贸高转化结构 ================= */
+/* ================= 产品卡片 ================= */
 .products-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -312,15 +312,12 @@ body {
     cursor: pointer;
 }
 
-/* 性能标签 */
 .product-perf-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
 .perf-tag { font-size: 10px; padding: 2px 8px; border-radius: 20px; background: #f1f5f9; color: #475569; }
 
-/* 应用标签 */
 .product-app-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
 .app-tag { font-size: 10px; padding: 2px 8px; border-radius: 20px; background: #eef2ff; color: #00bfff; }
 
-/* 商务信息行 */
 .product-spec-row {
     display: flex;
     flex-wrap: wrap;
@@ -338,10 +335,8 @@ body {
     font-weight: 600;
 }
 
-/* 物理参数 */
 .product-physical { font-size: 11px; color: #6b7280; margin: 6px 0; }
 
-/* CTA按钮 */
 .cta-buttons { display: flex; gap: 10px; margin-top: 12px; }
 .cta-quote {
     flex: 1;
@@ -410,13 +405,13 @@ body {
 </head>
 <body>
 
+<!-- 导航栏 - 已移除 Applications -->
 <nav class="navbar">
     <div class="nav-container">
         <div class="logo">SY<span>siyin</span></div>
         <div class="nav-links">
             <a href="index.html">Home</a>
             <a href="products.html" class="active">Products</a>
-            <a href="applications.html">Applications</a>
             <a href="factory.html">Factory</a>
             <a href="contact.html">Contact</a>
             <a href="admin.html">Admin</a>
@@ -447,14 +442,9 @@ body {
 <!-- 主内容区 -->
 <section class="container">
     <div class="main-content">
-        <!-- 左侧筛选面板 - 现代化升级 -->
         <div class="filter-sidebar">
-            <div class="filter-header">
-                <h3>Filter Products</h3>
-                <p>Narrow down by criteria</p>
-            </div>
+            <div class="filter-header"><h3>Filter Products</h3><p>Narrow down by criteria</p></div>
             <button class="reset-filter-btn" id="resetFiltersBtn">⟳ Reset All Filters</button>
-            
             <div class="filter-group"><div class="filter-title">📁 Category</div><div class="filter-options" id="catFilter"></div></div>
             <div class="filter-group"><div class="filter-title">🎯 Application</div><div class="filter-options" id="appFilter"></div></div>
             <div class="filter-group"><div class="filter-title">⚡ Performance</div><div class="filter-options" id="perfFilter"></div></div>
@@ -466,11 +456,8 @@ body {
             <div class="filter-group"><div class="filter-title">📑 Base Fabric</div><div class="filter-options" id="baseFabricFilter"></div></div>
         </div>
 
-        <!-- 右侧产品区 -->
         <div class="products-area">
-            <div class="products-header">
-                <div class="products-count" id="productsCount">Loading products...</div>
-            </div>
+            <div class="products-header"><div class="products-count" id="productsCount">Loading products...</div></div>
             <div id="productsGrid" class="products-grid"><div style="text-align:center; grid-column:1/-1; padding:60px;">Loading...</div></div>
             <div class="pagination" id="pagination"></div>
         </div>
