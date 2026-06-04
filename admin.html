@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>Siyin 后台管理 V3</title>
+<title>Siyin 后台管理 V4 | 完整版</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 * { box-sizing: border-box; }
@@ -21,6 +21,7 @@ h4 { margin: 16px 0 10px; color: #cbd5e1; font-size: 14px; }
 
 input, select, textarea { width: 100%; padding: 12px; margin-bottom: 16px; border-radius: 12px; border: none; background: #1f2a3e; color: white; font-size: 14px; }
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
 
 .upload-box { border: 2px dashed #4b5563; border-radius: 16px; padding: 30px; text-align: center; cursor: pointer; background: #1e293b; margin-bottom: 15px; }
 .upload-box:hover { border-color: #00bfff; background: #334155; }
@@ -41,7 +42,7 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
 .tab-content.active { display: block; }
 
 .item { background: white; color: black; padding: 15px; border-radius: 12px; margin-top: 12px; }
-.item-actions { display: flex; gap: 10px; margin-top: 12px; justify-content: flex-end; }
+.item-actions { display: flex; gap: 10px; margin-top: 12px; justify-content: flex-end; flex-wrap: wrap; }
 .edit-btn { background: #f59e0b; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; }
 .delete-btn { background: #dc2626; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; }
 .preview-btn { background: #22c55e; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; }
@@ -51,8 +52,10 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
 .kpi-number { font-size: 32px; font-weight: 700; color: #00bfff; }
 
 .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center; }
-.modal-content { background: #1e293b; border-radius: 20px; padding: 28px; width: 90%; max-width: 650px; max-height: 85vh; overflow-y: auto; }
+.modal-content { background: #1e293b; border-radius: 20px; padding: 28px; width: 90%; max-width: 750px; max-height: 85vh; overflow-y: auto; }
 .modal-buttons { display: flex; gap: 12px; margin-top: 20px; }
+
+.section-title { font-size: 14px; font-weight: 600; margin: 15px 0 10px; color: #00bfff; }
 </style>
 </head>
 <body>
@@ -72,16 +75,16 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
     <button class="tab-btn" data-tab="settings">⚙️ 网站设置</button>
   </div>
 
-  <!-- ================= Dashboard ================= -->
+  <!-- Dashboard -->
   <div id="dashboardTab" class="tab-content active">
     <div class="dashboard">
       <div class="kpi-box"><div class="kpi-number" id="kpiProducts">0</div><div>📦 产品总数</div></div>
       <div class="kpi-box"><div class="kpi-number" id="kpiInquiries">0</div><div>📩 询盘总数</div></div>
-      <div class="kpi-box"><div class="kpi-number" id="kpiWetsuit">0</div><div>🏄 潜水料相关</div></div>
+      <div class="kpi-box"><div class="kpi-number" id="kpiHot">0</div><div>🔥 热门产品</div></div>
     </div>
   </div>
 
-  <!-- ================= 产品管理 ================= -->
+  <!-- 产品管理 -->
   <div id="productsTab" class="tab-content">
     <div class="box">
       <h3>📤 快速上架新产品</h3>
@@ -95,41 +98,41 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
 
       <!-- Step 1：基础信息 -->
       <div id="step1" class="step-content active">
-        <input type="text" id="p_name" placeholder="产品名称 *">
-        
-        <select id="p_category">
-          <option value="">— 选择一级分类 —</option>
-          <option value="Neoprene Fabrics">🧵 Neoprene Fabrics</option>
-          <option value="Laminated Neoprene">🔗 Laminated Neoprene</option>
-          <option value="Sportswear Fabrics">🏃 Sportswear / Yogawear Fabrics</option>
-          <option value="Foam & Protective Materials">🛡️ Foam & Protective Materials</option>
-          <option value="Outdoor & Camping Materials">🏕️ Outdoor & Camping Materials</option>
-          <option value="Bag & Cooler Materials">🎒 Bag & Cooler Materials</option>
-          <option value="Medical & Support Materials">🏥 Medical & Support Materials</option>
-          <option value="Eco-Friendly Materials">🌱 Eco-Friendly Materials</option>
-          <option value="Finished Products">📦 Finished Products</option>
-        </select>
-        
-        <select id="p_subcategory">
-          <option value="">— 选择二级分类 —</option>
-          <option value="CR Neoprene">CR Neoprene</option>
-          <option value="SCR Neoprene">SCR Neoprene</option>
-          <option value="SBR Neoprene">SBR Neoprene</option>
-          <option value="Perforated Neoprene">Perforated Neoprene</option>
-          <option value="Embossed Neoprene">Embossed Neoprene</option>
-          <option value="Neoprene + Polyester">Neoprene + Polyester</option>
-          <option value="Neoprene + Nylon">Neoprene + Nylon</option>
-          <option value="Neoprene + Jersey">Neoprene + Jersey</option>
-          <option value="Neoprene + Lycra">Neoprene + Lycra</option>
-          <option value="Double Laminated">Double Laminated</option>
-          <option value="Sports Fabric">Sports Fabric</option>
-          <option value="Yoga Fabric">Yoga Fabric</option>
-          <option value="Foam Sheet">Foam Sheet</option>
-          <option value="Protective Material">Protective Material</option>
-          <option value="Eco Material">Eco Material</option>
-        </select>
-        
-        <input type="text" id="p_slogan" placeholder="一句话卖点（用于首页/SEO）">
+        <div class="row">
+          <input type="text" id="p_name" placeholder="产品名称 *">
+          <input type="text" id="p_sku" placeholder="SKU / 产品编码 (如: SBR-NEO-03)">
+        </div>
+        <div class="row">
+          <select id="p_category">
+            <option value="">— 选择一级分类 —</option>
+            <option value="Neoprene Fabric">🧵 Neoprene Fabric</option>
+            <option value="Sports & Fitness Textiles">🏃 Sports & Fitness Textiles</option>
+            <option value="Bag & Luggage Materials">🎒 Bag & Luggage Materials</option>
+            <option value="Outdoor & Camping Fabrics">🏕️ Outdoor & Camping Fabrics</option>
+            <option value="Medical & Support Materials">🏥 Medical & Support Materials</option>
+            <option value="Industrial & Protective Fabrics">🛡️ Industrial & Protective Fabrics</option>
+            <option value="Custom OEM & Lamination">⚙️ Custom OEM & Lamination</option>
+          </select>
+          <input type="text" id="p_subcategory" placeholder="二级分类 (如: CR Neoprene Fabric)">
+        </div>
+        <div class="row">
+          <select id="p_lead_time">
+            <option value="fast">⏱️ Fast (7-15 days)</option>
+            <option value="normal">📦 Normal (20-30 days)</option>
+            <option value="custom">⚙️ Custom</option>
+          </select>
+          <select id="p_oem_level">
+            <option value="OEM">🔧 OEM</option>
+            <option value="ODM">🎨 ODM</option>
+            <option value="OEM/ODM">🏭 OEM/ODM</option>
+          </select>
+        </div>
+        <div class="row">
+          <label style="display:flex; align-items:center; gap:10px;">
+            <input type="checkbox" id="p_is_hot" style="width:20px; margin:0;"> 🔥 标记为热门产品
+          </label>
+          <input type="text" id="p_slogan" placeholder="一句话卖点（用于首页/SEO）">
+        </div>
         <button class="btn-next" onclick="goToStep(2)">下一步 →</button>
       </div>
 
@@ -143,25 +146,30 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
 
       <!-- Step 3：规格参数 -->
       <div id="step3" class="step-content">
-        <div class="row">
+        <div class="row-3">
           <input type="text" id="p_thickness" placeholder="厚度 (mm)">
-          <select id="p_thickness_range">
-            <option value="">厚度范围</option>
-            <option value="0.5mm - 1mm">0.5mm - 1mm</option>
-            <option value="1mm - 2mm">1mm - 2mm</option>
-            <option value="2mm - 3mm">2mm - 3mm</option>
-            <option value="3mm - 5mm">3mm - 5mm</option>
-            <option value="5mm - 8mm">5mm - 8mm</option>
-            <option value="Custom Thickness">Custom Thickness</option>
+          <input type="text" id="p_gsm" placeholder="GSM (克重)">
+          <select id="p_base_fabric">
+            <option value="">基布类型</option>
+            <option value="N cloth">N cloth</option>
+            <option value="T cloth">T cloth</option>
+            <option value="Terry cloth">Terry cloth</option>
+            <option value="Bare Rubber">Bare Rubber</option>
           </select>
         </div>
         <div class="row">
-          <input type="text" id="p_width" placeholder="宽度 (m)">
-          <input type="text" id="p_gsm" placeholder="GSM">
+          <input type="text" id="p_width" placeholder="宽度 / 尺寸">
+          <input type="text" id="p_color" placeholder="颜色">
         </div>
         <div class="row">
-          <input type="text" id="p_color" placeholder="颜色">
-          <input type="text" id="p_moq" placeholder="MOQ">
+          <input type="text" id="p_moq" placeholder="MOQ (最小订购量)">
+          <select id="p_product_form">
+            <option value="">产品形态</option>
+            <option value="Rolls">Rolls (卷材)</option>
+            <option value="Sheets">Sheets (片材)</option>
+            <option value="Cut Pieces">Cut Pieces (裁片)</option>
+            <option value="Finished Lamination">Finished Lamination (成品复合)</option>
+          </select>
         </div>
         <input type="text" id="p_material" placeholder="材料结构 (如: Neoprene + Polyester)">
         <button class="btn-next" onclick="goToStep(4)">下一步 →</button>
@@ -169,37 +177,50 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
 
       <!-- Step 4：标签与发布 -->
       <div id="step4" class="step-content">
-        <h4>⚡ 性能特点</h4>
+        <h4>⚡ 性能特点 (Performance)</h4>
         <div class="tags" id="featuresTags">
           <div class="tag" data-val="Waterproof">💧 Waterproof</div>
-          <div class="tag" data-val="Thermal Insulation">🔥 Thermal Insulation</div>
           <div class="tag" data-val="Stretch">🔄 Stretch</div>
+          <div class="tag" data-val="Thermal">🔥 Thermal</div>
           <div class="tag" data-val="Breathable">🌬️ Breathable</div>
-          <div class="tag" data-val="Shockproof">🛡️ Shockproof</div>
-          <div class="tag" data-val="Abrasion Resistant">⚙️ Abrasion Resistant</div>
+          <div class="tag" data-val="Durable">🛡️ Durable</div>
+          <div class="tag" data-val="Shock Absorbent">📦 Shock Absorbent</div>
           <div class="tag" data-val="UV Resistant">☀️ UV Resistant</div>
-          <div class="tag" data-val="Anti-slip">👣 Anti-slip</div>
+          <div class="tag" data-val="Flame Retardant">🔥 Flame Retardant</div>
+          <div class="tag" data-val="Anti-Bacterial">🦠 Anti-Bacterial</div>
           <div class="tag" data-val="Eco-friendly">🌱 Eco-friendly</div>
-          <div class="tag" data-val="Soft Touch">✨ Soft Touch</div>
           <div class="tag" data-val="Lightweight">🪶 Lightweight</div>
-          <div class="tag" data-val="Quick Dry">💨 Quick Dry</div>
         </div>
 
-        <h4>🎯 应用场景</h4>
+        <h4>🎯 应用场景 (Application)</h4>
         <div class="tags" id="appsTags">
-          <div class="tag" data-val="Wetsuits">🏄 Wetsuits</div>
+          <div class="tag" data-val="Wetsuit">🏄 Wetsuit</div>
           <div class="tag" data-val="Sportswear">🏃 Sportswear</div>
-          <div class="tag" data-val="Yoga Wear">🧘 Yoga Wear</div>
-          <div class="tag" data-val="Laptop Bags">💻 Laptop Bags</div>
-          <div class="tag" data-val="School Bags">🎒 School Bags</div>
-          <div class="tag" data-val="Can Cooler">🥤 Can Cooler</div>
-          <div class="tag" data-val="Bottle Holder">🍶 Bottle Holder</div>
-          <div class="tag" data-val="Knee Support">🦵 Knee Support</div>
-          <div class="tag" data-val="Waist Trimmer">🏋️ Waist Trimmer</div>
-          <div class="tag" data-val="Posture Corrector">🧍 Posture Corrector</div>
-          <div class="tag" data-val="Camping Goods">🏕️ Camping Goods</div>
-          <div class="tag" data-val="Outdoor Gear">⛺ Outdoor Gear</div>
-          <div class="tag" data-val="Protective Equipment">🛡️ Protective Equipment</div>
+          <div class="tag" data-val="Bags">🎒 Bags</div>
+          <div class="tag" data-val="Medical">🏥 Medical</div>
+          <div class="tag" data-val="Outdoor">🏕️ Outdoor</div>
+          <div class="tag" data-val="Yoga">🧘 Yoga</div>
+          <div class="tag" data-val="Camping">⛺ Camping</div>
+          <div class="tag" data-val="Protective Gear">🛡️ Protective Gear</div>
+        </div>
+
+        <h4>💰 商务信号 (Commercial)</h4>
+        <div class="tags" id="commercialTags">
+          <div class="tag" data-val="Low MOQ">📦 Low MOQ</div>
+          <div class="tag" data-val="Fast Delivery">⚡ Fast Delivery</div>
+          <div class="tag" data-val="OEM Ready">🔧 OEM Ready</div>
+          <div class="tag" data-val="Sample Available">📋 Sample Available</div>
+          <div class="tag" data-val="Factory Direct">🏭 Factory Direct</div>
+          <div class="tag" data-val="Bulk Order">📦 Bulk Order</div>
+        </div>
+
+        <h4>✅ 认证资质 (Certification)</h4>
+        <div class="tags" id="certTags">
+          <div class="tag" data-val="REACH">✅ REACH</div>
+          <div class="tag" data-val="ROHS">✅ ROHS</div>
+          <div class="tag" data-val="OEKO-TEX">✅ OEKO-TEX</div>
+          <div class="tag" data-val="CA65">✅ CA65</div>
+          <div class="tag" data-val="ISO9001">✅ ISO9001</div>
         </div>
 
         <textarea id="p_desc" rows="4" placeholder="产品详细描述..."></textarea>
@@ -218,7 +239,7 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
     </div>
   </div>
 
-  <!-- ================= 工厂管理 ================= -->
+  <!-- 工厂管理 -->
   <div id="factoryTab" class="tab-content">
     <div class="box">
       <h3>🏭 工厂照片</h3>
@@ -233,7 +254,7 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
     </div>
   </div>
 
-  <!-- ================= 网站设置 ================= -->
+  <!-- 网站设置 -->
   <div id="settingsTab" class="tab-content">
     <div class="box">
       <h3>🏠 首页背景图</h3>
@@ -245,16 +266,50 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
   </div>
 </div>
 
-<!-- 编辑产品模态框 -->
+<!-- 编辑产品模态框（增强版） -->
 <div id="editModal" class="modal">
   <div class="modal-content">
     <h3>✏️ 编辑产品</h3>
     <input type="hidden" id="editId">
-    <input type="text" id="editName" placeholder="产品名称">
-    <select id="editCategory"><option value="">选择分类</option><option value="Neoprene Fabrics">🧵 Neoprene Fabrics</option><option value="Laminated Neoprene">🔗 Laminated Neoprene</option><option value="Foam & Protective">🛡️ Foam & Protective</option></select>
-    <div class="row"><input type="text" id="editThickness" placeholder="厚度"><input type="text" id="editWidth" placeholder="宽度"></div>
-    <div class="row"><input type="text" id="editColor" placeholder="颜色"><input type="text" id="editGsm" placeholder="GSM"></div>
-    <input type="text" id="editMoq" placeholder="MOQ">
+    <div class="row">
+      <input type="text" id="editName" placeholder="产品名称">
+      <input type="text" id="editSku" placeholder="SKU">
+    </div>
+    <div class="row">
+      <select id="editCategory"><option value="">选择分类</option>
+        <option value="Neoprene Fabric">Neoprene Fabric</option>
+        <option value="Sports & Fitness Textiles">Sports & Fitness Textiles</option>
+        <option value="Bag & Luggage Materials">Bag & Luggage Materials</option>
+        <option value="Outdoor & Camping Fabrics">Outdoor & Camping Fabrics</option>
+        <option value="Medical & Support Materials">Medical & Support Materials</option>
+        <option value="Industrial & Protective Fabrics">Industrial & Protective Fabrics</option>
+        <option value="Custom OEM & Lamination">Custom OEM & Lamination</option>
+      </select>
+      <select id="editLeadTime">
+        <option value="fast">Fast (7-15 days)</option>
+        <option value="normal">Normal (20-30 days)</option>
+        <option value="custom">Custom</option>
+      </select>
+    </div>
+    <div class="row">
+      <input type="text" id="editThickness" placeholder="厚度">
+      <input type="text" id="editGsm" placeholder="GSM">
+    </div>
+    <div class="row">
+      <input type="text" id="editWidth" placeholder="宽度">
+      <input type="text" id="editColor" placeholder="颜色">
+    </div>
+    <div class="row">
+      <input type="text" id="editMoq" placeholder="MOQ">
+      <select id="editOemLevel">
+        <option value="OEM">OEM</option>
+        <option value="ODM">ODM</option>
+        <option value="OEM/ODM">OEM/ODM</option>
+      </select>
+    </div>
+    <label style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+      <input type="checkbox" id="editIsHot"> 🔥 热门产品
+    </label>
     <textarea id="editDesc" rows="3" placeholder="产品描述"></textarea>
     <div class="modal-buttons"><button id="saveEditBtn" style="background:#f59e0b;">保存</button><button id="cancelEditBtn" style="background:#6c757d;">取消</button></div>
   </div>
@@ -269,8 +324,10 @@ let currentStep = 1;
 let selectedFiles = [];
 let selectedFeatures = [];
 let selectedApps = [];
+let selectedCommercial = [];
+let selectedCerts = [];
 
-// ========== 登录 ==========
+// 登录
 document.getElementById("loginBtn").onclick = function() {
   if (document.getElementById("pass").value === "123456") {
     document.getElementById("loginBox").style.display = "none";
@@ -290,13 +347,12 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
     let tab = this.dataset.tab;
     document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
     if (tab === "dashboard") document.getElementById("dashboardTab").classList.add("active");
-    if (tab === "products") document.getElementById("productsTab").classList.add("active");
+    if (tab === "products") { document.getElementById("productsTab").classList.add("active"); loadProducts(); }
     if (tab === "factory") { document.getElementById("factoryTab").classList.add("active"); loadFactoryPhotos(); }
     if (tab === "settings") document.getElementById("settingsTab").classList.add("active");
   };
 });
 
-// ========== 分步骤 ==========
 function goToStep(step) {
   document.querySelectorAll(".step-content").forEach(el => el.classList.remove("active"));
   document.getElementById(`step${step}`).classList.add("active");
@@ -307,25 +363,27 @@ function goToStep(step) {
   currentStep = step;
 }
 
-// ========== 标签选择 ==========
-document.querySelectorAll("#featuresTags .tag").forEach(tag => {
-  tag.onclick = function() {
-    this.classList.toggle("active");
-    const val = this.dataset.val;
-    if (selectedFeatures.includes(val)) selectedFeatures = selectedFeatures.filter(f => f !== val);
-    else selectedFeatures.push(val);
-  };
-});
-document.querySelectorAll("#appsTags .tag").forEach(tag => {
-  tag.onclick = function() {
-    this.classList.toggle("active");
-    const val = this.dataset.val;
-    if (selectedApps.includes(val)) selectedApps = selectedApps.filter(a => a !== val);
-    else selectedApps.push(val);
-  };
-});
+// 标签选择初始化
+function initTagSelection(containerId, selectedArray) {
+  document.querySelectorAll(`#${containerId} .tag`).forEach(tag => {
+    tag.onclick = function() {
+      this.classList.toggle("active");
+      const val = this.dataset.val;
+      if (selectedArray.includes(val)) {
+        const idx = selectedArray.indexOf(val);
+        selectedArray.splice(idx, 1);
+      } else {
+        selectedArray.push(val);
+      }
+    };
+  });
+}
+initTagSelection("featuresTags", selectedFeatures);
+initTagSelection("appsTags", selectedApps);
+initTagSelection("commercialTags", selectedCommercial);
+initTagSelection("certTags", selectedCerts);
 
-// ========== 图片上传 ==========
+// 图片上传
 document.getElementById("uploadBox").onclick = () => document.getElementById("fileInput").click();
 document.getElementById("fileInput").onchange = (e) => {
   selectedFiles = Array.from(e.target.files);
@@ -344,13 +402,14 @@ function renderPreview() {
 }
 function removeFile(idx) { selectedFiles.splice(idx, 1); renderPreview(); }
 
-// ========== 提交产品 ==========
+// 提交产品（完整版）
 async function submitProduct() {
   const name = document.getElementById("p_name").value.trim();
   if (!name) { alert("请填写产品名称"); return; }
   const btn = event.target;
   btn.disabled = true;
   btn.innerText = "发布中...";
+  
   const imageUrls = [];
   for (let f of selectedFiles) {
     const fn = Date.now() + "_" + f.name.replace(/[^a-zA-Z0-9.-]/g, '_');
@@ -360,25 +419,34 @@ async function submitProduct() {
       imageUrls.push(data.publicUrl);
     }
   }
+  
   const productData = {
     name: name,
+    sku: document.getElementById("p_sku").value || null,
     category: document.getElementById("p_category").value,
     subcategory: document.getElementById("p_subcategory").value,
     slogan: document.getElementById("p_slogan").value,
     thickness: document.getElementById("p_thickness").value,
-    thickness_range: document.getElementById("p_thickness_range").value,
-    width: document.getElementById("p_width").value,
     gsm: document.getElementById("p_gsm").value,
+    width: document.getElementById("p_width").value,
     color: document.getElementById("p_color").value,
     moq: document.getElementById("p_moq").value,
     material: document.getElementById("p_material").value,
+    base_fabric: document.getElementById("p_base_fabric").value,
+    product_forms: document.getElementById("p_product_form").value ? [document.getElementById("p_product_form").value] : [],
     features: selectedFeatures,
     applications: selectedApps,
+    business_tags: selectedCommercial,
+    certifications: selectedCerts,
+    lead_time: document.getElementById("p_lead_time").value,
+    oem_level: document.getElementById("p_oem_level").value,
+    is_hot: document.getElementById("p_is_hot").checked,
     description: document.getElementById("p_desc").value,
     video_url: document.getElementById("p_video").value || null,
     image: imageUrls[0] || "",
     images: imageUrls
   };
+  
   const { error } = await sb.from("products").insert([productData]);
   if (error) alert("失败：" + error.message);
   else { alert("✅ 发布成功！"); location.reload(); }
@@ -386,55 +454,70 @@ async function submitProduct() {
   btn.innerText = "🚀 发布产品";
 }
 
-// ========== 产品列表 ==========
+// 加载产品列表
 async function loadProducts() {
   const { data } = await sb.from("products").select("*").order("id", { ascending: false });
   let html = "";
   (data || []).forEach(p => {
-    html += `<div class="item"><b>${escapeHtml(p.name)}</b><br>📁 ${escapeHtml(p.category || "-")}<br>📏 ${escapeHtml(p.thickness || "-")}<br>
-    <div class="item-actions">
-      <button class="edit-btn" onclick='openEditModal(${p.id}, "${escapeHtml(p.name).replace(/'/g,"\\'")}", "${escapeHtml(p.category||"").replace(/'/g,"\\'")}", "${escapeHtml(p.thickness||"").replace(/'/g,"\\'")}", "${escapeHtml(p.width||"").replace(/'/g,"\\'")}", "${escapeHtml(p.color||"").replace(/'/g,"\\'")}", "${escapeHtml(p.gsm||"").replace(/'/g,"\\'")}", "${escapeHtml(p.moq||"").replace(/'/g,"\\'")}", "${escapeHtml(p.description||"").replace(/'/g,"\\'")}")'>✏️ 编辑</button>
-      <button class="preview-btn" onclick="window.open('product.html?id=${p.id}','_blank')">👁️ 预览</button>
-      <button class="delete-btn" onclick="deleteProduct(${p.id})">🗑️ 删除</button>
-    </div></div>`;
+    html += `<div class="item">
+      <b>${escapeHtml(p.name)}</b> ${p.is_hot ? '🔥' : ''}<br>
+      📁 ${escapeHtml(p.category || "-")} | SKU: ${escapeHtml(p.sku || "-")}<br>
+      📏 ${escapeHtml(p.thickness || "-")}mm | ${escapeHtml(p.gsm || "-")}gsm | MOQ: ${escapeHtml(p.moq || "-")}<br>
+      <div class="item-actions">
+        <button class="edit-btn" onclick='openEditModal(${JSON.stringify(p).replace(/'/g, "&#39;")})'>✏️ 编辑</button>
+        <button class="preview-btn" onclick="window.open('product.html?id=${p.id}','_blank')">👁️ 预览</button>
+        <button class="delete-btn" onclick="deleteProduct(${p.id})">🗑️ 删除</button>
+      </div>
+    </div>`;
   });
   document.getElementById("productList").innerHTML = html || "<div>暂无产品</div>";
 }
 
-function openEditModal(id, name, category, thickness, width, color, gsm, moq, desc) {
-  document.getElementById("editId").value = id;
-  document.getElementById("editName").value = name;
-  document.getElementById("editCategory").value = category;
-  document.getElementById("editThickness").value = thickness;
-  document.getElementById("editWidth").value = width;
-  document.getElementById("editColor").value = color;
-  document.getElementById("editGsm").value = gsm;
-  document.getElementById("editMoq").value = moq;
-  document.getElementById("editDesc").value = desc;
+// 打开编辑模态框（增强版）
+function openEditModal(product) {
+  document.getElementById("editId").value = product.id;
+  document.getElementById("editName").value = product.name || "";
+  document.getElementById("editSku").value = product.sku || "";
+  document.getElementById("editCategory").value = product.category || "";
+  document.getElementById("editLeadTime").value = product.lead_time || "normal";
+  document.getElementById("editThickness").value = product.thickness || "";
+  document.getElementById("editGsm").value = product.gsm || "";
+  document.getElementById("editWidth").value = product.width || "";
+  document.getElementById("editColor").value = product.color || "";
+  document.getElementById("editMoq").value = product.moq || "";
+  document.getElementById("editOemLevel").value = product.oem_level || "OEM";
+  document.getElementById("editIsHot").checked = product.is_hot || false;
+  document.getElementById("editDesc").value = product.description || "";
   document.getElementById("editModal").style.display = "flex";
 }
+
 async function saveEdit() {
   const id = document.getElementById("editId").value;
   const { error } = await sb.from("products").update({
     name: document.getElementById("editName").value,
+    sku: document.getElementById("editSku").value,
     category: document.getElementById("editCategory").value,
+    lead_time: document.getElementById("editLeadTime").value,
     thickness: document.getElementById("editThickness").value,
+    gsm: document.getElementById("editGsm").value,
     width: document.getElementById("editWidth").value,
     color: document.getElementById("editColor").value,
-    gsm: document.getElementById("editGsm").value,
     moq: document.getElementById("editMoq").value,
+    oem_level: document.getElementById("editOemLevel").value,
+    is_hot: document.getElementById("editIsHot").checked,
     description: document.getElementById("editDesc").value
   }).eq("id", id);
   if (error) alert("失败：" + error.message);
   else { alert("✅ 已更新"); document.getElementById("editModal").style.display = "none"; loadProducts(); }
 }
+
 async function deleteProduct(id) { if (confirm("确定删除？")) { await sb.from("products").delete().eq("id", id); loadProducts(); } }
 
 document.getElementById("saveEditBtn").onclick = saveEdit;
 document.getElementById("cancelEditBtn").onclick = () => document.getElementById("editModal").style.display = "none";
 document.getElementById("refreshBtn").onclick = loadProducts;
 
-// ========== 工厂照片 ==========
+// 工厂照片
 let currentFactoryFile = null;
 document.getElementById("factoryUploadBox").onclick = () => document.getElementById("factoryFile").click();
 document.getElementById("factoryFile").onchange = (e) => { if (e.target.files[0]) { currentFactoryFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("factoryPreview").innerHTML = `<img src="${ev.target.result}" class="preview-img">`; reader.readAsDataURL(currentFactoryFile); } };
@@ -448,22 +531,22 @@ document.getElementById("addFactoryBtn").onclick = async function() {
 };
 async function loadFactoryPhotos() {
   let { data } = await sb.from("factory_photos").select("*").order("sort_order");
-  let html = ""; (data || []).forEach(p => { html += `<div class="media-item"><img src="${p.image_url}" class="media-img"><div>${p.title || "照片"}</div><button onclick="deleteFactoryPhoto(${p.id})" style="background:#dc2626;">删除</button></div>`; });
+  let html = ""; (data || []).forEach(p => { html += `<div style="display:inline-block; margin:10px;"><img src="${p.image_url}" style="width:100px;border-radius:8px;"><div>${p.title || "照片"}</div><button onclick="deleteFactoryPhoto(${p.id})" style="background:#dc2626;">删除</button></div>`; });
   document.getElementById("factoryList").innerHTML = html || "<div>暂无</div>";
 }
 async function deleteFactoryPhoto(id) { if (confirm("删除？")) { await sb.from("factory_photos").delete().eq("id", id); loadFactoryPhotos(); } }
 
-// ========== 统计 ==========
+// 统计
 async function loadStats() {
   const { data: products } = await sb.from("products").select("*");
   const { data: inquiries } = await sb.from("inquiries").select("*");
   document.getElementById("kpiProducts").innerText = products?.length || 0;
   document.getElementById("kpiInquiries").innerText = inquiries?.length || 0;
-  const wetsuitProducts = (products || []).filter(p => p.applications?.includes("Wetsuits")).length;
-  document.getElementById("kpiWetsuit").innerText = wetsuitProducts;
+  const hotProducts = (products || []).filter(p => p.is_hot === true).length;
+  document.getElementById("kpiHot").innerText = hotProducts;
 }
 
-// ========== 背景图 ==========
+// 背景图
 let currentHeroFile = null;
 document.getElementById("heroUploadBox").onclick = () => document.getElementById("heroFile").click();
 document.getElementById("heroFile").onchange = (e) => { if (e.target.files[0]) { currentHeroFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("heroPreview").innerHTML = `<img src="${ev.target.result}" style="width:100px;border-radius:8px;">`; reader.readAsDataURL(currentHeroFile); } };
