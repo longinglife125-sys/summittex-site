@@ -2,195 +2,238 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>Siyin 后台管理系统</title>
+<title>Siyin 后台管理 V2</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 * { box-sizing: border-box; }
-body { margin:0; font-family:Arial; background:#0b1220; color:white; }
-#loginBox { max-width:360px; margin:120px auto; background:white; color:black; padding:24px; border-radius:16px; }
-#panelBox { display:none; padding:20px; }
-.box { background:#111827; padding:15px; border-radius:12px; margin-bottom:15px; }
-h3 { margin-bottom: 15px; color: #e2e8f0; }
+body { margin: 0; font-family: 'Inter', Arial, sans-serif; background: #0b1220; color: white; }
+#loginBox { max-width: 360px; margin: 120px auto; background: white; color: black; padding: 24px; border-radius: 16px; }
+#panelBox { display: none; padding: 20px; }
+.box { background: #111827; padding: 24px; border-radius: 20px; margin-bottom: 20px; }
+h3 { margin-bottom: 16px; color: #e2e8f0; font-size: 18px; }
+h4 { margin: 16px 0 10px; color: #cbd5e1; font-size: 14px; }
+
+.step-nav { display: flex; gap: 12px; margin-bottom: 30px; }
+.step { flex: 1; padding: 12px; text-align: center; border-radius: 40px; background: #1e293b; color: #94a3b8; font-weight: 500; }
+.step.active { background: #00bfff; color: #0f172a; }
+.step-content { display: none; }
+.step-content.active { display: block; }
+
+input, select, textarea { width: 100%; padding: 12px; margin-bottom: 16px; border-radius: 12px; border: none; background: #1f2a3e; color: white; font-size: 14px; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+.upload-box { border: 2px dashed #4b5563; border-radius: 16px; padding: 30px; text-align: center; cursor: pointer; background: #1e293b; margin-bottom: 15px; }
+.upload-box:hover { border-color: #00bfff; background: #334155; }
+.preview-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin: 5px; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.tag { padding: 8px 18px; border: 1px solid #334155; border-radius: 40px; cursor: pointer; background: #1f2a3e; color: #cbd5e1; }
+.tag.active { background: #00bfff; color: #0f172a; border-color: #00bfff; }
+
+button { padding: 12px 24px; background: #00bfff; color: #0f172a; border: none; border-radius: 40px; cursor: pointer; font-weight: 600; margin-top: 10px; }
+button:hover { background: #0099cc; transform: translateY(-2px); }
+
 .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-.tab-btn { flex:1; background:#1e293b; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-size:14px; }
-.tab-btn.active { background:#2563eb; }
+.tab-btn { flex: 1; background: #1e293b; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 500; color: white; }
+.tab-btn.active { background: #00bfff; color: #0f172a; }
 .tab-content { display: none; }
 .tab-content.active { display: block; }
-input,select,textarea { width:100%; padding:10px; margin-top:8px; margin-bottom:8px; border-radius:8px; border:none; background:#1f2a3e; color:white; }
-button { padding:12px; margin-top:10px; background:#2563eb; color:white; border:none; border-radius:10px; cursor:pointer; }
-button:hover { background:#1d4ed8; }
-.item { background:white; color:black; padding:10px; border-radius:10px; margin-top:10px; }
-.item-img { max-width:50px; max-height:50px; border-radius:5px; margin:2px; }
-.item-actions { display: flex; gap: 10px; margin-top: 10px; justify-content: flex-end; }
-.edit-btn, .preview-btn, .delete-btn { padding:6px 12px; font-size:12px; width:auto; margin-top:0; border-radius:6px; cursor:pointer; }
-.edit-btn { background:#f59e0b; color:white; border:none; }
-.preview-btn { background:#22c55e; color:white; border:none; }
-.delete-btn { background:#dc2626; color:white; border:none; }
-.upload-box { border:2px dashed #4b5563; border-radius:12px; padding:20px; text-align:center; margin:10px 0; cursor:pointer; background:#1e293b; }
-.upload-box:hover { border-color:#2563eb; background:#334155; }
-.preview-img { width:80px; height:80px; object-fit:cover; border-radius:8px; margin:5px; }
-.media-item { background:#1e293b; border-radius:8px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
-.media-img { width:60px; height:60px; object-fit:cover; border-radius:8px; }
-.existing-img-item { position:relative; width:70px; height:70px; border-radius:8px; overflow:hidden; border:1px solid #4b5563; display:inline-block; margin:5px; }
-.existing-img-item img { width:100%; height:100%; object-fit:cover; }
-.existing-img-remove { position:absolute; top:2px; right:2px; background:rgba(220,38,38,0.9); color:white; border:none; border-radius:50%; width:18px; height:18px; font-size:10px; cursor:pointer; }
-.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:10000; justify-content:center; align-items:center; }
-.modal-content { background:#1e293b; border-radius:16px; padding:24px; width:90%; max-width:600px; max-height:85vh; overflow-y:auto; }
-.modal-content h3 { margin-bottom:20px; }
-.modal-buttons { display:flex; gap:10px; margin-top:20px; }
-.modal-buttons button { flex:1; margin-top:0; }
+
+.item { background: white; color: black; padding: 15px; border-radius: 12px; margin-top: 12px; }
+.item-actions { display: flex; gap: 10px; margin-top: 12px; justify-content: flex-end; }
+.edit-btn { background: #f59e0b; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; }
+.delete-btn { background: #dc2626; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; }
+.preview-btn { background: #22c55e; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; }
+
+.media-item { background: #1e293b; border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+.media-img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
+
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center; }
+.modal-content { background: #1e293b; border-radius: 20px; padding: 28px; width: 90%; max-width: 650px; max-height: 85vh; overflow-y: auto; }
+.modal-buttons { display: flex; gap: 12px; margin-top: 20px; }
 </style>
 </head>
-
 <body>
 
 <div id="loginBox">
-<h3>管理员登录</h3>
-<input type="password" id="pass" placeholder="请输入密码">
-<button id="loginBtn">登录</button>
-<div style="font-size:12px;margin-top:10px;text-align:center;">密码：123456</div>
+  <h3>管理员登录</h3>
+  <input type="password" id="pass" placeholder="请输入密码">
+  <button id="loginBtn">登录</button>
+  <div style="font-size:12px;margin-top:10px;text-align:center;">密码：123456</div>
 </div>
 
 <div id="panelBox">
-
-<div class="tab-buttons">
+  <div class="tab-buttons">
     <button class="tab-btn active" data-tab="products">📦 产品管理</button>
     <button class="tab-btn" data-tab="factory">🏭 工厂管理</button>
-    <button class="tab-btn" data-tab="apps">📱 应用管理</button>
     <button class="tab-btn" data-tab="settings">⚙️ 网站设置</button>
-</div>
+  </div>
 
-<!-- 产品管理 -->
-<div id="productsTab" class="tab-content active">
+  <!-- ================= 产品管理 ================= -->
+  <div id="productsTab" class="tab-content active">
+    <!-- 分步骤上架 -->
     <div class="box">
-        <h3>📤 上传产品</h3>
-        <input id="name" placeholder="产品名称">
-        <select id="category">
-            <option>Outdoor Functional Fabrics</option>
-            <option>Sports & Activewear Fabrics</option>
-            <option>Recycled & Sustainable Fabrics</option>
-            <option>Stretch Fabrics</option>
-            <option>Nylon & Polyester Fabrics</option>
-            <option>Others</option>
+      <h3>📤 快速上架新产品</h3>
+      
+      <div class="step-nav">
+        <div class="step active" data-step="1">1. 基础信息</div>
+        <div class="step" data-step="2">2. 图片上传</div>
+        <div class="step" data-step="3">3. 规格与标签</div>
+        <div class="step" data-step="4">4. 发布</div>
+      </div>
+
+      <!-- Step 1 -->
+      <div id="step1" class="step-content active">
+        <input type="text" id="p_name" placeholder="产品名称 *">
+        <select id="p_category">
+          <option value="">选择一级分类</option>
+          <option value="Neoprene Fabrics">🧵 Neoprene Fabrics</option>
+          <option value="Laminated Neoprene">🔗 Laminated Neoprene</option>
+          <option value="Foam & Protective">🛡️ Foam & Protective</option>
+          <option value="Functional Fabrics">📐 Functional Fabrics</option>
+          <option value="Sustainable">🌱 Sustainable Materials</option>
         </select>
-        <input id="gsm" placeholder="GSM">
-        <input id="moq" placeholder="MOQ">
-        <textarea id="feature" placeholder="产品描述"></textarea>
-        <div class="upload-box" id="productUploadBox">📸 点击选择产品图片（可多选）</div>
-        <input type="file" id="productFile" multiple accept="image/*" style="display:none">
-        <div id="productPreviewContainer" style="display:flex; flex-wrap:wrap; gap:5px; margin-top:10px;"></div>
-        <input id="videoUrl" placeholder="视频链接 (YouTube)">
-        <button id="uploadBtn">上传产品</button>
-    </div>
-    <div class="box">
-        <h3>📦 产品列表</h3>
-        <button id="refreshBtn">刷新</button>
-        <div id="productList"></div>
-    </div>
-</div>
+        <select id="p_subcategory">
+          <option value="">选择二级分类（可选）</option>
+          <option value="Single-layer Neoprene">Single-layer Neoprene</option>
+          <option value="Neoprene + Polyester">Neoprene + Polyester</option>
+          <option value="Neoprene + Jersey">Neoprene + Jersey</option>
+        </select>
+        <input type="text" id="p_slogan" placeholder="一句话卖点（用于首页/SEO）">
+        <button class="btn-next" onclick="goToStep(2)">下一步 →</button>
+      </div>
 
-<!-- 工厂管理 -->
-<div id="factoryTab" class="tab-content">
-    <div class="box">
-        <h3>🏭 工厂照片管理</h3>
-        <div style="margin-bottom:20px;">
-            <h4>➕ 添加工厂照片</h4>
-            <div class="upload-box" id="factoryUploadBox">📸 点击选择照片</div>
-            <input type="file" id="factoryFile" accept="image/*" style="display:none">
-            <div id="factoryPreview"></div>
-            <input type="text" id="factoryTitle" placeholder="照片标题">
-            <select id="factoryCategory"><option value="facility">工厂设施</option><option value="production">生产线</option></select>
-            <input type="number" id="factoryOrder" placeholder="排序" value="0">
-            <button id="addFactoryBtn">添加工厂照片</button>
+      <!-- Step 2 -->
+      <div id="step2" class="step-content">
+        <div class="upload-box" id="uploadBox">📸 点击上传产品图片（可多选）</div>
+        <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
+        <div id="previewArea" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:15px;"></div>
+        <button class="btn-next" onclick="goToStep(3)">下一步 →</button>
+      </div>
+
+      <!-- Step 3 -->
+      <div id="step3" class="step-content">
+        <div class="row">
+          <input type="text" id="p_thickness" placeholder="厚度 (mm)">
+          <input type="text" id="p_width" placeholder="宽度 (m)">
         </div>
-        <div id="factoryList"></div>
-    </div>
-    <div class="box">
-        <h3>📜 证书管理</h3>
-        <div style="margin-bottom:20px;">
-            <div class="upload-box" id="certUploadBox">📸 点击选择证书图片</div>
-            <input type="file" id="certFile" accept="image/*" style="display:none">
-            <div id="certPreview"></div>
-            <input type="text" id="certName" placeholder="证书名称">
-            <input type="number" id="certOrder" placeholder="排序" value="0">
-            <button id="addCertBtn">添加证书</button>
+        <div class="row">
+          <input type="text" id="p_gsm" placeholder="GSM">
+          <input type="text" id="p_color" placeholder="颜色">
         </div>
-        <div id="certList"></div>
-    </div>
-    <div class="box">
-        <h3>⚙️ 工厂设置</h3>
-        <div class="upload-box" id="videoUploadBox">📹 点击上传 MP4 视频</div>
-        <input type="file" id="videoFileUpload" accept="video/mp4,video/webm" style="display:none">
-        <div id="videoPreviewArea"></div>
-        <input type="text" id="factoryVideoUrl" placeholder="或粘贴 YouTube 链接">
-        <input type="text" id="factoryName" placeholder="工厂标题">
-        <textarea id="factoryDesc" placeholder="工厂描述" rows="2"></textarea>
-        <button id="saveSettingsBtn">保存设置</button>
-    </div>
-</div>
+        <input type="text" id="p_moq" placeholder="MOQ">
 
-<!-- 应用管理 -->
-<div id="appsTab" class="tab-content">
-    <div class="box">
-        <h3>📱 应用领域管理</h3>
-        <div style="background:#0f1722; padding:15px; border-radius:8px; margin-bottom:20px;">
-            <h4>➕ 添加新应用</h4>
-            <div class="upload-box" id="appUploadBox">📸 点击选择应用图片</div>
-            <input type="file" id="appFile" accept="image/*" style="display:none">
-            <div id="appPreview"></div>
-            <input type="text" id="appName" placeholder="应用名称">
-            <input type="text" id="appIcon" placeholder="图标（如：🏄‍♂️）">
-            <textarea id="appDesc" placeholder="应用描述" rows="2"></textarea>
-            <input type="number" id="appOrder" placeholder="排序" value="0">
-            <button id="addAppBtn">添加应用</button>
+        <h4>⚡ 性能特点</h4>
+        <div class="tags" id="featuresTags">
+          <div class="tag" data-val="Waterproof">💧 Waterproof</div>
+          <div class="tag" data-val="Shockproof">🛡️ Shockproof</div>
+          <div class="tag" data-val="Thermal">🔥 Thermal</div>
+          <div class="tag" data-val="Stretch">🔄 Stretch</div>
+          <div class="tag" data-val="Breathable">🌬️ Breathable</div>
+          <div class="tag" data-val="Eco">🌱 Eco-Friendly</div>
         </div>
-        <h4>📋 现有应用列表</h4>
-        <div id="appsList">加载中...</div>
-    </div>
-</div>
 
-<!-- 网站设置（背景图管理） -->
-<div id="settingsTab" class="tab-content">
+        <h4>🎯 应用场景</h4>
+        <div class="tags" id="appsTags">
+          <div class="tag" data-val="Wetsuits">🏄 Wetsuits</div>
+          <div class="tag" data-val="Bags">🎒 Bags & Coolers</div>
+          <div class="tag" data-val="Shoes">👟 Shoes</div>
+          <div class="tag" data-val="Protective">🛡️ Protective Gear</div>
+          <div class="tag" data-val="Outdoor">🏕️ Outdoor</div>
+        </div>
+
+        <button class="btn-next" onclick="goToStep(4)">下一步 →</button>
+      </div>
+
+      <!-- Step 4 -->
+      <div id="step4" class="step-content">
+        <textarea id="p_desc" rows="4" placeholder="产品详细描述..."></textarea>
+        <input type="text" id="p_video" placeholder="视频链接 (YouTube)">
+        <button onclick="submitProduct()">🚀 发布产品</button>
+        <div id="submitMsg" style="margin-top:15px;"></div>
+      </div>
+    </div>
+
+    <!-- 产品列表 -->
     <div class="box">
-        <h3>🏠 首页 Hero 背景图</h3>
-        <div class="upload-box" id="heroBgUploadBox">📸 点击上传背景图（推荐尺寸：1920x800）</div>
-        <input type="file" id="heroBgFile" accept="image/*" style="display:none">
-        <div id="heroBgPreview"></div>
-        <button id="saveHeroBgBtn">保存背景图</button>
-        <div id="heroBgStatus" style="margin-top:10px; font-size:12px;"></div>
+      <h3>📦 已有产品</h3>
+      <button id="refreshBtn">刷新列表</button>
+      <div id="productList"></div>
     </div>
-</div>
+  </div>
 
+  <!-- ================= 工厂管理 ================= -->
+  <div id="factoryTab" class="tab-content">
+    <div class="box">
+      <h3>🏭 工厂照片</h3>
+      <div class="upload-box" id="factoryUploadBox">📸 点击上传工厂照片</div>
+      <input type="file" id="factoryFile" accept="image/*" style="display:none">
+      <div id="factoryPreview"></div>
+      <input type="text" id="factoryTitle" placeholder="照片标题">
+      <select id="factoryCategory"><option value="facility">工厂设施</option><option value="production">生产线</option></select>
+      <input type="number" id="factoryOrder" placeholder="排序" value="0">
+      <button id="addFactoryBtn">添加工厂照片</button>
+      <div id="factoryList"></div>
+    </div>
+    <div class="box">
+      <h3>📜 证书管理</h3>
+      <div class="upload-box" id="certUploadBox">📸 点击上传证书</div>
+      <input type="file" id="certFile" accept="image/*" style="display:none">
+      <div id="certPreview"></div>
+      <input type="text" id="certName" placeholder="证书名称">
+      <input type="number" id="certOrder" placeholder="排序" value="0">
+      <button id="addCertBtn">添加证书</button>
+      <div id="certList"></div>
+    </div>
+    <div class="box">
+      <h3>⚙️ 工厂视频</h3>
+      <div class="upload-box" id="videoUploadBox">📹 上传 MP4 视频</div>
+      <input type="file" id="videoFile" accept="video/mp4" style="display:none">
+      <div id="videoPreview"></div>
+      <input type="text" id="factoryVideoUrl" placeholder="或粘贴 YouTube 链接">
+      <button id="saveVideoBtn">保存视频设置</button>
+    </div>
+  </div>
+
+  <!-- ================= 网站设置 ================= -->
+  <div id="settingsTab" class="tab-content">
+    <div class="box">
+      <h3>🏠 首页背景图</h3>
+      <div class="upload-box" id="heroUploadBox">📸 点击上传背景图</div>
+      <input type="file" id="heroFile" accept="image/*" style="display:none">
+      <div id="heroPreview"></div>
+      <button id="saveHeroBtn">保存背景图</button>
+    </div>
+  </div>
 </div>
 
 <!-- 编辑产品模态框 -->
 <div id="editModal" class="modal">
-    <div class="modal-content">
-        <h3>✏️ 编辑产品</h3>
-        <input type="hidden" id="editId">
-        <input type="text" id="editName" placeholder="产品名称">
-        <select id="editCategory">
-            <option>Outdoor Functional Fabrics</option>
-            <option>Sports & Activewear Fabrics</option>
-            <option>Recycled & Sustainable Fabrics</option>
-            <option>Stretch Fabrics</option>
-            <option>Nylon & Polyester Fabrics</option>
-            <option>Others</option>
-        </select>
-        <input type="text" id="editGsm" placeholder="GSM">
-        <input type="text" id="editMoq" placeholder="MOQ">
-        <textarea id="editFeature" placeholder="产品描述" rows="3"></textarea>
-        <input type="text" id="editVideoUrl" placeholder="视频链接">
-        <div style="margin-top:15px;">🖼️ 现有图片（点击 × 删除）</div>
-        <div id="existingImagesContainer" style="display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; padding:10px; background:#0f1722; border-radius:8px;"></div>
-        <div class="upload-box" id="editUploadBox" style="padding:12px;">📸 点击添加新图片（可多选）</div>
-        <input type="file" id="editFileInput" multiple accept="image/*" style="display:none">
-        <div id="editPreviewContainer" style="display:flex; flex-wrap:wrap; gap:5px; margin-top:10px;"></div>
-        <div class="modal-buttons">
-            <button id="saveEditBtn" style="background:#f59e0b;">保存修改</button>
-            <button id="cancelEditBtn" style="background:#6c757d;">取消</button>
-        </div>
+  <div class="modal-content">
+    <h3>✏️ 编辑产品</h3>
+    <input type="hidden" id="editId">
+    <input type="text" id="editName" placeholder="产品名称">
+    <select id="editCategory">
+      <option value="">选择分类</option>
+      <option value="Neoprene Fabrics">🧵 Neoprene Fabrics</option>
+      <option value="Laminated Neoprene">🔗 Laminated Neoprene</option>
+      <option value="Foam & Protective">🛡️ Foam & Protective</option>
+    </select>
+    <div class="row">
+      <input type="text" id="editThickness" placeholder="厚度">
+      <input type="text" id="editWidth" placeholder="宽度">
     </div>
+    <div class="row">
+      <input type="text" id="editColor" placeholder="颜色">
+      <input type="text" id="editGsm" placeholder="GSM">
+    </div>
+    <input type="text" id="editMoq" placeholder="MOQ">
+    <textarea id="editDesc" rows="3" placeholder="产品描述"></textarea>
+    <div class="modal-buttons">
+      <button id="saveEditBtn" style="background:#f59e0b;">保存</button>
+      <button id="cancelEditBtn" style="background:#6c757d;">取消</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -199,279 +242,239 @@ const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // 全局变量
-let currentFactoryFile = null, currentCertFile = null, currentVideoFile = null;
-let currentEditImages = [], currentNewImages = [], editingProductId = null;
-let productFiles = [];
-let currentAppFile = null;
-let currentHeroBgFile = null;
+let currentStep = 1;
+let selectedFiles = [];
+let selectedFeatures = [];
+let selectedApps = [];
 
-// 产品上传图片预览
-document.getElementById("productUploadBox").onclick = () => document.getElementById("productFile").click();
-document.getElementById("productFile").onchange = (e) => {
-    productFiles = Array.from(e.target.files);
-    let container = document.getElementById("productPreviewContainer");
-    container.innerHTML = "";
-    productFiles.forEach((f, idx) => {
-        let reader = new FileReader();
-        reader.onload = (ev) => { container.innerHTML += `<div style="position:relative; display:inline-block;"><img src="${ev.target.result}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;"><button onclick="removeProductFile(${idx})" style="position:absolute;top:-5px;right:-5px;background:red;border-radius:50%;width:20px;height:20px;">×</button></div>`; };
-        reader.readAsDataURL(f);
-    });
-};
-function removeProductFile(idx) { productFiles.splice(idx,1); document.getElementById("productFile").value = ""; location.reload(); }
-
-// 登录
+// ========== 登录 ==========
 document.getElementById("loginBtn").onclick = function() {
-    if (document.getElementById("pass").value === "123456") {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("panelBox").style.display = "block";
-        loadProducts(); loadFactoryPhotos(); loadCertificates(); loadFactorySettings(); loadApplications(); loadCurrentBackground();
-    } else alert("密码错误");
+  if (document.getElementById("pass").value === "123456") {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("panelBox").style.display = "block";
+    loadProducts();
+    loadFactoryPhotos();
+    loadCertificates();
+    loadHeroBackground();
+  } else alert("密码错误");
 };
-document.getElementById("pass").addEventListener("keypress", (e) => { if (e.key === "Enter") document.getElementById("loginBtn").click(); });
-
-// 加载当前背景图预览
-async function loadCurrentBackground() {
-    const { data } = await sb.from("site_settings").select("setting_value").eq("setting_key", "hero_background").single();
-    if (data && data.setting_value && data.setting_value !== 'https://placehold.co/1920x800/0f3b5c/white?text=Hero+Background') {
-        document.getElementById("heroBgPreview").innerHTML = `<img src="${data.setting_value}" class="preview-img"><div style="color:#4ade80; margin-top:5px;">当前背景图已设置</div>`;
-    } else {
-        document.getElementById("heroBgPreview").innerHTML = '<div style="color:#94a3b8;">暂无自定义背景图，使用默认背景</div>';
-    }
-}
 
 // 标签页切换
 document.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.onclick = function() {
-        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-        this.classList.add("active");
-        let tab = this.dataset.tab;
-        document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
-        if (tab === "products") document.getElementById("productsTab").classList.add("active");
-        if (tab === "factory") { document.getElementById("factoryTab").classList.add("active"); loadFactoryPhotos(); loadCertificates(); loadFactorySettings(); }
-        if (tab === "apps") { document.getElementById("appsTab").classList.add("active"); loadApplications(); }
-        if (tab === "settings") { document.getElementById("settingsTab").classList.add("active"); loadCurrentBackground(); }
-    };
+  btn.onclick = function() {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    this.classList.add("active");
+    let tab = this.dataset.tab;
+    document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+    if (tab === "products") document.getElementById("productsTab").classList.add("active");
+    if (tab === "factory") { document.getElementById("factoryTab").classList.add("active"); loadFactoryPhotos(); loadCertificates(); }
+    if (tab === "settings") document.getElementById("settingsTab").classList.add("active");
+  };
 });
 
-// 上传产品
-document.getElementById("uploadBtn").onclick = async function() {
-    let name = document.getElementById("name").value;
-    if (!name) { alert("请输入产品名称"); return; }
-    let btn = this; btn.disabled = true; btn.innerText = "上传中...";
-    let imageUrls = [];
-    for (let f of productFiles) {
-        let fn = Date.now() + "_" + f.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-        let { error } = await sb.storage.from("images").upload(fn, f);
-        if (!error) { let { data } = sb.storage.from("images").getPublicUrl(fn); imageUrls.push(data.publicUrl); }
+// ========== 分步骤 ==========
+function goToStep(step) {
+  document.querySelectorAll(".step-content").forEach(el => el.classList.remove("active"));
+  document.getElementById(`step${step}`).classList.add("active");
+  document.querySelectorAll(".step").forEach((el, idx) => {
+    if (idx + 1 <= step) el.classList.add("active");
+    else el.classList.remove("active");
+  });
+  currentStep = step;
+}
+
+// ========== 标签选择 ==========
+document.querySelectorAll("#featuresTags .tag").forEach(tag => {
+  tag.onclick = function() {
+    this.classList.toggle("active");
+    const val = this.dataset.val;
+    if (selectedFeatures.includes(val)) selectedFeatures = selectedFeatures.filter(f => f !== val);
+    else selectedFeatures.push(val);
+  };
+});
+document.querySelectorAll("#appsTags .tag").forEach(tag => {
+  tag.onclick = function() {
+    this.classList.toggle("active");
+    const val = this.dataset.val;
+    if (selectedApps.includes(val)) selectedApps = selectedApps.filter(a => a !== val);
+    else selectedApps.push(val);
+  };
+});
+
+// ========== 图片上传 ==========
+document.getElementById("uploadBox").onclick = () => document.getElementById("fileInput").click();
+document.getElementById("fileInput").onchange = (e) => {
+  selectedFiles = Array.from(e.target.files);
+  renderPreview();
+};
+function renderPreview() {
+  const container = document.getElementById("previewArea");
+  container.innerHTML = "";
+  selectedFiles.forEach((file, idx) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      container.innerHTML += `<div style="position:relative; display:inline-block;"><img src="${ev.target.result}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;"><button onclick="removeFile(${idx})" style="position:absolute;top:-5px;right:-5px;background:red;border-radius:50%;width:20px;height:20px;">×</button></div>`;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function removeFile(idx) {
+  selectedFiles.splice(idx, 1);
+  renderPreview();
+}
+
+// ========== 提交产品 ==========
+async function submitProduct() {
+  const name = document.getElementById("p_name").value.trim();
+  if (!name) { alert("请填写产品名称"); return; }
+  const btn = event.target;
+  btn.disabled = true;
+  btn.innerText = "发布中...";
+  const imageUrls = [];
+  for (let f of selectedFiles) {
+    const fn = Date.now() + "_" + f.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const { error } = await sb.storage.from("images").upload(fn, f);
+    if (!error) {
+      const { data } = sb.storage.from("images").getPublicUrl(fn);
+      imageUrls.push(data.publicUrl);
     }
-    let videoUrl = document.getElementById("videoUrl").value;
-    let { error } = await sb.from("products").insert([{ name, category: document.getElementById("category").value, gsm: document.getElementById("gsm").value, moq: document.getElementById("moq").value, feature: document.getElementById("feature").value, image: imageUrls[0] || "", images: imageUrls, video_url: videoUrl }]);
-    if (error) alert("失败：" + error.message);
-    else { alert("✅ 上传成功！图片：" + imageUrls.length + "张"); location.reload(); }
-    btn.disabled = false; btn.innerText = "上传产品";
-};
+  }
+  const productData = {
+    name: name,
+    category: document.getElementById("p_category").value,
+    subcategory: document.getElementById("p_subcategory").value || null,
+    slogan: document.getElementById("p_slogan").value || "",
+    thickness: document.getElementById("p_thickness").value || "Custom",
+    width: document.getElementById("p_width").value || "Custom",
+    gsm: document.getElementById("p_gsm").value || "Custom",
+    color: document.getElementById("p_color").value || "Custom",
+    moq: document.getElementById("p_moq").value || "Contact",
+    description: document.getElementById("p_desc").value,
+    features: selectedFeatures,
+    applications: selectedApps,
+    video_url: document.getElementById("p_video").value || null,
+    image: imageUrls[0] || "",
+    images: imageUrls
+  };
+  const { error } = await sb.from("products").insert([productData]);
+  if (error) alert("失败：" + error.message);
+  else { alert("✅ 发布成功！"); location.reload(); }
+  btn.disabled = false;
+  btn.innerText = "🚀 发布产品";
+}
 
-// 加载产品列表
+// ========== 产品列表 ==========
 async function loadProducts() {
-    let { data } = await sb.from("products").select("*").order("id", { ascending: false });
-    let html = "";
-    (data || []).forEach(p => {
-        let imgCount = (p.images && p.images.length) || (p.image ? 1 : 0);
-        let preview = "";
-        if (p.images && p.images.length) { preview = p.images.slice(0,2).map(img => `<img src="${img}" class="item-img">`).join(''); if (p.images.length > 2) preview += `<span> +${p.images.length-2}</span>`; }
-        else if (p.image) preview = `<img src="${p.image}" class="item-img">`;
-        let safeName = (p.name || "").replace(/'/g, "\\'");
-        html += `<div class="item"><b>${p.name}</b> <span style="font-size:11px; color:#666;">(${imgCount}张图片)</span><br>📁 ${p.category}<br>⚖️ ${p.gsm || "-"} | 📦 ${p.moq || "-"}<br><div>${preview}</div>
-        <div class="item-actions"><button class="edit-btn" onclick='openEditModal(${p.id}, "${safeName}", "${(p.category||"").replace(/'/g,"\\'")}", "${(p.gsm||"").replace(/'/g,"\\'")}", "${(p.moq||"").replace(/'/g,"\\'")}", "${(p.feature||"").replace(/'/g,"\\'")}", "${(p.video_url||"").replace(/'/g,"\\'")}", ${JSON.stringify(p.images || [])})'>✏️ 编辑</button>
-        <button class="preview-btn" onclick='window.open("product.html?id=${p.id}", "_blank")'>👁️ 预览</button>
-        <button class="delete-btn" onclick="deleteProduct(${p.id})">🗑️ 删除</button></div></div>`;
-    });
-    document.getElementById("productList").innerHTML = html || "<div>暂无产品</div>";
+  const { data } = await sb.from("products").select("*").order("id", { ascending: false });
+  let html = "";
+  (data || []).forEach(p => {
+    html += `<div class="item"><b>${escapeHtml(p.name)}</b><br>📁 ${escapeHtml(p.category || "-")}<br>📏 ${escapeHtml(p.thickness || "-")}<br>
+    <div class="item-actions">
+      <button class="edit-btn" onclick="openEditModal(${p.id}, '${escapeHtml(p.name).replace(/'/g,"\\'")}', '${escapeHtml(p.category||"").replace(/'/g,"\\'")}', '${escapeHtml(p.thickness||"").replace(/'/g,"\\'")}', '${escapeHtml(p.width||"").replace(/'/g,"\\'")}', '${escapeHtml(p.color||"").replace(/'/g,"\\'")}', '${escapeHtml(p.gsm||"").replace(/'/g,"\\'")}', '${escapeHtml(p.moq||"").replace(/'/g,"\\'")}', '${escapeHtml(p.description||"").replace(/'/g,"\\'")}')">✏️ 编辑</button>
+      <button class="preview-btn" onclick="window.open('product.html?id=${p.id}','_blank')">👁️ 预览</button>
+      <button class="delete-btn" onclick="deleteProduct(${p.id})">🗑️ 删除</button>
+    </div></div>`;
+  });
+  document.getElementById("productList").innerHTML = html || "<div>暂无产品</div>";
 }
 
-// 编辑功能
-function openEditModal(id, name, category, gsm, moq, feature, videoUrl, imagesArr) {
-    editingProductId = id;
-    currentEditImages = imagesArr || [];
-    currentNewImages = [];
-    document.getElementById("editId").value = id;
-    document.getElementById("editName").value = name;
-    document.getElementById("editCategory").value = category;
-    document.getElementById("editGsm").value = gsm;
-    document.getElementById("editMoq").value = moq;
-    document.getElementById("editFeature").value = feature;
-    document.getElementById("editVideoUrl").value = videoUrl;
-    renderExistingImages();
-    renderEditPreview();
-    document.getElementById("editModal").style.display = "flex";
-}
-function renderExistingImages() {
-    let container = document.getElementById("existingImagesContainer");
-    if (!currentEditImages.length) { container.innerHTML = '<div style="color:#94a3b8;">暂无图片</div>'; return; }
-    container.innerHTML = currentEditImages.map((img, idx) => `<div class="existing-img-item"><img src="${img}"><button class="existing-img-remove" onclick="removeExistingImage(${idx})">×</button></div>`).join('');
-}
-function removeExistingImage(index) { currentEditImages.splice(index,1); renderExistingImages(); }
-document.getElementById("editUploadBox").onclick = () => document.getElementById("editFileInput").click();
-document.getElementById("editFileInput").onchange = (e) => {
-    for (let f of Array.from(e.target.files)) if (f.size <= 10*1024*1024) currentNewImages.push(f);
-    renderEditPreview();
-};
-function removeNewImage(index) { currentNewImages.splice(index,1); renderEditPreview(); }
-function renderEditPreview() {
-    let container = document.getElementById("editPreviewContainer");
-    container.innerHTML = "";
-    currentNewImages.forEach((f, idx) => {
-        let reader = new FileReader();
-        reader.onload = (ev) => { container.innerHTML += `<div style="position:relative; display:inline-block;"><img src="${ev.target.result}" style="width:70px;height:70px;object-fit:cover;border-radius:8px;"><button onclick="removeNewImage(${idx})" style="position:absolute;top:-5px;right:-5px;background:red;border-radius:50%;width:18px;height:18px;">×</button></div>`; };
-        reader.readAsDataURL(f);
-    });
+function openEditModal(id, name, category, thickness, width, color, gsm, moq, desc) {
+  document.getElementById("editId").value = id;
+  document.getElementById("editName").value = name;
+  document.getElementById("editCategory").value = category;
+  document.getElementById("editThickness").value = thickness;
+  document.getElementById("editWidth").value = width;
+  document.getElementById("editColor").value = color;
+  document.getElementById("editGsm").value = gsm;
+  document.getElementById("editMoq").value = moq;
+  document.getElementById("editDesc").value = desc;
+  document.getElementById("editModal").style.display = "flex";
 }
 async function saveEdit() {
-    let newImageUrls = [];
-    for (let f of currentNewImages) {
-        let fn = Date.now() + "_edit_" + f.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-        let { error } = await sb.storage.from("images").upload(fn, f);
-        if (!error) { let { data } = sb.storage.from("images").getPublicUrl(fn); newImageUrls.push(data.publicUrl); }
-    }
-    let allImages = [...currentEditImages, ...newImageUrls];
-    let { error } = await sb.from("products").update({
-        name: document.getElementById("editName").value,
-        category: document.getElementById("editCategory").value,
-        gsm: document.getElementById("editGsm").value,
-        moq: document.getElementById("editMoq").value,
-        feature: document.getElementById("editFeature").value,
-        video_url: document.getElementById("editVideoUrl").value,
-        image: allImages[0] || "",
-        images: allImages
-    }).eq("id", editingProductId);
-    if (error) alert("编辑失败：" + error.message);
-    else { alert("✅ 已更新"); document.getElementById("editModal").style.display = "none"; loadProducts(); }
+  const id = document.getElementById("editId").value;
+  const { error } = await sb.from("products").update({
+    name: document.getElementById("editName").value,
+    category: document.getElementById("editCategory").value,
+    thickness: document.getElementById("editThickness").value,
+    width: document.getElementById("editWidth").value,
+    color: document.getElementById("editColor").value,
+    gsm: document.getElementById("editGsm").value,
+    moq: document.getElementById("editMoq").value,
+    description: document.getElementById("editDesc").value
+  }).eq("id", id);
+  if (error) alert("失败：" + error.message);
+  else { alert("✅ 已更新"); document.getElementById("editModal").style.display = "none"; loadProducts(); }
 }
 async function deleteProduct(id) { if (confirm("确定删除？")) { await sb.from("products").delete().eq("id", id); loadProducts(); } }
 
 document.getElementById("saveEditBtn").onclick = saveEdit;
 document.getElementById("cancelEditBtn").onclick = () => document.getElementById("editModal").style.display = "none";
+document.getElementById("refreshBtn").onclick = loadProducts;
 
-// 工厂照片管理
+// ========== 工厂照片管理 ==========
+let currentFactoryFile = null;
 document.getElementById("factoryUploadBox").onclick = () => document.getElementById("factoryFile").click();
 document.getElementById("factoryFile").onchange = (e) => { if (e.target.files[0]) { currentFactoryFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("factoryPreview").innerHTML = `<img src="${ev.target.result}" class="preview-img">`; reader.readAsDataURL(currentFactoryFile); } };
 document.getElementById("addFactoryBtn").onclick = async function() {
-    if (!currentFactoryFile) { alert("请选择图片"); return; }
-    let fn = "factory/" + Date.now() + "_" + currentFactoryFile.name;
-    await sb.storage.from("images").upload(fn, currentFactoryFile);
-    let { data } = sb.storage.from("images").getPublicUrl(fn);
-    await sb.from("factory_photos").insert([{ image_url: data.publicUrl, title: document.getElementById("factoryTitle").value, category: document.getElementById("factoryCategory").value, sort_order: parseInt(document.getElementById("factoryOrder").value) || 0 }]);
-    alert("添加成功"); location.reload();
+  if (!currentFactoryFile) { alert("请选择图片"); return; }
+  let fn = "factory/" + Date.now() + "_" + currentFactoryFile.name;
+  await sb.storage.from("images").upload(fn, currentFactoryFile);
+  let { data } = sb.storage.from("images").getPublicUrl(fn);
+  await sb.from("factory_photos").insert([{ image_url: data.publicUrl, title: document.getElementById("factoryTitle").value, category: document.getElementById("factoryCategory").value, sort_order: parseInt(document.getElementById("factoryOrder").value) || 0 }]);
+  alert("添加成功"); location.reload();
 };
 async function loadFactoryPhotos() {
-    let { data } = await sb.from("factory_photos").select("*").order("sort_order");
-    let html = ""; (data || []).forEach(p => { html += `<div class="media-item"><img src="${p.image_url}" class="media-img"><div>${p.title || "照片"}</div><button onclick="deleteFactoryPhoto(${p.id})" style="background:#dc2626;">删除</button></div>`; });
-    document.getElementById("factoryList").innerHTML = html || "<div>暂无</div>";
+  let { data } = await sb.from("factory_photos").select("*").order("sort_order");
+  let html = ""; (data || []).forEach(p => { html += `<div class="media-item"><img src="${p.image_url}" class="media-img"><div>${p.title || "照片"}</div><button onclick="deleteFactoryPhoto(${p.id})" style="background:#dc2626;">删除</button></div>`; });
+  document.getElementById("factoryList").innerHTML = html || "<div>暂无</div>";
 }
 async function deleteFactoryPhoto(id) { if (confirm("删除？")) { await sb.from("factory_photos").delete().eq("id", id); loadFactoryPhotos(); } }
 
-// 证书管理
+// ========== 证书管理 ==========
+let currentCertFile = null;
 document.getElementById("certUploadBox").onclick = () => document.getElementById("certFile").click();
 document.getElementById("certFile").onchange = (e) => { if (e.target.files[0]) { currentCertFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("certPreview").innerHTML = `<img src="${ev.target.result}" class="preview-img">`; reader.readAsDataURL(currentCertFile); } };
 document.getElementById("addCertBtn").onclick = async function() {
-    if (!currentCertFile) { alert("请选择图片"); return; }
-    let fn = "certs/" + Date.now() + "_" + currentCertFile.name;
-    await sb.storage.from("images").upload(fn, currentCertFile);
-    let { data } = sb.storage.from("images").getPublicUrl(fn);
-    await sb.from("factory_certificates").insert([{ image_url: data.publicUrl, name: document.getElementById("certName").value, sort_order: parseInt(document.getElementById("certOrder").value) || 0 }]);
-    alert("添加成功"); location.reload();
+  if (!currentCertFile) { alert("请选择图片"); return; }
+  let fn = "certs/" + Date.now() + "_" + currentCertFile.name;
+  await sb.storage.from("images").upload(fn, currentCertFile);
+  let { data } = sb.storage.from("images").getPublicUrl(fn);
+  await sb.from("factory_certificates").insert([{ image_url: data.publicUrl, name: document.getElementById("certName").value, sort_order: parseInt(document.getElementById("certOrder").value) || 0 }]);
+  alert("添加成功"); location.reload();
 };
 async function loadCertificates() {
-    let { data } = await sb.from("factory_certificates").select("*").order("sort_order");
-    let html = ""; (data || []).forEach(c => { html += `<div class="media-item"><img src="${c.image_url}" class="media-img"><div>${c.name || "证书"}</div><button onclick="deleteCertificate(${c.id})" style="background:#dc2626;">删除</button></div>`; });
-    document.getElementById("certList").innerHTML = html || "<div>暂无</div>";
+  let { data } = await sb.from("factory_certificates").select("*").order("sort_order");
+  let html = ""; (data || []).forEach(c => { html += `<div class="media-item"><img src="${c.image_url}" class="media-img"><div>${c.name || "证书"}</div><button onclick="deleteCertificate(${c.id})" style="background:#dc2626;">删除</button></div>`; });
+  document.getElementById("certList").innerHTML = html || "<div>暂无</div>";
 }
 async function deleteCertificate(id) { if (confirm("删除？")) { await sb.from("factory_certificates").delete().eq("id", id); loadCertificates(); } }
 
-// 工厂设置
-document.getElementById("videoUploadBox").onclick = () => document.getElementById("videoFileUpload").click();
-document.getElementById("videoFileUpload").onchange = (e) => { if (e.target.files[0]) { currentVideoFile = e.target.files[0]; let url = URL.createObjectURL(currentVideoFile); document.getElementById("videoPreviewArea").innerHTML = `<video src="${url}" controls style="max-width:200px;"></video><button onclick="clearVideoFile()">取消</button>`; } };
-function clearVideoFile() { currentVideoFile = null; document.getElementById("videoFileUpload").value = ""; document.getElementById("videoPreviewArea").innerHTML = ""; }
-async function loadFactorySettings() {
-    let { data } = await sb.from("factory_settings").select("*");
-    let s = {}; (data || []).forEach(i => s[i.setting_key] = i.setting_value);
-    document.getElementById("factoryVideoUrl").value = s.factory_video_url || "";
-    document.getElementById("factoryName").value = s.factory_name || "Our Factory";
-    document.getElementById("factoryDesc").value = s.factory_description || "";
+// ========== 网站设置 ==========
+let currentHeroFile = null;
+document.getElementById("heroUploadBox").onclick = () => document.getElementById("heroFile").click();
+document.getElementById("heroFile").onchange = (e) => { if (e.target.files[0]) { currentHeroFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("heroPreview").innerHTML = `<img src="${ev.target.result}" class="preview-img">`; reader.readAsDataURL(currentHeroFile); } };
+document.getElementById("saveHeroBtn").onclick = async function() {
+  if (!currentHeroFile) { alert("请选择图片"); return; }
+  let fn = "hero/" + Date.now() + "_" + currentHeroFile.name;
+  await sb.storage.from("images").upload(fn, currentHeroFile);
+  let { data } = sb.storage.from("images").getPublicUrl(fn);
+  await sb.from("site_settings").upsert({ setting_key: "hero_background", setting_value: data.publicUrl }, { onConflict: "setting_key" });
+  alert("背景图已更新"); location.reload();
+};
+async function loadHeroBackground() {
+  let { data } = await sb.from("site_settings").select("setting_value").eq("setting_key", "hero_background").maybeSingle();
+  if (data && data.setting_value) document.getElementById("heroPreview").innerHTML = `<img src="${data.setting_value}" style="width:100px;border-radius:8px;">`;
 }
-document.getElementById("saveSettingsBtn").onclick = async function() {
-    let videoUrl = document.getElementById("factoryVideoUrl").value;
-    if (currentVideoFile) {
-        let fn = "video/" + Date.now() + "_" + currentVideoFile.name;
-        await sb.storage.from("images").upload(fn, currentVideoFile);
-        let { data } = sb.storage.from("images").getPublicUrl(fn);
-        videoUrl = data.publicUrl;
-    }
-    await sb.from("factory_settings").upsert({ setting_key: "factory_video_url", setting_value: videoUrl }, { onConflict: "setting_key" });
-    await sb.from("factory_settings").upsert({ setting_key: "factory_name", setting_value: document.getElementById("factoryName").value }, { onConflict: "setting_key" });
-    await sb.from("factory_settings").upsert({ setting_key: "factory_description", setting_value: document.getElementById("factoryDesc").value }, { onConflict: "setting_key" });
-    alert("设置已保存"); location.reload();
-};
 
-// 应用管理
-document.getElementById("appUploadBox").onclick = () => document.getElementById("appFile").click();
-document.getElementById("appFile").onchange = (e) => {
-    if (e.target.files[0]) { currentAppFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("appPreview").innerHTML = `<img src="${ev.target.result}" class="preview-img"><button onclick="clearAppFile()">取消</button>`; reader.readAsDataURL(currentAppFile); }
-};
-function clearAppFile() { currentAppFile = null; document.getElementById("appFile").value = ""; document.getElementById("appPreview").innerHTML = ""; }
-document.getElementById("addAppBtn").onclick = async function() {
-    let name = document.getElementById("appName").value.trim();
-    if (!name) { alert("请输入应用名称"); return; }
-    let imageUrl = "";
-    if (currentAppFile) {
-        let fn = "apps/" + Date.now() + "_" + currentAppFile.name;
-        let { error } = await sb.storage.from("images").upload(fn, currentAppFile);
-        if (error) { alert("图片上传失败：" + error.message); return; }
-        let { data } = sb.storage.from("images").getPublicUrl(fn);
-        imageUrl = data.publicUrl;
-    } else { alert("请先选择图片"); return; }
-    let { error } = await sb.from("applications").insert([{ name: name, description: document.getElementById("appDesc").value, image_url: imageUrl, icon: document.getElementById("appIcon").value || "📦", sort_order: parseInt(document.getElementById("appOrder").value) || 0, is_active: true }]);
-    if (error) alert("添加失败：" + error.message);
-    else { alert("添加成功"); clearAppFile(); document.getElementById("appName").value = ""; document.getElementById("appDesc").value = ""; document.getElementById("appIcon").value = ""; document.getElementById("appOrder").value = "0"; loadApplications(); }
-};
-async function loadApplications() {
-    let { data } = await sb.from("applications").select("*").order("sort_order");
-    let html = ""; (data || []).forEach(app => { html += `<div class="media-item"><img src="${app.image_url}" class="media-img"><div><b>${app.name}</b><br><small>排序: ${app.sort_order}</small></div><button onclick="deleteApp(${app.id})" style="background:#dc2626;">删除</button></div>`; });
-    document.getElementById("appsList").innerHTML = html || "<div>暂无应用</div>";
-}
-async function deleteApp(id) { if (confirm("删除这个应用？")) { await sb.from("applications").delete().eq("id", id); loadApplications(); } }
+function escapeHtml(str) { if (!str) return ""; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
 
-// ========== 首页背景图管理 ==========
-document.getElementById("heroBgUploadBox").onclick = () => document.getElementById("heroBgFile").click();
-document.getElementById("heroBgFile").onchange = (e) => {
-    if (e.target.files[0]) { currentHeroBgFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("heroBgPreview").innerHTML = `<img src="${ev.target.result}" class="preview-img"><button onclick="clearHeroBgFile()">取消选择</button>`; reader.readAsDataURL(currentHeroBgFile); }
-};
-function clearHeroBgFile() { currentHeroBgFile = null; document.getElementById("heroBgFile").value = ""; document.getElementById("heroBgPreview").innerHTML = ""; loadCurrentBackground(); }
-document.getElementById("saveHeroBgBtn").onclick = async function() {
-    if (!currentHeroBgFile) { alert("请先选择图片"); return; }
-    let status = document.getElementById("heroBgStatus");
-    status.innerHTML = "⏳ 上传中...";
-    let fn = "settings/" + Date.now() + "_hero." + currentHeroBgFile.name.split('.').pop();
-    let { error: uploadError } = await sb.storage.from("images").upload(fn, currentHeroBgFile);
-    if (uploadError) { status.innerHTML = "❌ 上传失败：" + uploadError.message; return; }
-    let { data } = sb.storage.from("images").getPublicUrl(fn);
-    let { error } = await sb.from("site_settings").upsert({ setting_key: "hero_background", setting_value: data.publicUrl }, { onConflict: "setting_key" });
-    if (error) { status.innerHTML = "❌ 保存失败：" + error.message; }
-    else { status.innerHTML = "✅ 背景图已更新！刷新首页查看效果。"; clearHeroBgFile(); }
-};
-
-window.openEditModal = openEditModal;
+window.goToStep = goToStep;
+window.removeFile = removeFile;
+window.submitProduct = submitProduct;
 window.deleteProduct = deleteProduct;
+window.openEditModal = openEditModal;
 window.deleteFactoryPhoto = deleteFactoryPhoto;
 window.deleteCertificate = deleteCertificate;
-window.deleteApp = deleteApp;
-window.removeNewImage = removeNewImage;
-window.removeExistingImage = removeExistingImage;
-window.removeProductFile = removeProductFile;
-window.clearVideoFile = clearVideoFile;
-window.clearAppFile = clearAppFile;
-window.clearHeroBgFile = clearHeroBgFile;
 </script>
-
 </body>
 </html>
