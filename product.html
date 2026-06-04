@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title id="pageTitle">Product Detail | Siyin</title>
-<meta id="pageDescription" name="description" content="High-quality neoprene and laminated fabrics for wetsuits, bags, shoes, and protective gear. OEM & ODM solutions available.">
+<title id="pageTitle">Neoprene Laminated Fabric | Waterproof & Flexible Supplier | Siyin</title>
+<meta id="pageDescription" name="description" content="High-performance neoprene laminated fabric for wetsuits, bags, shoes, and protective gear. Waterproof, flexible, thermal insulation. OEM/ODM customization available.">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -16,7 +16,7 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background: #f8fafc;
+    background: #ffffff;
     color: #1f2937;
     line-height: 1.5;
     padding-top: 70px;
@@ -84,13 +84,14 @@ body {
 /* ================= 按钮 ================= */
 .btn {
     display: inline-block;
-    padding: 12px 28px;
+    padding: 14px 32px;
     border-radius: 40px;
     font-weight: 600;
     text-decoration: none;
     transition: all 0.2s;
     cursor: pointer;
     border: none;
+    font-size: 14px;
 }
 
 .btn-primary {
@@ -109,6 +110,20 @@ body {
     background: transparent;
 }
 
+.btn-outline:hover {
+    background: rgba(0,191,255,0.1);
+    transform: translateY(-2px);
+}
+
+.btn-dark {
+    background: #0f3b5c;
+    color: white;
+}
+
+.btn-dark:hover {
+    background: #1e4a6f;
+}
+
 /* ================= 产品详情 ================= */
 .product-detail {
     display: grid;
@@ -123,6 +138,11 @@ body {
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
+/* 产品标题区 */
+.product-header {
+    margin-bottom: 24px;
+}
+
 .product-badge {
     display: inline-block;
     background: #eef2ff;
@@ -135,100 +155,233 @@ body {
 }
 
 .product-title {
-    font-size: 32px;
+    font-size: 36px;
+    font-weight: 700;
+    color: #0f3b5c;
+    margin-bottom: 16px;
+    line-height: 1.2;
+}
+
+.product-subtitle {
+    font-size: 18px;
+    color: #4b5563;
+    margin-bottom: 24px;
+}
+
+/* 核心卖点标签 */
+.key-sell-points {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.sell-point {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f8fafc;
+    padding: 8px 16px;
+    border-radius: 40px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #0f3b5c;
+}
+
+.sell-point .icon {
+    font-size: 18px;
+}
+
+/* ================= 材料介绍 ================= */
+.section-card {
+    background: #f8fafc;
+    border-radius: 24px;
+    padding: 32px;
+    margin: 32px 0;
+}
+
+.section-title {
+    font-size: 22px;
     font-weight: 700;
     color: #0f3b5c;
     margin-bottom: 16px;
 }
 
-.specs-table {
-    background: #f8fafc;
-    border-radius: 20px;
-    padding: 24px;
+.section-title .icon {
+    margin-right: 8px;
+}
+
+.section-desc {
+    font-size: 16px;
+    color: #4b5563;
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+/* ================= 应用场景卡片 ================= */
+.apps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
     margin: 24px 0;
 }
 
-.spec-row {
-    display: flex;
-    padding: 12px 0;
-    border-bottom: 1px solid #e2e8f0;
+.app-card {
+    background: white;
+    border: 1px solid #eef2ff;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.2s;
 }
 
-.spec-row:last-child {
+.app-card:hover {
+    border-color: #00bfff;
+    transform: translateY(-2px);
+}
+
+.app-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.app-card h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0f3b5c;
+    margin-bottom: 4px;
+}
+
+.app-card p {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+/* ================= 性能特性（重要升级） ================= */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin: 24px 0;
+}
+
+.feature-item {
+    background: white;
+    border: 1px solid #eef2ff;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.feature-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+}
+
+.feature-item h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f3b5c;
+    margin-bottom: 8px;
+}
+
+.feature-item p {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+/* ================= 规格表格 ================= */
+.specs-table {
+    background: white;
+    border: 1px solid #eef2ff;
+    border-radius: 16px;
+    width: 100%;
+    margin: 16px 0;
+}
+
+.specs-table tr {
+    border-bottom: 1px solid #eef2ff;
+}
+
+.specs-table tr:last-child {
     border-bottom: none;
 }
 
+.specs-table td {
+    padding: 14px 16px;
+}
+
 .spec-label {
-    width: 110px;
     font-weight: 600;
     color: #0f3b5c;
+    width: 35%;
 }
 
 .spec-value {
-    flex: 1;
-    color: #1f2937;
+    color: #4b5563;
 }
 
-.section-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #0f3b5c;
-    margin: 24px 0 16px;
+/* ================= 定制化选项 ================= */
+.customization-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin: 20px 0;
 }
 
-.features-list {
-    list-style: none;
-}
-
-.features-list li {
-    padding: 8px 0;
+.custom-item {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    padding: 12px;
+    background: white;
+    border: 1px solid #eef2ff;
+    border-radius: 12px;
 }
 
-.features-list li::before {
-    content: "✓";
+.custom-item .check {
     color: #00bfff;
     font-weight: bold;
 }
 
-.app-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
+.custom-item span {
+    font-size: 14px;
 }
 
-.app-tag {
-    background: #eef2ff;
-    color: #0f3b5c;
-    padding: 6px 16px;
-    border-radius: 30px;
-    font-size: 13px;
+/* ================= CTA 询盘区（强化） ================= */
+.cta-card {
+    background: linear-gradient(135deg, #0f3b5c 0%, #1e4a6f 100%);
+    border-radius: 24px;
+    padding: 40px;
+    text-align: center;
+    margin: 40px 0;
 }
 
-.quote-form {
-    background: #f8fafc;
-    border-radius: 20px;
-    padding: 24px;
-    margin-top: 30px;
-}
-
-.quote-form h3 {
-    margin-bottom: 16px;
-    color: #0f3b5c;
-}
-
-.quote-form input,
-.quote-form select,
-.quote-form textarea {
-    width: 100%;
-    padding: 12px 16px;
+.cta-card h3 {
+    color: white;
+    font-size: 24px;
     margin-bottom: 12px;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    font-family: inherit;
+}
+
+.cta-card p {
+    color: #cbd5e1;
+    margin-bottom: 24px;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cta-buttons .btn-white {
+    background: white;
+    color: #0f3b5c;
+}
+
+.cta-buttons .btn-white:hover {
+    background: #e2e8f0;
 }
 
 /* 多图滑动样式 */
@@ -324,21 +477,11 @@ body {
     color: #00bfff;
 }
 
-.whatsapp {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: #25D366;
-    color: white;
-    padding: 12px 18px;
-    border-radius: 50px;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    z-index: 100;
+/* ================= 响应式 ================= */
+@media (max-width: 1024px) {
+    .apps-grid, .features-grid, .customization-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
@@ -346,14 +489,23 @@ body {
         grid-template-columns: 1fr;
         gap: 30px;
     }
-    .navbar {
-        padding: 12px 20px;
+    .apps-grid, .features-grid, .customization-grid {
+        grid-template-columns: 1fr;
     }
     .nav-links {
         display: none;
     }
+    .product-title {
+        font-size: 28px;
+    }
     .container {
         padding: 0 20px;
+    }
+    .navbar {
+        padding: 12px 20px;
+    }
+    .cta-buttons {
+        flex-direction: column;
     }
 }
 </style>
@@ -386,8 +538,6 @@ body {
     </div>
 </footer>
 
-<a href="https://wa.me/8613800000000?text=Hello, I'm interested in your neoprene products" class="whatsapp" target="_blank">💬 WhatsApp</a>
-
 <script>
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
@@ -400,39 +550,28 @@ let productData = null;
 let mediaList = [];
 let currentMediaIndex = 0;
 
-// 分类标签映射
-const categoryLabels = {
-    "Neoprene Fabrics": "🧵 Single-layer Neoprene",
-    "Laminated Neoprene": "🔗 Multi-layer Laminated",
-    "Foam & Protective": "🛡️ Foam & Protective",
-    "Functional Fabrics": "📐 Functional Fabrics",
-    "Sustainable": "🌱 Sustainable Materials",
-    "Others": "📦 Custom Materials"
+// 性能特性描述库
+const featureDescriptions = {
+    "Waterproof": "Resistant to water penetration, ideal for marine and wet environments.",
+    "Shockproof": "Excellent impact absorption for protective gear and padding.",
+    "Flexible": "High elasticity and soft hand-feel, conforms to body shape.",
+    "Durable": "Long-lasting performance, resistant to wear and tear.",
+    "Thermal Insulation": "Maintains temperature in cold conditions, keeps warmth.",
+    "Breathable": "Air circulation design, comfortable for extended wear.",
+    "Lightweight": "Easy to handle, reduces product weight.",
+    "Soft Touch": "Gentle on skin, comfortable for direct contact."
 };
 
-// 子分类映射
-const subcategoryLabels = {
-    "Single-layer Neoprene": "Soft, flexible, waterproof",
-    "Neoprene + Polyester": "Durable polyester backing",
-    "Neoprene + Spandex": "High elasticity",
-    "Neoprene + Jersey": "Soft, comfortable",
-    "Neoprene + Nylon": "Strong and durable",
-    "Shockproof": "Impact protection",
-    "Mesh": "Breathable reinforcement",
-    "Lining": "Inner lining fabric",
-    "Eco-friendly": "Recycled materials"
-};
-
-// 完整产品数据（匹配一级+二级分类）
-const productDatabase = {
-    1: { id: 1, name: "Neoprene Fabric 2mm", category: "Neoprene Fabrics", subcategory: "Single-layer Neoprene", thickness: "2mm", width: "1.3m", color: "Black", gsm: "200", moq: "100m", image: "https://placehold.co/600x400/0f3b5c/white?text=Neoprene+2mm", description: "Soft, flexible, and waterproof single-layer neoprene. Ideal for wetsuits, bags, and footwear.", features: ["Waterproof", "Flexible", "Thermal Insulation", "Lightweight"], applications: ["Wetsuits", "Bags", "Shoes", "Protective Gear"] },
-    2: { id: 2, name: "Neoprene Fabric 3mm", category: "Neoprene Fabrics", subcategory: "Single-layer Neoprene", thickness: "3mm", width: "1.3m", color: "Black", gsm: "300", moq: "100m", image: "https://placehold.co/600x400/0f3b5c/white?text=Neoprene+3mm", description: "Medium thickness neoprene for sports gear and protective equipment.", features: ["Waterproof", "Durable", "Comfortable", "Good Insulation"], applications: ["Wetsuits", "Protective Gear", "Sports Equipment"] },
-    3: { id: 3, name: "Laminated Neoprene 3mm Black", category: "Laminated Neoprene", subcategory: "Neoprene + Polyester", thickness: "3mm", width: "1.5m", color: "Black", gsm: "350", moq: "100m", image: "https://placehold.co/600x400/2c7da0/white?text=Laminated+3mm", description: "Polyester-backed laminated neoprene, waterproof & flexible. Perfect for bags and wetsuits.", features: ["Waterproof & Shockproof", "Flexible & Durable", "Thermal Insulation", "OEM Customizable"], applications: ["Wetsuits", "Cooler Bags", "Shoes", "Backpacks"] },
-    4: { id: 4, name: "Laminated Neoprene + Jersey 5mm", category: "Laminated Neoprene", subcategory: "Neoprene + Jersey", thickness: "5mm", width: "1.5m", color: "Black/Custom", gsm: "500", moq: "100m", image: "https://placehold.co/600x400/2c7da0/white?text=Neoprene+Jersey", description: "Soft jersey bonding for comfortable wear applications. Great for protective gear.", features: ["Soft Touch", "Breathable", "High Elasticity", "Comfortable"], applications: ["Wetsuits", "Protective Gear", "Sports Equipment"] },
-    5: { id: 5, name: "EVA Foam 2mm Shockproof", category: "Foam & Protective", subcategory: "Shockproof", thickness: "2mm", width: "1.3m", color: "Black/White", gsm: "180", moq: "100m", image: "https://placehold.co/600x400/0f3b5c/white?text=EVA+Foam", description: "Lightweight EVA foam for impact protection and cushioning.", features: ["Shockproof", "Lightweight", "Insulation", "Flexible"], applications: ["Shoes", "Bags", "Protective Gear"] },
-    6: { id: 6, name: "EVA Foam 5mm", category: "Foam & Protective", subcategory: "Shockproof", thickness: "5mm", width: "1.3m", color: "Black", gsm: "400", moq: "100m", image: "https://placehold.co/600x400/0f3b5c/white?text=EVA+5mm", description: "Thick EVA foam for maximum protection and insulation.", features: ["High Impact Protection", "Durable", "Insulation", "Shock Absorbent"], applications: ["Protective Gear", "Sports Equipment", "Industrial"] },
-    7: { id: 7, name: "Mesh Lining Fabric", category: "Functional Fabrics", subcategory: "Mesh", thickness: "0.5mm", width: "1.5m", color: "Black", gsm: "120", moq: "100m", image: "https://placehold.co/600x400/2c7da0/white?text=Mesh+Fabric", description: "Breathable mesh fabric for reinforcement and lining applications.", features: ["Breathable", "Lightweight", "Reinforcement", "Quick-dry"], applications: ["Bags", "Shoes", "Backpacks", "Lining"] },
-    8: { id: 8, name: "Recycled Neoprene 3mm", category: "Sustainable", subcategory: "Eco-friendly", thickness: "3mm", width: "1.3m", color: "Black/Gray", gsm: "300", moq: "200m", image: "https://placehold.co/600x400/0aa699/white?text=Recycled", description: "Eco-friendly neoprene made from recycled materials. Sustainable without compromising performance.", features: ["Sustainable", "High Performance", "Eco-friendly", "Durable"], applications: ["Wetsuits", "Bags", "Shoes", "Eco Products"] }
+// 应用场景图标映射
+const appIcons = {
+    "Wetsuits": "🏄",
+    "Cooler Bags": "🎒",
+    "Shoes": "👟",
+    "Backpacks": "🎒",
+    "Protective Gear": "🛡️",
+    "Medical Supports": "🏥",
+    "Sports Equipment": "⚽",
+    "Bags": "👜"
 };
 
 async function loadProduct() {
@@ -447,10 +586,10 @@ async function loadProduct() {
         if (!error && data) {
             product = data;
         } else {
-            product = productDatabase[productId];
+            product = getSampleProduct(productId);
         }
     } catch(e) {
-        product = productDatabase[productId];
+        product = getSampleProduct(productId);
     }
     
     if (!product) {
@@ -460,9 +599,8 @@ async function loadProduct() {
     
     productData = product;
     
-    // 更新 SEO 标题和描述
-    document.title = `${product.name} | ${product.category} Supplier | Siyin`;
-    document.querySelector('meta[name="description"]').setAttribute('content', `${product.name} - ${product.description.substring(0, 150)} OEM & ODM available.`);
+    // 更新 SEO 标题
+    document.title = `${product.name} | ${product.category || "Neoprene"} Supplier | Siyin`;
     
     // 构建媒体列表
     mediaList = [];
@@ -471,10 +609,44 @@ async function loadProduct() {
         product.images.forEach(img => { if (img) mediaList.push({ type: 'image', url: img }); });
     }
     
-    const categoryLabel = categoryLabels[product.category] || product.category;
-    const subcategoryDesc = subcategoryLabels[product.subcategory] || "";
-    const features = product.features || ["Waterproof & Shockproof", "Flexible & Durable", "Thermal Insulation", "OEM Customizable"];
+    // 准备数据
+    const categoryName = product.category || "Neoprene Fabrics";
+    const subcategoryName = product.subcategory || "Laminated Material";
+    const coreFeatures = product.features || ["Waterproof", "Flexible", "Durable", "Thermal Insulation"];
     const applications = product.applications || ["Wetsuits", "Cooler Bags", "Shoes", "Backpacks", "Protective Gear"];
+    
+    // 生成核心卖点标签
+    const sellPointsHtml = coreFeatures.slice(0, 3).map(f => `
+        <div class="sell-point"><span class="icon">✓</span> ${f}</div>
+    `).join('');
+    
+    // 生成应用场景卡片
+    const appsHtml = applications.slice(0, 6).map(app => `
+        <div class="app-card">
+            <div class="app-icon">${appIcons[app] || "📦"}</div>
+            <h4>${app}</h4>
+            <p>Suitable material solution</p>
+        </div>
+    `).join('');
+    
+    // 生成性能特性卡片（带描述）
+    const featuresHtml = coreFeatures.map(f => `
+        <div class="feature-item">
+            <div class="feature-icon">${getFeatureIcon(f)}</div>
+            <h4>${f}</h4>
+            <p>${featureDescriptions[f] || "High-performance material for demanding applications."}</p>
+        </div>
+    `).join('');
+    
+    // 生成规格表格
+    const specsHtml = `
+        <tr><td class="spec-label">Material Type</td><td class="spec-value">${categoryName}</td></tr>
+        <tr><td class="spec-label">Construction</td><td class="spec-value">${subcategoryName}</td></tr>
+        <tr><td class="spec-label">Thickness</td><td class="spec-value">${product.thickness || "Custom (1mm - 10mm)"}</td></tr>
+        <tr><td class="spec-label">Width</td><td class="spec-value">${product.width || "Custom Width Available"}</td></tr>
+        <tr><td class="spec-label">Color</td><td class="spec-value">${product.color || "Black / Custom Color"}</td></tr>
+        <tr><td class="spec-label">MOQ</td><td class="spec-value">${product.moq || "Contact for MOQ"}</td></tr>
+    `;
     
     document.getElementById("productContainer").innerHTML = `
         <a href="products.html" class="back-link">← Back to Products</a>
@@ -488,51 +660,110 @@ async function loadProduct() {
                 <div class="thumbnails" id="thumbnails"></div>
             </div>
             <div>
-                <div class="product-badge">${categoryLabel}</div>
-                <h1 class="product-title">${escapeHtml(product.name)}</h1>
-                <p>${escapeHtml(product.description)}</p>
-                
-                <div class="specs-table">
-                    <div class="spec-row"><div class="spec-label">Material Type</div><div class="spec-value">${product.category || "Neoprene"}</div></div>
-                    <div class="spec-row"><div class="spec-label">Subcategory</div><div class="spec-value">${product.subcategory || "Standard"}</div></div>
-                    ${subcategoryDesc ? `<div class="spec-row"><div class="spec-label">Features</div><div class="spec-value">${subcategoryDesc}</div></div>` : ''}
-                    <div class="spec-row"><div class="spec-label">Thickness</div><div class="spec-value">${product.thickness || "2mm / 3mm / 5mm"}</div></div>
-                    <div class="spec-row"><div class="spec-label">Width</div><div class="spec-value">${product.width || "1.3–1.5m"}</div></div>
-                    <div class="spec-row"><div class="spec-label">Color</div><div class="spec-value">${product.color || "Black / Custom"}</div></div>
-                    <div class="spec-row"><div class="spec-label">GSM</div><div class="spec-value">${product.gsm || "200-500"}</div></div>
-                    <div class="spec-row"><div class="spec-label">MOQ</div><div class="spec-value">${product.moq || "100 meters"}</div></div>
+                <div class="product-header">
+                    <div class="product-badge">${categoryName}</div>
+                    <h1 class="product-title">${escapeHtml(product.name)}</h1>
+                    <p class="product-subtitle">High-performance material for industrial and outdoor applications</p>
+                    <div class="key-sell-points">
+                        ${sellPointsHtml}
+                    </div>
                 </div>
                 
-                <div class="section-title">Key Features</div>
-                <ul class="features-list">
-                    ${features.map(f => `<li>${f}</li>`).join('')}
-                </ul>
-                
-                <div class="section-title">Applications</div>
-                <div class="app-tags">
-                    ${applications.map(app => `<span class="app-tag">${app}</span>`).join('')}
+                <div class="section-card">
+                    <div class="section-title">📖 Material Overview</div>
+                    <div class="section-desc">
+                        ${escapeHtml(product.description || `${product.name} is designed for demanding applications requiring flexibility, durability, and protection. Suitable for wetsuits, bags, shoes, and protective gear.`)}
+
+                    </div>
                 </div>
                 
-                <div class="quote-form">
-                    <h3>Get Free Sample / Request Quote</h3>
-                    <input type="text" id="inqName" placeholder="Your Name *">
-                    <input type="email" id="inqEmail" placeholder="Your Email *">
-                    <input type="text" id="inqCompany" placeholder="Company Name">
-                    <select id="inqType">
-                        <option value="">Inquiry Type</option>
-                        <option value="Sample">Free Sample</option>
-                        <option value="Quote">Price Quotation</option>
-                        <option value="Technical">Technical Support</option>
-                    </select>
-                    <textarea id="inqMessage" rows="4" placeholder="Tell us about your requirements... *"></textarea>
-                    <button class="btn btn-primary" onclick="sendInquiry()">Send Inquiry →</button>
-                    <div id="inqSuccess" style="display:none; margin-top:12px; padding:10px; background:#4ade80; border-radius:8px; text-align:center;">✅ Inquiry sent! We'll contact you soon.</div>
+                <div class="section-card">
+                    <div class="section-title">🎯 Applications</div>
+                    <div class="apps-grid">
+                        ${appsHtml}
+                    </div>
+                </div>
+                
+                <div class="section-card">
+                    <div class="section-title">⚡ Performance Features</div>
+                    <div class="features-grid">
+                        ${featuresHtml}
+                    </div>
+                </div>
+                
+                <div class="section-card">
+                    <div class="section-title">📋 Specifications</div>
+                    <table class="specs-table">
+                        ${specsHtml}
+                    </table>
+                </div>
+                
+                <div class="section-card">
+                    <div class="section-title">🎨 Customization Options</div>
+                    <div class="customization-grid">
+                        <div class="custom-item"><span class="check">✓</span> <span>Thickness customization</span></div>
+                        <div class="custom-item"><span class="check">✓</span> <span>Fabric lamination options</span></div>
+                        <div class="custom-item"><span class="check">✓</span> <span>Color customization</span></div>
+                        <div class="custom-item"><span class="check">✓</span> <span>Surface texture options</span></div>
+                        <div class="custom-item"><span class="check">✓</span> <span>Printing & branding available</span></div>
+                        <div class="custom-item"><span class="check">✓</span> <span>OEM / ODM service</span></div>
+                    </div>
+                </div>
+                
+                <div class="cta-card">
+                    <h3>Get Free Sample or Quote in 24 Hours</h3>
+                    <p>Tell us your requirements, we'll provide the best solution</p>
+                    <div class="cta-buttons">
+                        <button class="btn btn-white" onclick="scrollToInquiry()">Request Sample</button>
+                        <button class="btn btn-white" onclick="scrollToInquiry()">Get Price</button>
+                        <button class="btn btn-white" onclick="scrollToInquiry()">Talk to Engineer</button>
+                    </div>
+                </div>
+                
+                <div class="quote-form" id="quoteForm" style="display:none;">
+                    <div class="section-card">
+                        <div class="section-title">📧 Send Inquiry</div>
+                        <input type="text" id="inqName" placeholder="Your Name *" style="width:100%; padding:12px; margin-bottom:12px; border:1px solid #e2e8f0; border-radius:12px;">
+                        <input type="email" id="inqEmail" placeholder="Your Email *" style="width:100%; padding:12px; margin-bottom:12px; border:1px solid #e2e8f0; border-radius:12px;">
+                        <input type="text" id="inqCompany" placeholder="Company Name" style="width:100%; padding:12px; margin-bottom:12px; border:1px solid #e2e8f0; border-radius:12px;">
+                        <select id="inqType" style="width:100%; padding:12px; margin-bottom:12px; border:1px solid #e2e8f0; border-radius:12px;">
+                            <option value="Sample">Free Sample</option>
+                            <option value="Quote">Price Quotation</option>
+                            <option value="Technical">Technical Support</option>
+                        </select>
+                        <textarea id="inqMessage" rows="4" placeholder="Tell us about your requirements... *" style="width:100%; padding:12px; margin-bottom:12px; border:1px solid #e2e8f0; border-radius:12px;"></textarea>
+                        <button class="btn btn-primary" onclick="sendInquiry()" style="width:100%;">Send Inquiry →</button>
+                        <div id="inqSuccess" style="display:none; margin-top:12px; padding:10px; background:#4ade80; border-radius:8px; text-align:center;">✅ Inquiry sent! We'll contact you soon.</div>
+                    </div>
                 </div>
             </div>
         </div>
     `;
     
     renderMedia();
+}
+
+function getFeatureIcon(feature) {
+    const icons = {
+        "Waterproof": "💧",
+        "Shockproof": "🛡️",
+        "Flexible": "🔄",
+        "Durable": "💪",
+        "Thermal Insulation": "🔥",
+        "Breathable": "🌬️",
+        "Lightweight": "⚡",
+        "Soft Touch": "✨"
+    };
+    return icons[feature] || "✓";
+}
+
+function getSampleProduct(id) {
+    const samples = {
+        1: { id: 1, name: "Neoprene Fabric 2mm", category: "Neoprene Fabrics", subcategory: "Single-layer Neoprene", thickness: "2mm", width: "1.3m", color: "Black", gsm: "200", moq: "100m", image: "https://placehold.co/600x400/0f3b5c/white?text=Neoprene+2mm", description: "Soft, flexible, and waterproof single-layer neoprene.", features: ["Waterproof", "Flexible", "Thermal Insulation"], applications: ["Wetsuits", "Bags", "Shoes"] },
+        2: { id: 2, name: "Neoprene Fabric 3mm", category: "Neoprene Fabrics", subcategory: "Single-layer Neoprene", thickness: "3mm", width: "1.3m", color: "Black", gsm: "300", moq: "100m", image: "https://placehold.co/600x400/0f3b5c/white?text=Neoprene+3mm", description: "Medium thickness neoprene for sports gear.", features: ["Waterproof", "Durable", "Comfortable"], applications: ["Wetsuits", "Protective Gear"] },
+        3: { id: 3, name: "Laminated Neoprene 3mm Black", category: "Laminated Neoprene", subcategory: "Neoprene + Polyester", thickness: "3mm", width: "1.5m", color: "Black", gsm: "350", moq: "100m", image: "https://placehold.co/600x400/2c7da0/white?text=Laminated+3mm", description: "Polyester-backed laminated neoprene, waterproof & flexible.", features: ["Waterproof", "Shockproof", "Flexible", "Durable"], applications: ["Wetsuits", "Cooler Bags", "Shoes", "Backpacks"] }
+    };
+    return samples[id];
 }
 
 function renderMedia() {
@@ -576,6 +807,14 @@ function goToMedia(index) {
     });
 }
 
+function scrollToInquiry() {
+    const form = document.getElementById("quoteForm");
+    if (form) {
+        form.style.display = "block";
+        form.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+}
+
 async function sendInquiry() {
     const name = document.getElementById("inqName")?.value.trim();
     const email = document.getElementById("inqEmail")?.value.trim();
@@ -588,7 +827,7 @@ async function sendInquiry() {
     
     const company = document.getElementById("inqCompany")?.value.trim() || "";
     const inquiryType = document.getElementById("inqType")?.value || "";
-    const fullMessage = `Inquiry Type: ${inquiryType}\nProduct: ${productData?.name || ""}\nCategory: ${productData?.category || ""}\nCompany: ${company}\nMessage: ${message}`;
+    const fullMessage = `Inquiry Type: ${inquiryType}\nProduct: ${productData?.name || ""}\nCompany: ${company}\nMessage: ${message}`;
     
     try {
         const { error } = await sb.from("inquiries").insert([{
@@ -618,6 +857,7 @@ loadProduct();
 window.goToMedia = goToMedia;
 window.changeMedia = changeMedia;
 window.sendInquiry = sendInquiry;
+window.scrollToInquiry = scrollToInquiry;
 </script>
 </body>
 </html>
