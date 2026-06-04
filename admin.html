@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>Siyin 后台管理 V2</title>
+<title>Siyin 后台管理 V3</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 * { box-sizing: border-box; }
@@ -27,7 +27,8 @@ input, select, textarea { width: 100%; padding: 12px; margin-bottom: 16px; borde
 .preview-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin: 5px; }
 
 .tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-.tag { padding: 8px 18px; border: 1px solid #334155; border-radius: 40px; cursor: pointer; background: #1f2a3e; color: #cbd5e1; }
+.tag { padding: 8px 18px; border: 1px solid #334155; border-radius: 40px; cursor: pointer; background: #1f2a3e; color: #cbd5e1; font-size: 13px; transition: all 0.2s; }
+.tag:hover { border-color: #00bfff; }
 .tag.active { background: #00bfff; color: #0f172a; border-color: #00bfff; }
 
 button { padding: 12px 24px; background: #00bfff; color: #0f172a; border: none; border-radius: 40px; cursor: pointer; font-weight: 600; margin-top: 10px; }
@@ -45,8 +46,9 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
 .delete-btn { background: #dc2626; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; }
 .preview-btn { background: #22c55e; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; }
 
-.media-item { background: #1e293b; border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-.media-img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
+.dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 20px; }
+.kpi-box { background: #1e293b; padding: 20px; border-radius: 16px; text-align: center; }
+.kpi-number { font-size: 32px; font-weight: 700; color: #00bfff; }
 
 .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center; }
 .modal-content { background: #1e293b; border-radius: 20px; padding: 28px; width: 90%; max-width: 650px; max-height: 85vh; overflow-y: auto; }
@@ -64,46 +66,74 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
 
 <div id="panelBox">
   <div class="tab-buttons">
-    <button class="tab-btn active" data-tab="products">📦 产品管理</button>
+    <button class="tab-btn active" data-tab="dashboard">📊 Dashboard</button>
+    <button class="tab-btn" data-tab="products">📦 产品管理</button>
     <button class="tab-btn" data-tab="factory">🏭 工厂管理</button>
     <button class="tab-btn" data-tab="settings">⚙️ 网站设置</button>
   </div>
 
+  <!-- ================= Dashboard ================= -->
+  <div id="dashboardTab" class="tab-content active">
+    <div class="dashboard">
+      <div class="kpi-box"><div class="kpi-number" id="kpiProducts">0</div><div>📦 产品总数</div></div>
+      <div class="kpi-box"><div class="kpi-number" id="kpiInquiries">0</div><div>📩 询盘总数</div></div>
+      <div class="kpi-box"><div class="kpi-number" id="kpiWetsuit">0</div><div>🏄 潜水料相关</div></div>
+    </div>
+  </div>
+
   <!-- ================= 产品管理 ================= -->
-  <div id="productsTab" class="tab-content active">
-    <!-- 分步骤上架 -->
+  <div id="productsTab" class="tab-content">
     <div class="box">
       <h3>📤 快速上架新产品</h3>
       
       <div class="step-nav">
         <div class="step active" data-step="1">1. 基础信息</div>
         <div class="step" data-step="2">2. 图片上传</div>
-        <div class="step" data-step="3">3. 规格与标签</div>
-        <div class="step" data-step="4">4. 发布</div>
+        <div class="step" data-step="3">3. 规格参数</div>
+        <div class="step" data-step="4">4. 标签与发布</div>
       </div>
 
-      <!-- Step 1 -->
+      <!-- Step 1：基础信息 -->
       <div id="step1" class="step-content active">
         <input type="text" id="p_name" placeholder="产品名称 *">
+        
         <select id="p_category">
-          <option value="">选择一级分类</option>
+          <option value="">— 选择一级分类 —</option>
           <option value="Neoprene Fabrics">🧵 Neoprene Fabrics</option>
           <option value="Laminated Neoprene">🔗 Laminated Neoprene</option>
-          <option value="Foam & Protective">🛡️ Foam & Protective</option>
-          <option value="Functional Fabrics">📐 Functional Fabrics</option>
-          <option value="Sustainable">🌱 Sustainable Materials</option>
+          <option value="Sportswear Fabrics">🏃 Sportswear / Yogawear Fabrics</option>
+          <option value="Foam & Protective Materials">🛡️ Foam & Protective Materials</option>
+          <option value="Outdoor & Camping Materials">🏕️ Outdoor & Camping Materials</option>
+          <option value="Bag & Cooler Materials">🎒 Bag & Cooler Materials</option>
+          <option value="Medical & Support Materials">🏥 Medical & Support Materials</option>
+          <option value="Eco-Friendly Materials">🌱 Eco-Friendly Materials</option>
+          <option value="Finished Products">📦 Finished Products</option>
         </select>
+        
         <select id="p_subcategory">
-          <option value="">选择二级分类（可选）</option>
-          <option value="Single-layer Neoprene">Single-layer Neoprene</option>
+          <option value="">— 选择二级分类 —</option>
+          <option value="CR Neoprene">CR Neoprene</option>
+          <option value="SCR Neoprene">SCR Neoprene</option>
+          <option value="SBR Neoprene">SBR Neoprene</option>
+          <option value="Perforated Neoprene">Perforated Neoprene</option>
+          <option value="Embossed Neoprene">Embossed Neoprene</option>
           <option value="Neoprene + Polyester">Neoprene + Polyester</option>
+          <option value="Neoprene + Nylon">Neoprene + Nylon</option>
           <option value="Neoprene + Jersey">Neoprene + Jersey</option>
+          <option value="Neoprene + Lycra">Neoprene + Lycra</option>
+          <option value="Double Laminated">Double Laminated</option>
+          <option value="Sports Fabric">Sports Fabric</option>
+          <option value="Yoga Fabric">Yoga Fabric</option>
+          <option value="Foam Sheet">Foam Sheet</option>
+          <option value="Protective Material">Protective Material</option>
+          <option value="Eco Material">Eco Material</option>
         </select>
+        
         <input type="text" id="p_slogan" placeholder="一句话卖点（用于首页/SEO）">
         <button class="btn-next" onclick="goToStep(2)">下一步 →</button>
       </div>
 
-      <!-- Step 2 -->
+      <!-- Step 2：图片上传 -->
       <div id="step2" class="step-content">
         <div class="upload-box" id="uploadBox">📸 点击上传产品图片（可多选）</div>
         <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
@@ -111,44 +141,70 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
         <button class="btn-next" onclick="goToStep(3)">下一步 →</button>
       </div>
 
-      <!-- Step 3 -->
+      <!-- Step 3：规格参数 -->
       <div id="step3" class="step-content">
         <div class="row">
           <input type="text" id="p_thickness" placeholder="厚度 (mm)">
-          <input type="text" id="p_width" placeholder="宽度 (m)">
+          <select id="p_thickness_range">
+            <option value="">厚度范围</option>
+            <option value="0.5mm - 1mm">0.5mm - 1mm</option>
+            <option value="1mm - 2mm">1mm - 2mm</option>
+            <option value="2mm - 3mm">2mm - 3mm</option>
+            <option value="3mm - 5mm">3mm - 5mm</option>
+            <option value="5mm - 8mm">5mm - 8mm</option>
+            <option value="Custom Thickness">Custom Thickness</option>
+          </select>
         </div>
         <div class="row">
+          <input type="text" id="p_width" placeholder="宽度 (m)">
           <input type="text" id="p_gsm" placeholder="GSM">
-          <input type="text" id="p_color" placeholder="颜色">
         </div>
-        <input type="text" id="p_moq" placeholder="MOQ">
+        <div class="row">
+          <input type="text" id="p_color" placeholder="颜色">
+          <input type="text" id="p_moq" placeholder="MOQ">
+        </div>
+        <input type="text" id="p_material" placeholder="材料结构 (如: Neoprene + Polyester)">
+        <button class="btn-next" onclick="goToStep(4)">下一步 →</button>
+      </div>
 
+      <!-- Step 4：标签与发布 -->
+      <div id="step4" class="step-content">
         <h4>⚡ 性能特点</h4>
         <div class="tags" id="featuresTags">
           <div class="tag" data-val="Waterproof">💧 Waterproof</div>
-          <div class="tag" data-val="Shockproof">🛡️ Shockproof</div>
-          <div class="tag" data-val="Thermal">🔥 Thermal</div>
+          <div class="tag" data-val="Thermal Insulation">🔥 Thermal Insulation</div>
           <div class="tag" data-val="Stretch">🔄 Stretch</div>
           <div class="tag" data-val="Breathable">🌬️ Breathable</div>
-          <div class="tag" data-val="Eco">🌱 Eco-Friendly</div>
+          <div class="tag" data-val="Shockproof">🛡️ Shockproof</div>
+          <div class="tag" data-val="Abrasion Resistant">⚙️ Abrasion Resistant</div>
+          <div class="tag" data-val="UV Resistant">☀️ UV Resistant</div>
+          <div class="tag" data-val="Anti-slip">👣 Anti-slip</div>
+          <div class="tag" data-val="Eco-friendly">🌱 Eco-friendly</div>
+          <div class="tag" data-val="Soft Touch">✨ Soft Touch</div>
+          <div class="tag" data-val="Lightweight">🪶 Lightweight</div>
+          <div class="tag" data-val="Quick Dry">💨 Quick Dry</div>
         </div>
 
         <h4>🎯 应用场景</h4>
         <div class="tags" id="appsTags">
           <div class="tag" data-val="Wetsuits">🏄 Wetsuits</div>
-          <div class="tag" data-val="Bags">🎒 Bags & Coolers</div>
-          <div class="tag" data-val="Shoes">👟 Shoes</div>
-          <div class="tag" data-val="Protective">🛡️ Protective Gear</div>
-          <div class="tag" data-val="Outdoor">🏕️ Outdoor</div>
+          <div class="tag" data-val="Sportswear">🏃 Sportswear</div>
+          <div class="tag" data-val="Yoga Wear">🧘 Yoga Wear</div>
+          <div class="tag" data-val="Laptop Bags">💻 Laptop Bags</div>
+          <div class="tag" data-val="School Bags">🎒 School Bags</div>
+          <div class="tag" data-val="Can Cooler">🥤 Can Cooler</div>
+          <div class="tag" data-val="Bottle Holder">🍶 Bottle Holder</div>
+          <div class="tag" data-val="Knee Support">🦵 Knee Support</div>
+          <div class="tag" data-val="Waist Trimmer">🏋️ Waist Trimmer</div>
+          <div class="tag" data-val="Posture Corrector">🧍 Posture Corrector</div>
+          <div class="tag" data-val="Camping Goods">🏕️ Camping Goods</div>
+          <div class="tag" data-val="Outdoor Gear">⛺ Outdoor Gear</div>
+          <div class="tag" data-val="Protective Equipment">🛡️ Protective Equipment</div>
         </div>
 
-        <button class="btn-next" onclick="goToStep(4)">下一步 →</button>
-      </div>
-
-      <!-- Step 4 -->
-      <div id="step4" class="step-content">
         <textarea id="p_desc" rows="4" placeholder="产品详细描述..."></textarea>
         <input type="text" id="p_video" placeholder="视频链接 (YouTube)">
+        
         <button onclick="submitProduct()">🚀 发布产品</button>
         <div id="submitMsg" style="margin-top:15px;"></div>
       </div>
@@ -175,24 +231,6 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
       <button id="addFactoryBtn">添加工厂照片</button>
       <div id="factoryList"></div>
     </div>
-    <div class="box">
-      <h3>📜 证书管理</h3>
-      <div class="upload-box" id="certUploadBox">📸 点击上传证书</div>
-      <input type="file" id="certFile" accept="image/*" style="display:none">
-      <div id="certPreview"></div>
-      <input type="text" id="certName" placeholder="证书名称">
-      <input type="number" id="certOrder" placeholder="排序" value="0">
-      <button id="addCertBtn">添加证书</button>
-      <div id="certList"></div>
-    </div>
-    <div class="box">
-      <h3>⚙️ 工厂视频</h3>
-      <div class="upload-box" id="videoUploadBox">📹 上传 MP4 视频</div>
-      <input type="file" id="videoFile" accept="video/mp4" style="display:none">
-      <div id="videoPreview"></div>
-      <input type="text" id="factoryVideoUrl" placeholder="或粘贴 YouTube 链接">
-      <button id="saveVideoBtn">保存视频设置</button>
-    </div>
   </div>
 
   <!-- ================= 网站设置 ================= -->
@@ -213,26 +251,12 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
     <h3>✏️ 编辑产品</h3>
     <input type="hidden" id="editId">
     <input type="text" id="editName" placeholder="产品名称">
-    <select id="editCategory">
-      <option value="">选择分类</option>
-      <option value="Neoprene Fabrics">🧵 Neoprene Fabrics</option>
-      <option value="Laminated Neoprene">🔗 Laminated Neoprene</option>
-      <option value="Foam & Protective">🛡️ Foam & Protective</option>
-    </select>
-    <div class="row">
-      <input type="text" id="editThickness" placeholder="厚度">
-      <input type="text" id="editWidth" placeholder="宽度">
-    </div>
-    <div class="row">
-      <input type="text" id="editColor" placeholder="颜色">
-      <input type="text" id="editGsm" placeholder="GSM">
-    </div>
+    <select id="editCategory"><option value="">选择分类</option><option value="Neoprene Fabrics">🧵 Neoprene Fabrics</option><option value="Laminated Neoprene">🔗 Laminated Neoprene</option><option value="Foam & Protective">🛡️ Foam & Protective</option></select>
+    <div class="row"><input type="text" id="editThickness" placeholder="厚度"><input type="text" id="editWidth" placeholder="宽度"></div>
+    <div class="row"><input type="text" id="editColor" placeholder="颜色"><input type="text" id="editGsm" placeholder="GSM"></div>
     <input type="text" id="editMoq" placeholder="MOQ">
     <textarea id="editDesc" rows="3" placeholder="产品描述"></textarea>
-    <div class="modal-buttons">
-      <button id="saveEditBtn" style="background:#f59e0b;">保存</button>
-      <button id="cancelEditBtn" style="background:#6c757d;">取消</button>
-    </div>
+    <div class="modal-buttons"><button id="saveEditBtn" style="background:#f59e0b;">保存</button><button id="cancelEditBtn" style="background:#6c757d;">取消</button></div>
   </div>
 </div>
 
@@ -241,7 +265,6 @@ const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// 全局变量
 let currentStep = 1;
 let selectedFiles = [];
 let selectedFeatures = [];
@@ -254,7 +277,7 @@ document.getElementById("loginBtn").onclick = function() {
     document.getElementById("panelBox").style.display = "block";
     loadProducts();
     loadFactoryPhotos();
-    loadCertificates();
+    loadStats();
     loadHeroBackground();
   } else alert("密码错误");
 };
@@ -266,8 +289,9 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
     this.classList.add("active");
     let tab = this.dataset.tab;
     document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+    if (tab === "dashboard") document.getElementById("dashboardTab").classList.add("active");
     if (tab === "products") document.getElementById("productsTab").classList.add("active");
-    if (tab === "factory") { document.getElementById("factoryTab").classList.add("active"); loadFactoryPhotos(); loadCertificates(); }
+    if (tab === "factory") { document.getElementById("factoryTab").classList.add("active"); loadFactoryPhotos(); }
     if (tab === "settings") document.getElementById("settingsTab").classList.add("active");
   };
 });
@@ -318,10 +342,7 @@ function renderPreview() {
     reader.readAsDataURL(file);
   });
 }
-function removeFile(idx) {
-  selectedFiles.splice(idx, 1);
-  renderPreview();
-}
+function removeFile(idx) { selectedFiles.splice(idx, 1); renderPreview(); }
 
 // ========== 提交产品 ==========
 async function submitProduct() {
@@ -342,16 +363,18 @@ async function submitProduct() {
   const productData = {
     name: name,
     category: document.getElementById("p_category").value,
-    subcategory: document.getElementById("p_subcategory").value || null,
-    slogan: document.getElementById("p_slogan").value || "",
-    thickness: document.getElementById("p_thickness").value || "Custom",
-    width: document.getElementById("p_width").value || "Custom",
-    gsm: document.getElementById("p_gsm").value || "Custom",
-    color: document.getElementById("p_color").value || "Custom",
-    moq: document.getElementById("p_moq").value || "Contact",
-    description: document.getElementById("p_desc").value,
+    subcategory: document.getElementById("p_subcategory").value,
+    slogan: document.getElementById("p_slogan").value,
+    thickness: document.getElementById("p_thickness").value,
+    thickness_range: document.getElementById("p_thickness_range").value,
+    width: document.getElementById("p_width").value,
+    gsm: document.getElementById("p_gsm").value,
+    color: document.getElementById("p_color").value,
+    moq: document.getElementById("p_moq").value,
+    material: document.getElementById("p_material").value,
     features: selectedFeatures,
     applications: selectedApps,
+    description: document.getElementById("p_desc").value,
     video_url: document.getElementById("p_video").value || null,
     image: imageUrls[0] || "",
     images: imageUrls
@@ -370,7 +393,7 @@ async function loadProducts() {
   (data || []).forEach(p => {
     html += `<div class="item"><b>${escapeHtml(p.name)}</b><br>📁 ${escapeHtml(p.category || "-")}<br>📏 ${escapeHtml(p.thickness || "-")}<br>
     <div class="item-actions">
-      <button class="edit-btn" onclick="openEditModal(${p.id}, '${escapeHtml(p.name).replace(/'/g,"\\'")}', '${escapeHtml(p.category||"").replace(/'/g,"\\'")}', '${escapeHtml(p.thickness||"").replace(/'/g,"\\'")}', '${escapeHtml(p.width||"").replace(/'/g,"\\'")}', '${escapeHtml(p.color||"").replace(/'/g,"\\'")}', '${escapeHtml(p.gsm||"").replace(/'/g,"\\'")}', '${escapeHtml(p.moq||"").replace(/'/g,"\\'")}', '${escapeHtml(p.description||"").replace(/'/g,"\\'")}')">✏️ 编辑</button>
+      <button class="edit-btn" onclick='openEditModal(${p.id}, "${escapeHtml(p.name).replace(/'/g,"\\'")}", "${escapeHtml(p.category||"").replace(/'/g,"\\'")}", "${escapeHtml(p.thickness||"").replace(/'/g,"\\'")}", "${escapeHtml(p.width||"").replace(/'/g,"\\'")}", "${escapeHtml(p.color||"").replace(/'/g,"\\'")}", "${escapeHtml(p.gsm||"").replace(/'/g,"\\'")}", "${escapeHtml(p.moq||"").replace(/'/g,"\\'")}", "${escapeHtml(p.description||"").replace(/'/g,"\\'")}")'>✏️ 编辑</button>
       <button class="preview-btn" onclick="window.open('product.html?id=${p.id}','_blank')">👁️ 预览</button>
       <button class="delete-btn" onclick="deleteProduct(${p.id})">🗑️ 删除</button>
     </div></div>`;
@@ -411,7 +434,7 @@ document.getElementById("saveEditBtn").onclick = saveEdit;
 document.getElementById("cancelEditBtn").onclick = () => document.getElementById("editModal").style.display = "none";
 document.getElementById("refreshBtn").onclick = loadProducts;
 
-// ========== 工厂照片管理 ==========
+// ========== 工厂照片 ==========
 let currentFactoryFile = null;
 document.getElementById("factoryUploadBox").onclick = () => document.getElementById("factoryFile").click();
 document.getElementById("factoryFile").onchange = (e) => { if (e.target.files[0]) { currentFactoryFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("factoryPreview").innerHTML = `<img src="${ev.target.result}" class="preview-img">`; reader.readAsDataURL(currentFactoryFile); } };
@@ -430,36 +453,27 @@ async function loadFactoryPhotos() {
 }
 async function deleteFactoryPhoto(id) { if (confirm("删除？")) { await sb.from("factory_photos").delete().eq("id", id); loadFactoryPhotos(); } }
 
-// ========== 证书管理 ==========
-let currentCertFile = null;
-document.getElementById("certUploadBox").onclick = () => document.getElementById("certFile").click();
-document.getElementById("certFile").onchange = (e) => { if (e.target.files[0]) { currentCertFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("certPreview").innerHTML = `<img src="${ev.target.result}" class="preview-img">`; reader.readAsDataURL(currentCertFile); } };
-document.getElementById("addCertBtn").onclick = async function() {
-  if (!currentCertFile) { alert("请选择图片"); return; }
-  let fn = "certs/" + Date.now() + "_" + currentCertFile.name;
-  await sb.storage.from("images").upload(fn, currentCertFile);
-  let { data } = sb.storage.from("images").getPublicUrl(fn);
-  await sb.from("factory_certificates").insert([{ image_url: data.publicUrl, name: document.getElementById("certName").value, sort_order: parseInt(document.getElementById("certOrder").value) || 0 }]);
-  alert("添加成功"); location.reload();
-};
-async function loadCertificates() {
-  let { data } = await sb.from("factory_certificates").select("*").order("sort_order");
-  let html = ""; (data || []).forEach(c => { html += `<div class="media-item"><img src="${c.image_url}" class="media-img"><div>${c.name || "证书"}</div><button onclick="deleteCertificate(${c.id})" style="background:#dc2626;">删除</button></div>`; });
-  document.getElementById("certList").innerHTML = html || "<div>暂无</div>";
+// ========== 统计 ==========
+async function loadStats() {
+  const { data: products } = await sb.from("products").select("*");
+  const { data: inquiries } = await sb.from("inquiries").select("*");
+  document.getElementById("kpiProducts").innerText = products?.length || 0;
+  document.getElementById("kpiInquiries").innerText = inquiries?.length || 0;
+  const wetsuitProducts = (products || []).filter(p => p.applications?.includes("Wetsuits")).length;
+  document.getElementById("kpiWetsuit").innerText = wetsuitProducts;
 }
-async function deleteCertificate(id) { if (confirm("删除？")) { await sb.from("factory_certificates").delete().eq("id", id); loadCertificates(); } }
 
-// ========== 网站设置 ==========
+// ========== 背景图 ==========
 let currentHeroFile = null;
 document.getElementById("heroUploadBox").onclick = () => document.getElementById("heroFile").click();
-document.getElementById("heroFile").onchange = (e) => { if (e.target.files[0]) { currentHeroFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("heroPreview").innerHTML = `<img src="${ev.target.result}" class="preview-img">`; reader.readAsDataURL(currentHeroFile); } };
+document.getElementById("heroFile").onchange = (e) => { if (e.target.files[0]) { currentHeroFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("heroPreview").innerHTML = `<img src="${ev.target.result}" style="width:100px;border-radius:8px;">`; reader.readAsDataURL(currentHeroFile); } };
 document.getElementById("saveHeroBtn").onclick = async function() {
   if (!currentHeroFile) { alert("请选择图片"); return; }
   let fn = "hero/" + Date.now() + "_" + currentHeroFile.name;
   await sb.storage.from("images").upload(fn, currentHeroFile);
   let { data } = sb.storage.from("images").getPublicUrl(fn);
   await sb.from("site_settings").upsert({ setting_key: "hero_background", setting_value: data.publicUrl }, { onConflict: "setting_key" });
-  alert("背景图已更新"); location.reload();
+  alert("背景图已更新");
 };
 async function loadHeroBackground() {
   let { data } = await sb.from("site_settings").select("setting_value").eq("setting_key", "hero_background").maybeSingle();
@@ -474,7 +488,6 @@ window.submitProduct = submitProduct;
 window.deleteProduct = deleteProduct;
 window.openEditModal = openEditModal;
 window.deleteFactoryPhoto = deleteFactoryPhoto;
-window.deleteCertificate = deleteCertificate;
 </script>
 </body>
 </html>
