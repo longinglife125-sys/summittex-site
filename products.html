@@ -1,382 +1,466 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Textile Fabrics | SummitTex</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
+<title>Premium Neoprene & Laminated Fabric Products | Siyin</title>
+<meta name="description" content="Supplier of neoprene and laminated fabrics for industrial and consumer applications including wetsuits, cooler bags, shoes, backpacks, and protective gear. OEM & ODM services available.">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-
-body{
-    margin:0;
-    font-family:Arial;
-    background:#f5f7fa;
-    color:#111827;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.container{
-    width:92%;
-    max-width:1200px;
-    margin:auto;
+body {
+    font-family: 'Inter', sans-serif;
+    background: #ffffff;
+    color: #1f2937;
+    line-height: 1.5;
+    padding-top: 70px;
 }
 
-header{
-    background:white;
-    padding:18px 0;
-    box-shadow:0 2px 10px rgba(0,0,0,.05);
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 32px;
 }
 
-.nav{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+/* ================= 导航栏 ================= */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 40px;
+    background: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-.logo{
-    font-size:1.3rem;
-    font-weight:bold;
-    color:#2563eb;
-    text-decoration:none;
+.logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0f3b5c;
+    letter-spacing: -0.5px;
 }
 
-.nav-links a{
-    color:#4b5563;
-    text-decoration:none;
-    margin-left:25px;
+.logo span {
+    color: #00bfff;
 }
 
-.nav-links a:hover{
-    color:#2563eb;
+.nav-links {
+    display: flex;
+    gap: 32px;
 }
 
-.filters{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    margin:25px 0;
+.nav-links a {
+    text-decoration: none;
+    color: #475569;
+    font-weight: 500;
+    font-size: 14px;
+    transition: color 0.2s;
 }
 
-.filter{
-    padding:8px 14px;
-    border-radius:999px;
-    background:white;
-    border:1px solid #e5e7eb;
-    cursor:pointer;
-    font-size:13px;
+.nav-links a:hover,
+.nav-links a.active {
+    color: #00bfff;
 }
 
-.filter.active{
-    background:#2563eb;
-    color:white;
+/* ================= 按钮 ================= */
+.btn {
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 40px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
 }
 
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-    gap:20px;
+.btn-primary {
+    background: #00bfff;
+    color: #0f172a;
 }
 
-.product-card{
-    background:white;
-    border-radius:14px;
-    overflow:hidden;
-    box-shadow:0 8px 20px rgba(0,0,0,.06);
-    cursor:pointer;
-    transition:.3s;
+.btn-primary:hover {
+    background: #0099cc;
+    transform: translateY(-2px);
 }
 
-.product-card:hover{
-    transform:translateY(-6px);
+.btn-outline {
+    border: 1px solid #00bfff;
+    color: #00bfff;
+    background: transparent;
 }
 
-.img-box{
-    position:relative;
-    height:200px;
-    overflow:hidden;
-    background:#f0f0f0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+.btn-outline:hover {
+    background: rgba(0,191,255,0.1);
+    transform: translateY(-2px);
 }
 
-.img-box img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    position:absolute;
-    top:0;
-    left:0;
-    transition:.4s;
+/* ================= 页面头部 ================= */
+.page-header {
+    background: linear-gradient(135deg, #0f3b5c 0%, #1e4a6f 100%);
+    color: white;
+    padding: 60px 0 40px;
+    text-align: center;
 }
 
-.hover-img{
-    opacity:0;
+.page-header h1 {
+    font-size: 42px;
+    margin-bottom: 16px;
 }
 
-.img-box:hover .hover-img{
-    opacity:1;
+.page-header p {
+    font-size: 18px;
+    color: #cbd5e1;
+    max-width: 700px;
+    margin: 0 auto;
 }
 
-.no-img{
-    color:#999;
-    font-size:14px;
+/* ================= 分类筛选 ================= */
+.category-filter {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 40px 0;
 }
 
-.info{
-    padding:14px;
+.filter-btn {
+    padding: 8px 24px;
+    border-radius: 40px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
 }
 
-.tag{
-    font-size:12px;
-    color:#2563eb;
-    background:#e0edff;
-    display:inline-block;
-    padding:4px 10px;
-    border-radius:999px;
-    margin-bottom:8px;
+.filter-btn:hover,
+.filter-btn.active {
+    background: #00bfff;
+    color: white;
+    border-color: #00bfff;
 }
 
-.meta{
-    font-size:13px;
-    color:#6b7280;
+/* ================= 产品网格 ================= */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: 60px;
 }
 
-.feature{
-    font-size:12px;
-    color:#9ca3af;
-    margin-top:6px;
+.product-card {
+    background: white;
+    border: 1px solid #eef2ff;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: pointer;
 }
 
-button{
-    width:100%;
-    margin-top:10px;
-    padding:10px;
-    border:none;
-    border-radius:8px;
-    background:#2563eb;
-    color:white;
-    cursor:pointer;
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 30px -12px rgba(0,0,0,0.12);
+    border-color: #00bfff;
 }
 
-button:hover{
-    background:#1d4ed8;
+.product-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
 }
 
-input{
-    width:100%;
-    padding:12px;
-    margin-top:18px;
-    border-radius:10px;
-    border:1px solid #e5e7eb;
-    box-sizing:border-box;
+.product-info {
+    padding: 20px;
 }
 
-.loading{
-    text-align:center;
-    padding:40px;
-    color:#666;
+.product-info h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: #0f3b5c;
 }
 
-.error-msg{
-    background:#fee2e2;
-    color:#dc2626;
-    padding:12px;
-    border-radius:8px;
-    margin:20px 0;
-    text-align:center;
+.product-info .spec {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 12px;
 }
 
-h1{
-    color:#1e293b;
+.product-info .desc {
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.product-info .price {
+    font-size: 14px;
+    font-weight: 600;
+    color: #00bfff;
+    margin-bottom: 12px;
+}
+
+/* ================= 分页 ================= */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 40px 0;
+}
+
+.pagination button {
+    padding: 8px 16px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pagination button:hover,
+.pagination button.active {
+    background: #00bfff;
+    color: white;
+    border-color: #00bfff;
+}
+
+/* ================= Footer ================= */
+.footer {
+    background: #0f172a;
+    color: #94a3b8;
+    padding: 48px 0;
+    text-align: center;
+    border-top: 1px solid #1e293b;
+}
+
+.footer-logo {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: white;
+}
+
+.footer-logo span {
+    color: #00bfff;
+}
+
+/* ================= 响应式 ================= */
+@media (max-width: 1024px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+    .nav-links {
+        display: none;
+    }
+    .page-header h1 {
+        font-size: 32px;
+    }
+    .container {
+        padding: 0 20px;
+    }
+    .navbar {
+        padding: 12px 20px;
+    }
 }
 </style>
-
 </head>
-
 <body>
 
-<header>
-<div class="container nav">
-    <a href="products.html" class="logo">🏭 SummitTex</a>
+<!-- 导航栏 -->
+<nav class="navbar">
+    <div class="logo">SY<span>siyin</span></div>
     <div class="nav-links">
-        <a href="products.html">Products</a>
         <a href="index.html">Home</a>
+        <a href="products.html" class="active">Products</a>
+        <a href="applications.html">Applications</a>
+        <a href="factory.html">Factory</a>
+        <a href="contact.html">Contact</a>
+        <a href="admin.html">Admin</a>
     </div>
-</div>
-</header>
+</nav>
 
-<div class="container">
+<!-- 页面头部 -->
+<section class="page-header">
+    <div class="container">
+        <h1>Our Products</h1>
+        <p>High-quality neoprene and laminated composite materials for wetsuits, bags, shoes, and protective gear</p>
+    </div>
+</section>
 
-<h1>Fabric Collections</h1>
+<!-- 分类筛选 -->
+<section class="container">
+    <div class="category-filter" id="categoryFilter">
+        <button class="filter-btn active" data-category="all">All Products</button>
+        <button class="filter-btn" data-category="Neoprene Fabrics">🧵 Neoprene Fabrics</button>
+        <button class="filter-btn" data-category="Laminated Neoprene">🔗 Laminated Neoprene</button>
+        <button class="filter-btn" data-category="Foam & Protective">🛡️ Foam & Protective</button>
+        <button class="filter-btn" data-category="Functional Fabrics">📐 Functional Fabrics</button>
+    </div>
+</section>
 
-<input id="search" placeholder="Search fabrics...">
+<!-- 产品列表 -->
+<section class="container">
+    <div id="productsGrid" class="products-grid"><div style="text-align: center;">Loading...</div></div>
+    <div class="pagination" id="pagination"></div>
+</section>
 
-<div class="filters" id="filters"></div>
-
-<div class="grid" id="grid">
-    <div class="loading">Loading products...</div>
-</div>
-
-</div>
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-logo">SY<span>siyin</span></div>
+        <p>Dongguan Siyin Sports Goods Co., Ltd.</p>
+        <p>© 2025 Siyin. All rights reserved.</p>
+    </div>
+</footer>
 
 <script>
-
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
-
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let products = [];
-let current = "All";
-let categories = ["All"];
+let allProducts = [];
+let currentCategory = "all";
+let currentPage = 1;
+const productsPerPage = 9;
 
-async function load(){
+// 产品分类映射
+const categoryMap = {
+    "Neoprene Fabrics": ["Neoprene", "Neoprene Fabrics"],
+    "Laminated Neoprene": ["Laminated", "Laminated Neoprene"],
+    "Foam & Protective": ["EVA", "Foam", "Protective", "Shockproof"],
+    "Functional Fabrics": ["Mesh", "Brushed", "Lining", "Functional"]
+};
 
-try{
-    document.getElementById("grid").innerHTML = '<div class="loading">Loading products...</div>';
-    
-    console.log("Connecting to Supabase...");
-    
-    let { data, error } = await sb
+async function loadProducts() {
+    const { data, error } = await sb
         .from("products")
-        .select("*");
+        .select("*")
+        .order("id", { ascending: false });
     
-    if(error){
-        console.error("Database error:", error);
-        document.getElementById("grid").innerHTML = `<div class="error-msg">❌ Connection failed: ${error.message}</div>`;
+    if (error) {
+        console.error("加载失败:", error);
         return;
     }
     
-    if(data && data.length > 0){
-        products = data;
-        console.log(`✅ Loaded ${products.length} products`);
-        
-        const uniqueCats = [...new Set(data.map(p => p.category).filter(c => c))];
-        categories = ["All", ...uniqueCats];
-        
-    }else{
-        products = [];
-        document.getElementById("grid").innerHTML = '<div class="loading">📭 No products yet</div>';
+    // 如果没有产品数据，使用示例数据
+    if (!data || data.length === 0) {
+        allProducts = getSampleProducts();
+    } else {
+        allProducts = data;
     }
     
-    renderFilters();
-    render();
-
-}catch(err){
-    console.error("Error:", err);
-    document.getElementById("grid").innerHTML = `<div class="error-msg">❌ System error: ${err.message}</div>`;
+    renderProducts();
 }
 
+function getSampleProducts() {
+    return [
+        { id: 1, name: "Neoprene Fabric 2mm", category: "Neoprene Fabrics", gsm: "200", moq: "100m", image: "https://placehold.co/400x220/0f3b5c/white?text=Neoprene+2mm", description: "Soft, flexible, and waterproof single-layer neoprene for wetsuits and bags.", thickness: "2mm", width: "1.3m", color: "Black" },
+        { id: 2, name: "Neoprene Fabric 3mm", category: "Neoprene Fabrics", gsm: "300", moq: "100m", image: "https://placehold.co/400x220/0f3b5c/white?text=Neoprene+3mm", description: "Medium thickness neoprene for sports gear and protective equipment.", thickness: "3mm", width: "1.3m", color: "Black" },
+        { id: 3, name: "Laminated Neoprene 3mm Black", category: "Laminated Neoprene", gsm: "350", moq: "100m", image: "https://placehold.co/400x220/2c7da0/white?text=Laminated+3mm", description: "Polyester-backed laminated neoprene, waterproof & flexible.", thickness: "3mm", width: "1.5m", color: "Black" },
+        { id: 4, name: "Laminated Neoprene + Jersey 5mm", category: "Laminated Neoprene", gsm: "500", moq: "100m", image: "https://placehold.co/400x220/2c7da0/white?text=Neoprene+Jersey", description: "Soft jersey bonding for comfortable wear applications.", thickness: "5mm", width: "1.5m", color: "Black/Custom" },
+        { id: 5, name: "EVA Foam 2mm Shockproof", category: "Foam & Protective", gsm: "180", moq: "100m", image: "https://placehold.co/400x220/0f3b5c/white?text=EVA+Foam", description: "Lightweight EVA foam for impact protection and cushioning.", thickness: "2mm", width: "1.3m", color: "Black/White" },
+        { id: 6, name: "Mesh Lining Fabric", category: "Functional Fabrics", gsm: "120", moq: "100m", image: "https://placehold.co/400x220/2c7da0/white?text=Mesh+Fabric", description: "Breathable mesh fabric for reinforcement and lining.", thickness: "0.5mm", width: "1.5m", color: "Black" },
+        { id: 7, name: "EVA Foam 5mm", category: "Foam & Protective", gsm: "400", moq: "100m", image: "https://placehold.co/400x220/0f3b5c/white?text=EVA+5mm", description: "Thick EVA foam for maximum protection and insulation.", thickness: "5mm", width: "1.3m", color: "Black" },
+        { id: 8, name: "Brushed Lining Fabric", category: "Functional Fabrics", gsm: "150", moq: "100m", image: "https://placehold.co/400x220/2c7da0/white?text=Brushed+Lining", description: "Soft brushed fabric for comfortable inner lining.", thickness: "0.8mm", width: "1.5m", color: "Black/Gray" }
+    ];
 }
 
-function renderFilters(){
-let html = "";
-categories.forEach(c=>{
-let activeClass = (c === current) ? "active" : "";
-html += `<div class="filter ${activeClass}" onclick="setFilter(event, '${c.replace(/'/g, "\\'")}')">${escapeHtml(c)}</div>`;
-});
-document.getElementById("filters").innerHTML = html;
+function filterProducts() {
+    if (currentCategory === "all") return allProducts;
+    
+    const keywords = categoryMap[currentCategory] || [currentCategory];
+    return allProducts.filter(p => {
+        const productCategory = p.category || "";
+        return keywords.some(keyword => productCategory.includes(keyword));
+    });
 }
 
-function setFilter(e,c){
-current = c;
-document.querySelectorAll(".filter").forEach(el=>{
-el.classList.remove("active");
-});
-e.target.classList.add("active");
-render();
-}
-
-document.getElementById("search").addEventListener("input", function(){
-    render();
-});
-
-function goDetail(id){
-    window.location.href = "product.html?id=" + id;
-}
-
-function render(){
-
-if(!products || products.length === 0){
-    document.getElementById("grid").innerHTML = '<div class="loading">📭 No products available</div>';
-    return;
-}
-
-let key = document.getElementById("search").value.toLowerCase();
-
-let list = products.filter(p=>{
-let matchCat = current === "All" || p.category === current;
-let matchSearch = true;
-if(key){
-    matchSearch = 
-        (p.name || "").toLowerCase().includes(key) ||
-        (p.feature || "").toLowerCase().includes(key) ||
-        (p.category || "").toLowerCase().includes(key);
-}
-return matchCat && matchSearch;
-});
-
-if(list.length === 0){
-    document.getElementById("grid").innerHTML = '<div class="loading">🔍 No matching products found</div>';
-    return;
-}
-
-let html = "";
-
-list.forEach(p=>{
-let img = p.image || "";
-let hoverImg = (p.images && p.images.length > 0) ? p.images[0] : img;
-
-let imgHtml = '';
-if(img){
-    imgHtml = `<img src="${img}" class="main-img" onerror="this.style.display='none';this.parentElement.innerHTML='<div class=\'no-img\'>📷 Image not found</div>'">`;
-    if(hoverImg && hoverImg !== img){
-        imgHtml += `<img src="${hoverImg}" class="hover-img" onerror="this.style.display='none'">`;
+function renderProducts() {
+    let filtered = filterProducts();
+    
+    const start = (currentPage - 1) * productsPerPage;
+    const paginated = filtered.slice(start, start + productsPerPage);
+    
+    const container = document.getElementById("productsGrid");
+    if (paginated.length === 0) {
+        container.innerHTML = '<div style="text-align: center; grid-column: 1/-1; padding: 60px;">No products found</div>';
+        document.getElementById("pagination").innerHTML = "";
+        return;
     }
-}else{
-    imgHtml = '<div class="no-img">📷 No image</div>';
+    
+    container.innerHTML = paginated.map(p => `
+        <div class="product-card" onclick="location.href='product.html?id=${p.id}'">
+            <img src="${p.image || 'https://placehold.co/400x220'}" onerror="this.src='https://placehold.co/400x220'">
+            <div class="product-info">
+                <h3>${escapeHtml(p.name)}</h3>
+                <div class="spec">${p.thickness ? `Thickness: ${p.thickness} | ` : ""}Width: ${p.width || "1.3-1.5m"} | Color: ${p.color || "Black/Custom"}</div>
+                <div class="desc">${escapeHtml(p.description || p.feature || (p.category + " material for various applications"))}</div>
+                <div class="spec">📦 MOQ: ${p.moq || "100 meters"}</div>
+                <div class="price">Get Quote →</div>
+            </div>
+        </div>
+    `).join('');
+    
+    renderPagination(filtered.length);
 }
 
-html += `
-<div class="product-card" onclick="goDetail('${p.id}')">
-    <div class="img-box">
-        ${imgHtml}
-    </div>
-    <div class="info">
-        <div class="tag">${escapeHtml(p.category || "Fabric")}</div>
-        <h3>${escapeHtml(p.name || "")}</h3>
-        <p class="meta">
-            GSM: ${escapeHtml(p.gsm || "-")} | MOQ: ${escapeHtml(p.moq || "-")}
-        </p>
-        <p class="feature">
-            ${escapeHtml((p.feature || "").substring(0,80))}
-        </p>
-        <button>View Details →</button>
-    </div>
-</div>
-`;
-});
-
-document.getElementById("grid").innerHTML = html;
+function renderPagination(total) {
+    const totalPages = Math.ceil(total / productsPerPage);
+    if (totalPages <= 1) {
+        document.getElementById("pagination").innerHTML = "";
+        return;
+    }
+    
+    let html = "";
+    for (let i = 1; i <= totalPages; i++) {
+        html += `<button class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+    }
+    document.getElementById("pagination").innerHTML = html;
 }
 
-function escapeHtml(str){
-    if(!str) return "";
-    return str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
+function goToPage(page) {
+    currentPage = page;
+    renderProducts();
+    window.scrollTo({ top: 400, behavior: "smooth" });
 }
 
-load();
+function setupFilters() {
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            currentCategory = btn.dataset.category;
+            currentPage = 1;
+            renderProducts();
+        });
+    });
+}
 
+function escapeHtml(str) {
+    if (!str) return "";
+    return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]);
+}
+
+loadProducts();
+setupFilters();
+window.goToPage = goToPage;
 </script>
-
 </body>
 </html>
