@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title id="pageTitle">Product Detail | Siyin</title>
-<meta name="description" id="pageDescription" content="High-quality neoprene and laminated fabrics for wetsuits, bags, shoes, and protective gear. OEM & ODM solutions available.">
+<meta id="pageDescription" name="description" content="High-quality neoprene and laminated fabrics for wetsuits, bags, shoes, and protective gear. OEM & ODM solutions available.">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -78,6 +78,7 @@ body {
     color: #00bfff;
     text-decoration: none;
     font-weight: 500;
+    margin-bottom: 20px;
 }
 
 /* ================= 按钮 ================= */
@@ -122,6 +123,17 @@ body {
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
+.product-badge {
+    display: inline-block;
+    background: #eef2ff;
+    color: #00bfff;
+    padding: 4px 12px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
 .product-title {
     font-size: 32px;
     font-weight: 700;
@@ -147,7 +159,7 @@ body {
 }
 
 .spec-label {
-    width: 100px;
+    width: 110px;
     font-weight: 600;
     color: #0f3b5c;
 }
@@ -157,9 +169,15 @@ body {
     color: #1f2937;
 }
 
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #0f3b5c;
+    margin: 24px 0 16px;
+}
+
 .features-list {
     list-style: none;
-    margin: 20px 0;
 }
 
 .features-list li {
@@ -179,7 +197,7 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin: 20px 0;
+    margin-bottom: 20px;
 }
 
 .app-tag {
@@ -382,11 +400,39 @@ let productData = null;
 let mediaList = [];
 let currentMediaIndex = 0;
 
-// 示例产品数据（当数据库无数据时使用）
-const sampleProducts = {
-    1: { id: 1, name: "Neoprene Fabric 2mm", category: "Neoprene Fabrics", gsm: "200", moq: "100m", image: "https://placehold.co/600x400/0f3b5c/white?text=Neoprene+2mm", description: "Soft, flexible, and waterproof single-layer neoprene.", thickness: "2mm", width: "1.3m", color: "Black", features: ["Waterproof", "Flexible", "Thermal Insulation"] },
-    2: { id: 2, name: "Neoprene Fabric 3mm", category: "Neoprene Fabrics", gsm: "300", moq: "100m", image: "https://placehold.co/600x400/0f3b5c/white?text=Neoprene+3mm", description: "Medium thickness neoprene for sports gear.", thickness: "3mm", width: "1.3m", color: "Black", features: ["Waterproof", "Durable", "Comfortable"] },
-    3: { id: 3, name: "Laminated Neoprene 3mm Black", category: "Laminated Neoprene", gsm: "350", moq: "100m", image: "https://placehold.co/600x400/2c7da0/white?text=Laminated+3mm", description: "Polyester-backed laminated neoprene, waterproof & flexible.", thickness: "3mm", width: "1.5m", color: "Black", features: ["Waterproof & Shockproof", "Flexible & Durable", "Thermal Insulation", "OEM Customizable"] }
+// 分类标签映射
+const categoryLabels = {
+    "Neoprene Fabrics": "🧵 Single-layer Neoprene",
+    "Laminated Neoprene": "🔗 Multi-layer Laminated",
+    "Foam & Protective": "🛡️ Foam & Protective",
+    "Functional Fabrics": "📐 Functional Fabrics",
+    "Sustainable": "🌱 Sustainable Materials",
+    "Others": "📦 Custom Materials"
+};
+
+// 子分类映射
+const subcategoryLabels = {
+    "Single-layer Neoprene": "Soft, flexible, waterproof",
+    "Neoprene + Polyester": "Durable polyester backing",
+    "Neoprene + Spandex": "High elasticity",
+    "Neoprene + Jersey": "Soft, comfortable",
+    "Neoprene + Nylon": "Strong and durable",
+    "Shockproof": "Impact protection",
+    "Mesh": "Breathable reinforcement",
+    "Lining": "Inner lining fabric",
+    "Eco-friendly": "Recycled materials"
+};
+
+// 完整产品数据（匹配一级+二级分类）
+const productDatabase = {
+    1: { id: 1, name: "Neoprene Fabric 2mm", category: "Neoprene Fabrics", subcategory: "Single-layer Neoprene", thickness: "2mm", width: "1.3m", color: "Black", gsm: "200", moq: "100m", image: "https://placehold.co/600x400/0f3b5c/white?text=Neoprene+2mm", description: "Soft, flexible, and waterproof single-layer neoprene. Ideal for wetsuits, bags, and footwear.", features: ["Waterproof", "Flexible", "Thermal Insulation", "Lightweight"], applications: ["Wetsuits", "Bags", "Shoes", "Protective Gear"] },
+    2: { id: 2, name: "Neoprene Fabric 3mm", category: "Neoprene Fabrics", subcategory: "Single-layer Neoprene", thickness: "3mm", width: "1.3m", color: "Black", gsm: "300", moq: "100m", image: "https://placehold.co/600x400/0f3b5c/white?text=Neoprene+3mm", description: "Medium thickness neoprene for sports gear and protective equipment.", features: ["Waterproof", "Durable", "Comfortable", "Good Insulation"], applications: ["Wetsuits", "Protective Gear", "Sports Equipment"] },
+    3: { id: 3, name: "Laminated Neoprene 3mm Black", category: "Laminated Neoprene", subcategory: "Neoprene + Polyester", thickness: "3mm", width: "1.5m", color: "Black", gsm: "350", moq: "100m", image: "https://placehold.co/600x400/2c7da0/white?text=Laminated+3mm", description: "Polyester-backed laminated neoprene, waterproof & flexible. Perfect for bags and wetsuits.", features: ["Waterproof & Shockproof", "Flexible & Durable", "Thermal Insulation", "OEM Customizable"], applications: ["Wetsuits", "Cooler Bags", "Shoes", "Backpacks"] },
+    4: { id: 4, name: "Laminated Neoprene + Jersey 5mm", category: "Laminated Neoprene", subcategory: "Neoprene + Jersey", thickness: "5mm", width: "1.5m", color: "Black/Custom", gsm: "500", moq: "100m", image: "https://placehold.co/600x400/2c7da0/white?text=Neoprene+Jersey", description: "Soft jersey bonding for comfortable wear applications. Great for protective gear.", features: ["Soft Touch", "Breathable", "High Elasticity", "Comfortable"], applications: ["Wetsuits", "Protective Gear", "Sports Equipment"] },
+    5: { id: 5, name: "EVA Foam 2mm Shockproof", category: "Foam & Protective", subcategory: "Shockproof", thickness: "2mm", width: "1.3m", color: "Black/White", gsm: "180", moq: "100m", image: "https://placehold.co/600x400/0f3b5c/white?text=EVA+Foam", description: "Lightweight EVA foam for impact protection and cushioning.", features: ["Shockproof", "Lightweight", "Insulation", "Flexible"], applications: ["Shoes", "Bags", "Protective Gear"] },
+    6: { id: 6, name: "EVA Foam 5mm", category: "Foam & Protective", subcategory: "Shockproof", thickness: "5mm", width: "1.3m", color: "Black", gsm: "400", moq: "100m", image: "https://placehold.co/600x400/0f3b5c/white?text=EVA+5mm", description: "Thick EVA foam for maximum protection and insulation.", features: ["High Impact Protection", "Durable", "Insulation", "Shock Absorbent"], applications: ["Protective Gear", "Sports Equipment", "Industrial"] },
+    7: { id: 7, name: "Mesh Lining Fabric", category: "Functional Fabrics", subcategory: "Mesh", thickness: "0.5mm", width: "1.5m", color: "Black", gsm: "120", moq: "100m", image: "https://placehold.co/600x400/2c7da0/white?text=Mesh+Fabric", description: "Breathable mesh fabric for reinforcement and lining applications.", features: ["Breathable", "Lightweight", "Reinforcement", "Quick-dry"], applications: ["Bags", "Shoes", "Backpacks", "Lining"] },
+    8: { id: 8, name: "Recycled Neoprene 3mm", category: "Sustainable", subcategory: "Eco-friendly", thickness: "3mm", width: "1.3m", color: "Black/Gray", gsm: "300", moq: "200m", image: "https://placehold.co/600x400/0aa699/white?text=Recycled", description: "Eco-friendly neoprene made from recycled materials. Sustainable without compromising performance.", features: ["Sustainable", "High Performance", "Eco-friendly", "Durable"], applications: ["Wetsuits", "Bags", "Shoes", "Eco Products"] }
 };
 
 async function loadProduct() {
@@ -401,10 +447,10 @@ async function loadProduct() {
         if (!error && data) {
             product = data;
         } else {
-            product = sampleProducts[productId];
+            product = productDatabase[productId];
         }
     } catch(e) {
-        product = sampleProducts[productId];
+        product = productDatabase[productId];
     }
     
     if (!product) {
@@ -414,9 +460,9 @@ async function loadProduct() {
     
     productData = product;
     
-    // 更新 SEO 标题
-    document.title = `${product.name} | Siyin Neoprene Fabric Supplier`;
-    document.querySelector('meta[name="description"]').setAttribute('content', `${product.name} - High-quality material for wetsuits, bags, shoes, and protective gear. OEM & ODM available.`);
+    // 更新 SEO 标题和描述
+    document.title = `${product.name} | ${product.category} Supplier | Siyin`;
+    document.querySelector('meta[name="description"]').setAttribute('content', `${product.name} - ${product.description.substring(0, 150)} OEM & ODM available.`);
     
     // 构建媒体列表
     mediaList = [];
@@ -425,10 +471,13 @@ async function loadProduct() {
         product.images.forEach(img => { if (img) mediaList.push({ type: 'image', url: img }); });
     }
     
+    const categoryLabel = categoryLabels[product.category] || product.category;
+    const subcategoryDesc = subcategoryLabels[product.subcategory] || "";
     const features = product.features || ["Waterproof & Shockproof", "Flexible & Durable", "Thermal Insulation", "OEM Customizable"];
-    const applications = ["Wetsuits", "Cooler Bags", "Shoes", "Backpacks", "Protective Gear"];
+    const applications = product.applications || ["Wetsuits", "Cooler Bags", "Shoes", "Backpacks", "Protective Gear"];
     
     document.getElementById("productContainer").innerHTML = `
+        <a href="products.html" class="back-link">← Back to Products</a>
         <div class="product-detail">
             <div class="media-gallery">
                 <div class="main-media-container" id="mainMediaContainer">
@@ -439,27 +488,27 @@ async function loadProduct() {
                 <div class="thumbnails" id="thumbnails"></div>
             </div>
             <div>
-                <div style="margin-bottom: 16px;">
-                    <a href="products.html" class="back-link">← Back to Products</a>
-                </div>
+                <div class="product-badge">${categoryLabel}</div>
                 <h1 class="product-title">${escapeHtml(product.name)}</h1>
-                <p>${escapeHtml(product.description || product.feature || "High-quality material for various applications")}</p>
+                <p>${escapeHtml(product.description)}</p>
                 
                 <div class="specs-table">
-                    <div class="spec-row"><div class="spec-label">Material</div><div class="spec-value">Neoprene + Polyester</div></div>
+                    <div class="spec-row"><div class="spec-label">Material Type</div><div class="spec-value">${product.category || "Neoprene"}</div></div>
+                    <div class="spec-row"><div class="spec-label">Subcategory</div><div class="spec-value">${product.subcategory || "Standard"}</div></div>
+                    ${subcategoryDesc ? `<div class="spec-row"><div class="spec-label">Features</div><div class="spec-value">${subcategoryDesc}</div></div>` : ''}
                     <div class="spec-row"><div class="spec-label">Thickness</div><div class="spec-value">${product.thickness || "2mm / 3mm / 5mm"}</div></div>
                     <div class="spec-row"><div class="spec-label">Width</div><div class="spec-value">${product.width || "1.3–1.5m"}</div></div>
                     <div class="spec-row"><div class="spec-label">Color</div><div class="spec-value">${product.color || "Black / Custom"}</div></div>
-                    <div class="spec-row"><div class="spec-label">MOQ</div><div class="spec-value">${product.moq || "100 meters"}</div></div>
                     <div class="spec-row"><div class="spec-label">GSM</div><div class="spec-value">${product.gsm || "200-500"}</div></div>
+                    <div class="spec-row"><div class="spec-label">MOQ</div><div class="spec-value">${product.moq || "100 meters"}</div></div>
                 </div>
                 
-                <h3>Key Features</h3>
+                <div class="section-title">Key Features</div>
                 <ul class="features-list">
                     ${features.map(f => `<li>${f}</li>`).join('')}
                 </ul>
                 
-                <h3>Applications</h3>
+                <div class="section-title">Applications</div>
                 <div class="app-tags">
                     ${applications.map(app => `<span class="app-tag">${app}</span>`).join('')}
                 </div>
@@ -539,7 +588,7 @@ async function sendInquiry() {
     
     const company = document.getElementById("inqCompany")?.value.trim() || "";
     const inquiryType = document.getElementById("inqType")?.value || "";
-    const fullMessage = `Inquiry Type: ${inquiryType}\nProduct: ${productData?.name || ""}\nCompany: ${company}\nMessage: ${message}`;
+    const fullMessage = `Inquiry Type: ${inquiryType}\nProduct: ${productData?.name || ""}\nCategory: ${productData?.category || ""}\nCompany: ${company}\nMessage: ${message}`;
     
     try {
         const { error } = await sb.from("inquiries").insert([{
