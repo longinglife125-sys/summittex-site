@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-
-<title>Product Detail | SummitTex</title>
-
+<title id="pageTitle">Product Detail | Siyin</title>
+<meta name="description" id="pageDescription" content="High-quality neoprene and laminated fabrics for wetsuits, bags, shoes, and protective gear. OEM & ODM solutions available.">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * {
     margin: 0;
@@ -17,92 +15,221 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-    background: #f5f7fa;
-    color: #111827;
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: #1f2937;
     line-height: 1.5;
+    padding-top: 70px;
 }
 
 .container {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 0 32px;
 }
 
-/* Header */
-.header {
-    background: white;
-    padding: 16px 0;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.header .container {
+/* ================= 导航栏 ================= */
+.navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 16px 40px;
+    background: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
 .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #2563eb;
+    font-size: 24px;
+    font-weight: 700;
+    color: #0f3b5c;
+    letter-spacing: -0.5px;
+}
+
+.logo span {
+    color: #00bfff;
+}
+
+.nav-links {
+    display: flex;
+    gap: 32px;
+}
+
+.nav-links a {
     text-decoration: none;
+    color: #475569;
+    font-weight: 500;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover {
+    color: #00bfff;
 }
 
 .back-link {
-    color: #4b5563;
-    text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    color: #00bfff;
+    text-decoration: none;
+    font-weight: 500;
 }
 
-.back-link:hover {
-    color: #2563eb;
+/* ================= 按钮 ================= */
+.btn {
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 40px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
 }
 
-/* 主布局 */
-.product-main {
+.btn-primary {
+    background: #00bfff;
+    color: #0f172a;
+}
+
+.btn-primary:hover {
+    background: #0099cc;
+    transform: translateY(-2px);
+}
+
+.btn-outline {
+    border: 1px solid #00bfff;
+    color: #00bfff;
+    background: transparent;
+}
+
+/* ================= 产品详情 ================= */
+.product-detail {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 48px;
+    gap: 50px;
+    padding: 40px 0 60px;
+}
+
+.product-image img {
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.product-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #0f3b5c;
+    margin-bottom: 16px;
+}
+
+.specs-table {
+    background: #f8fafc;
+    border-radius: 20px;
+    padding: 24px;
+    margin: 24px 0;
+}
+
+.spec-row {
+    display: flex;
+    padding: 12px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.spec-row:last-child {
+    border-bottom: none;
+}
+
+.spec-label {
+    width: 100px;
+    font-weight: 600;
+    color: #0f3b5c;
+}
+
+.spec-value {
+    flex: 1;
+    color: #1f2937;
+}
+
+.features-list {
+    list-style: none;
+    margin: 20px 0;
+}
+
+.features-list li {
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.features-list li::before {
+    content: "✓";
+    color: #00bfff;
+    font-weight: bold;
+}
+
+.app-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.app-tag {
+    background: #eef2ff;
+    color: #0f3b5c;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 13px;
+}
+
+.quote-form {
+    background: #f8fafc;
+    border-radius: 20px;
+    padding: 24px;
     margin-top: 30px;
 }
 
-@media (max-width: 768px) {
-    .product-main {
-        grid-template-columns: 1fr;
-        gap: 30px;
-    }
+.quote-form h3 {
+    margin-bottom: 16px;
+    color: #0f3b5c;
 }
 
-/* ========== 图片滑动区域 ========== */
+.quote-form input,
+.quote-form select,
+.quote-form textarea {
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-family: inherit;
+}
+
+/* 多图滑动样式 */
 .media-gallery {
     position: relative;
-    user-select: none;
 }
 
-/* 主媒体容器 - 支持滑动 */
 .main-media-container {
     position: relative;
     overflow: hidden;
     border-radius: 20px;
     background: white;
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    touch-action: pan-y pinch-zoom;
 }
 
 .main-media-wrapper {
     display: flex;
     transition: transform 0.3s ease-out;
     cursor: grab;
-}
-
-.main-media-wrapper:active {
-    cursor: grabbing;
 }
 
 .main-media-item {
@@ -121,14 +248,6 @@ body {
     object-fit: contain;
 }
 
-.main-video {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    border: none;
-    background: #000;
-}
-
-/* 左右箭头按钮 - 放在照片左右两侧中间 */
 .gallery-arrow {
     position: absolute;
     top: 50%;
@@ -140,625 +259,316 @@ body {
     border: none;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 24px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-size: 20px;
     z-index: 10;
-    transition: all 0.2s;
-    font-family: monospace;
 }
 
-.gallery-arrow:hover {
-    background: rgba(0,0,0,0.75);
-    transform: translateY(-50%) scale(1.05);
-}
+.gallery-arrow.left { left: 16px; }
+.gallery-arrow.right { right: 16px; }
 
-.gallery-arrow.left {
-    left: 16px;
-}
-
-.gallery-arrow.right {
-    right: 16px;
-}
-
-/* 指示点（当前第几张） */
-.media-indicators {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 12px;
-}
-
-.indicator-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #cbd5e1;
-    transition: all 0.2s;
-    cursor: pointer;
-}
-
-.indicator-dot.active {
-    width: 24px;
-    border-radius: 4px;
-    background: #2563eb;
-}
-
-/* 缩略图区域 */
 .thumbnails {
     display: flex;
     gap: 12px;
     margin-top: 16px;
     overflow-x: auto;
     padding-bottom: 8px;
-    scrollbar-width: thin;
 }
 
 .thumbnail {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     border-radius: 12px;
     cursor: pointer;
     border: 2px solid transparent;
-    transition: all 0.2s;
     object-fit: cover;
-    background: white;
-    flex-shrink: 0;
 }
 
 .thumbnail.active {
-    border-color: #2563eb;
-    box-shadow: 0 4px 12px rgba(37,99,235,0.2);
+    border-color: #00bfff;
 }
 
-.thumbnail.video-thumb {
-    position: relative;
+/* ================= Footer ================= */
+.footer {
+    background: #0f172a;
+    color: #94a3b8;
+    padding: 48px 0;
+    text-align: center;
 }
 
-.thumbnail.video-thumb::after {
-    content: "▶";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0,0,0,0.6);
-    color: white;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-}
-
-/* 产品信息 */
-.product-info {
-    background: white;
-    border-radius: 20px;
-    padding: 24px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
-}
-
-.category-tag {
-    display: inline-block;
-    background: #e0edff;
-    color: #2563eb;
-    padding: 6px 14px;
-    border-radius: 30px;
-    font-size: 12px;
-    font-weight: 500;
+.footer-logo {
+    font-size: 20px;
+    font-weight: 700;
     margin-bottom: 16px;
-}
-
-.product-title {
-    font-size: 28px;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 16px;
-    line-height: 1.3;
-}
-
-.specs-table {
-    background: #f8fafc;
-    border-radius: 16px;
-    padding: 16px;
-    margin: 20px 0;
-}
-
-.spec-row {
-    display: flex;
-    padding: 10px 0;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.spec-row:last-child {
-    border-bottom: none;
-}
-
-.spec-label {
-    width: 80px;
-    font-weight: 600;
-    color: #475569;
-}
-
-.spec-value {
-    flex: 1;
-    color: #1e293b;
-}
-
-.features {
-    margin: 24px 0;
-}
-
-.features h3 {
-    font-size: 18px;
-    margin-bottom: 12px;
-    color: #1e293b;
-}
-
-.features-content {
-    color: #4b5563;
-    line-height: 1.7;
-}
-
-.rfq-btn {
-    width: 100%;
-    padding: 16px;
-    background: #2563eb;
     color: white;
-    border: none;
-    border-radius: 40px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 24px;
 }
 
-.rfq-btn:hover {
-    background: #1d4ed8;
+.footer-logo span {
+    color: #00bfff;
 }
 
-.whatsapp-btn {
-    width: 100%;
-    padding: 14px;
+.whatsapp {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
     background: #25D366;
     color: white;
-    border: none;
-    border-radius: 40px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
+    padding: 12px 18px;
+    border-radius: 50px;
+    text-decoration: none;
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 8px;
-    margin-top: 12px;
-    text-decoration: none;
-}
-
-.whatsapp-btn:hover {
-    background: #128C7E;
-}
-
-.inquiry-form {
-    margin-top: 30px;
-    background: #f8fafc;
-    border-radius: 20px;
-    padding: 20px;
-    display: none;
-}
-
-.inquiry-form.show {
-    display: block;
-}
-
-.form-group {
-    margin-bottom: 16px;
-}
-
-.form-group input,
-.form-group textarea {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    font-size: 14px;
-}
-
-.send-btn {
-    background: #2563eb;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 40px;
     font-weight: 600;
-    cursor: pointer;
-    width: 100%;
+    font-size: 14px;
+    z-index: 100;
 }
 
-.cancel-btn {
-    background: #e5e7eb;
-    color: #374151;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 40px;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 10px;
-}
-
-.loading, .error, .not-found {
-    text-align: center;
-    padding: 60px;
-    background: white;
-    border-radius: 20px;
-    margin-top: 30px;
+@media (max-width: 768px) {
+    .product-detail {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    .navbar {
+        padding: 12px 20px;
+    }
+    .nav-links {
+        display: none;
+    }
+    .container {
+        padding: 0 20px;
+    }
 }
 </style>
 </head>
-
 <body>
 
-<header class="header">
-    <div class="container">
-        <a href="products.html" class="logo">🏭 SummitTex</a>
-        <a href="products.html" class="back-link">← Back to Products</a>
+<!-- 导航栏 -->
+<nav class="navbar">
+    <div class="logo">SY<span>siyin</span></div>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="applications.html">Applications</a>
+        <a href="factory.html">Factory</a>
+        <a href="contact.html">Contact</a>
+        <a href="admin.html">Admin</a>
     </div>
-</header>
+</nav>
 
-<div class="container">
-    <div id="product-content">
-        <div class="loading">Loading product details...</div>
-    </div>
+<div class="container" id="productContainer">
+    <div style="text-align: center; padding: 60px;">Loading...</div>
 </div>
 
-<script>
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-logo">SY<span>siyin</span></div>
+        <p>Dongguan Siyin Sports Goods Co., Ltd.</p>
+        <p>© 2025 Siyin. All rights reserved.</p>
+    </div>
+</footer>
 
+<a href="https://wa.me/8613800000000?text=Hello, I'm interested in your neoprene products" class="whatsapp" target="_blank">💬 WhatsApp</a>
+
+<script>
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const urlParams = new URLSearchParams(window.location.search);
-let productId = urlParams.get("id");
-if (productId && !isNaN(parseInt(productId))) {
-    productId = parseInt(productId);
-}
+const productId = urlParams.get("id");
 
 let productData = null;
 let mediaList = [];
 let currentMediaIndex = 0;
-let touchStartX = 0;
-let touchCurrentX = 0;
-let isDragging = false;
 
-function escapeHtml(str) {
-    if (!str) return "";
-    return str.replace(/[&<>]/g, function(m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-    });
-}
+// 示例产品数据（当数据库无数据时使用）
+const sampleProducts = {
+    1: { id: 1, name: "Neoprene Fabric 2mm", category: "Neoprene Fabrics", gsm: "200", moq: "100m", image: "https://placehold.co/600x400/0f3b5c/white?text=Neoprene+2mm", description: "Soft, flexible, and waterproof single-layer neoprene.", thickness: "2mm", width: "1.3m", color: "Black", features: ["Waterproof", "Flexible", "Thermal Insulation"] },
+    2: { id: 2, name: "Neoprene Fabric 3mm", category: "Neoprene Fabrics", gsm: "300", moq: "100m", image: "https://placehold.co/600x400/0f3b5c/white?text=Neoprene+3mm", description: "Medium thickness neoprene for sports gear.", thickness: "3mm", width: "1.3m", color: "Black", features: ["Waterproof", "Durable", "Comfortable"] },
+    3: { id: 3, name: "Laminated Neoprene 3mm Black", category: "Laminated Neoprene", gsm: "350", moq: "100m", image: "https://placehold.co/600x400/2c7da0/white?text=Laminated+3mm", description: "Polyester-backed laminated neoprene, waterproof & flexible.", thickness: "3mm", width: "1.5m", color: "Black", features: ["Waterproof & Shockproof", "Flexible & Durable", "Thermal Insulation", "OEM Customizable"] }
+};
 
-function formatText(text) {
-    if (!text) return "No description available";
-    return escapeHtml(text).replace(/\n/g, "<br>");
-}
-
-function isVideoUrl(url) {
-    if (!url) return false;
-    const youtubePattern = /(youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)/i;
-    const vimeoPattern = /vimeo\.com\//i;
-    const mp4Pattern = /\.(mp4|webm|mov)(\?|$)/i;
-    return youtubePattern.test(url) || vimeoPattern.test(url) || mp4Pattern.test(url);
-}
-
-function getEmbedUrl(url) {
-    let match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-    if (match) return `https://www.youtube.com/embed/${match[1]}`;
-    match = url.match(/vimeo\.com\/(\d+)/);
-    if (match) return `https://player.vimeo.com/video/${match[1]}`;
-    return url;
-}
-
-function buildMediaList(product) {
-    const list = [];
-    if (product.images && Array.isArray(product.images)) {
-        product.images.forEach(img => {
-            if (img && img.trim()) list.push({ type: 'image', url: img });
-        });
-    } else if (product.image && product.image.trim()) {
-        list.push({ type: 'image', url: product.image });
-    }
-    if (product.video_url && product.video_url.trim() && isVideoUrl(product.video_url)) {
-        list.push({ type: 'video', url: product.video_url });
-    }
-    return list;
-}
-
-function renderMainMedia() {
-    const container = document.getElementById('mainMediaWrapper');
-    if (!container) return;
-    
-    if (mediaList.length === 0) {
-        container.innerHTML = '<div class="main-media-item"><div style="text-align:center;">No Media</div></div>';
+async function loadProduct() {
+    if (!productId) {
+        document.getElementById("productContainer").innerHTML = "<div style='text-align:center; padding:60px;'>Invalid product ID</div>";
         return;
     }
     
-    container.innerHTML = mediaList.map((media, idx) => {
-        if (media.type === 'video') {
-            const embedUrl = getEmbedUrl(media.url);
-            return `<div class="main-media-item"><iframe class="main-video" src="${embedUrl}" frameborder="0" allowfullscreen></iframe></div>`;
+    let product;
+    try {
+        const { data, error } = await sb.from("products").select("*").eq("id", productId).single();
+        if (!error && data) {
+            product = data;
         } else {
-            return `<div class="main-media-item"><img class="main-image" src="${media.url}" alt="Product image" onerror="this.src='https://placehold.co/800x800?text=Image+Not+Found'"></div>`;
+            product = sampleProducts[productId];
         }
-    }).join('');
-    
-    updateSliderPosition();
-}
-
-function updateSliderPosition() {
-    const wrapper = document.getElementById('mainMediaWrapper');
-    if (wrapper) {
-        wrapper.style.transform = `translateX(-${currentMediaIndex * 100}%)`;
+    } catch(e) {
+        product = sampleProducts[productId];
     }
-    updateIndicators();
-}
-
-function updateIndicators() {
-    const indicators = document.getElementById('mediaIndicators');
-    if (!indicators) return;
     
-    if (mediaList.length <= 1) {
-        indicators.style.display = 'none';
+    if (!product) {
+        document.getElementById("productContainer").innerHTML = "<div style='text-align:center; padding:60px;'>Product not found</div>";
         return;
     }
     
-    indicators.style.display = 'flex';
-    indicators.innerHTML = mediaList.map((_, idx) => 
-        `<div class="indicator-dot ${idx === currentMediaIndex ? 'active' : ''}" onclick="goToMedia(${idx})"></div>`
-    ).join('');
-}
-
-function goToMedia(index) {
-    if (index < 0) index = 0;
-    if (index >= mediaList.length) index = mediaList.length - 1;
-    currentMediaIndex = index;
-    updateSliderPosition();
-    updateThumbnails();
-}
-
-function nextMedia() {
-    if (currentMediaIndex < mediaList.length - 1) {
-        currentMediaIndex++;
-    } else {
-        currentMediaIndex = 0;
+    productData = product;
+    
+    // 更新 SEO 标题
+    document.title = `${product.name} | Siyin Neoprene Fabric Supplier`;
+    document.querySelector('meta[name="description"]').setAttribute('content', `${product.name} - High-quality material for wetsuits, bags, shoes, and protective gear. OEM & ODM available.`);
+    
+    // 构建媒体列表
+    mediaList = [];
+    if (product.image) mediaList.push({ type: 'image', url: product.image });
+    if (product.images && product.images.length) {
+        product.images.forEach(img => { if (img) mediaList.push({ type: 'image', url: img }); });
     }
-    updateSliderPosition();
-    updateThumbnails();
-}
-
-function prevMedia() {
-    if (currentMediaIndex > 0) {
-        currentMediaIndex--;
-    } else {
-        currentMediaIndex = mediaList.length - 1;
-    }
-    updateSliderPosition();
-    updateThumbnails();
-}
-
-function updateThumbnails() {
-    const container = document.getElementById('thumbnails');
-    if (!container) return;
     
-    container.innerHTML = mediaList.map((media, idx) => {
-        let thumbUrl = media.url;
-        let isVideo = media.type === 'video';
-        if (isVideo && media.url.includes('youtube')) {
-            const match = media.url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-            if (match) thumbUrl = `https://img.youtube.com/vi/${match[1]}/default.jpg`;
-        }
-        return `<img src="${thumbUrl}" class="thumbnail ${idx === currentMediaIndex ? 'active' : ''} ${isVideo ? 'video-thumb' : ''}" onclick="goToMedia(${idx})" onerror="this.src='https://placehold.co/80x80?text=No'">`;
-    }).join('');
-}
-
-// 触摸滑动事件
-function bindSwipeEvents() {
-    const container = document.getElementById('mainMediaContainer');
-    if (!container) return;
+    const features = product.features || ["Waterproof & Shockproof", "Flexible & Durable", "Thermal Insulation", "OEM Customizable"];
+    const applications = ["Wetsuits", "Cooler Bags", "Shoes", "Backpacks", "Protective Gear"];
     
-    container.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-        isDragging = true;
-    }, { passive: true });
-    
-    container.addEventListener('touchmove', (e) => {
-        if (!isDragging) return;
-        touchCurrentX = e.touches[0].clientX;
-        const deltaX = touchCurrentX - touchStartX;
-        const wrapper = document.getElementById('mainMediaWrapper');
-        if (wrapper && Math.abs(deltaX) > 20) {
-            e.preventDefault();
-            const offset = (-currentMediaIndex * 100) + (deltaX / container.offsetWidth * 100);
-            wrapper.style.transform = `translateX(${offset}%)`;
-            wrapper.style.transition = 'none';
-        }
-    }, { passive: false });
-    
-    container.addEventListener('touchend', () => {
-        if (!isDragging) return;
-        isDragging = false;
-        const deltaX = touchCurrentX - touchStartX;
-        const threshold = 50;
-        if (Math.abs(deltaX) > threshold) {
-            if (deltaX > 0 && currentMediaIndex > 0) {
-                prevMedia();
-            } else if (deltaX < 0 && currentMediaIndex < mediaList.length - 1) {
-                nextMedia();
-            } else {
-                updateSliderPosition();
-            }
-        } else {
-            updateSliderPosition();
-        }
-        const wrapper = document.getElementById('mainMediaWrapper');
-        if (wrapper) wrapper.style.transition = 'transform 0.3s ease-out';
-    });
-    
-    // 鼠标拖拽支持
-    container.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        touchStartX = e.clientX;
-        isDragging = true;
-        container.style.cursor = 'grabbing';
-    });
-    
-    window.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        touchCurrentX = e.clientX;
-        const deltaX = touchCurrentX - touchStartX;
-        const wrapper = document.getElementById('mainMediaWrapper');
-        if (wrapper && Math.abs(deltaX) > 5) {
-            const offset = (-currentMediaIndex * 100) + (deltaX / container.offsetWidth * 100);
-            wrapper.style.transform = `translateX(${offset}%)`;
-            wrapper.style.transition = 'none';
-        }
-    });
-    
-    window.addEventListener('mouseup', () => {
-        if (!isDragging) return;
-        isDragging = false;
-        container.style.cursor = 'grab';
-        const deltaX = touchCurrentX - touchStartX;
-        const threshold = 50;
-        if (Math.abs(deltaX) > threshold) {
-            if (deltaX > 0 && currentMediaIndex > 0) {
-                prevMedia();
-            } else if (deltaX < 0 && currentMediaIndex < mediaList.length - 1) {
-                nextMedia();
-            } else {
-                updateSliderPosition();
-            }
-        } else {
-            updateSliderPosition();
-        }
-        const wrapper = document.getElementById('mainMediaWrapper');
-        if (wrapper) wrapper.style.transition = 'transform 0.3s ease-out';
-    });
-}
-
-function renderProduct() {
-    if (!productData) return;
-    
-    const p = productData;
-    mediaList = buildMediaList(p);
-    currentMediaIndex = 0;
-    
-    const html = `
-        <div class="product-main">
+    document.getElementById("productContainer").innerHTML = `
+        <div class="product-detail">
             <div class="media-gallery">
                 <div class="main-media-container" id="mainMediaContainer">
                     <div class="main-media-wrapper" id="mainMediaWrapper"></div>
-                    ${mediaList.length > 1 ? `<button class="gallery-arrow left" onclick="prevMedia()">&lt;</button>` : ''}
-                    ${mediaList.length > 1 ? `<button class="gallery-arrow right" onclick="nextMedia()">&gt;</button>` : ''}
+                    ${mediaList.length > 1 ? `<button class="gallery-arrow left" onclick="changeMedia(-1)">‹</button>` : ''}
+                    ${mediaList.length > 1 ? `<button class="gallery-arrow right" onclick="changeMedia(1)">›</button>` : ''}
                 </div>
-                <div class="media-indicators" id="mediaIndicators"></div>
                 <div class="thumbnails" id="thumbnails"></div>
             </div>
-            
-            <div class="product-info">
-                <div class="category-tag">${escapeHtml(p.category || "Fabric")}</div>
-                <h1 class="product-title">${escapeHtml(p.name || "Product Name")}</h1>
-                <div class="specs-table">
-                    <div class="spec-row"><div class="spec-label">⚖️ GSM</div><div class="spec-value">${escapeHtml(p.gsm || "-")}</div></div>
-                    <div class="spec-row"><div class="spec-label">📦 MOQ</div><div class="spec-value">${escapeHtml(p.moq || "-")}</div></div>
+            <div>
+                <div style="margin-bottom: 16px;">
+                    <a href="products.html" class="back-link">← Back to Products</a>
                 </div>
-                <div class="features"><h3>📝 Product Features</h3><div class="features-content">${formatText(p.feature)}</div></div>
-                <button class="rfq-btn" onclick="toggleInquiryForm()">📧 Request Quotation</button>
-                <a href="#" class="whatsapp-btn" id="whatsappLink" target="_blank">💬 WhatsApp Inquiry</a>
-                <div class="inquiry-form" id="inquiryForm">
-                    <h3>📋 Inquiry Form</h3>
-                    <div class="form-group"><input type="text" id="inqName" placeholder="Full Name *"></div>
-                    <div class="form-group"><input type="email" id="inqEmail" placeholder="Email Address *"></div>
-                    <div class="form-group"><input type="text" id="inqCompany" placeholder="Company Name"></div>
-                    <div class="form-group"><input type="text" id="inqQuantity" placeholder="Quantity (meters/rolls)"></div>
-                    <div class="form-group"><textarea id="inqMessage" rows="4" placeholder="Your message..."></textarea></div>
-                    <button class="send-btn" onclick="sendInquiry()">Send Inquiry ✉️</button>
-                    <button class="cancel-btn" onclick="toggleInquiryForm()">Cancel</button>
+                <h1 class="product-title">${escapeHtml(product.name)}</h1>
+                <p>${escapeHtml(product.description || product.feature || "High-quality material for various applications")}</p>
+                
+                <div class="specs-table">
+                    <div class="spec-row"><div class="spec-label">Material</div><div class="spec-value">Neoprene + Polyester</div></div>
+                    <div class="spec-row"><div class="spec-label">Thickness</div><div class="spec-value">${product.thickness || "2mm / 3mm / 5mm"}</div></div>
+                    <div class="spec-row"><div class="spec-label">Width</div><div class="spec-value">${product.width || "1.3–1.5m"}</div></div>
+                    <div class="spec-row"><div class="spec-label">Color</div><div class="spec-value">${product.color || "Black / Custom"}</div></div>
+                    <div class="spec-row"><div class="spec-label">MOQ</div><div class="spec-value">${product.moq || "100 meters"}</div></div>
+                    <div class="spec-row"><div class="spec-label">GSM</div><div class="spec-value">${product.gsm || "200-500"}</div></div>
+                </div>
+                
+                <h3>Key Features</h3>
+                <ul class="features-list">
+                    ${features.map(f => `<li>${f}</li>`).join('')}
+                </ul>
+                
+                <h3>Applications</h3>
+                <div class="app-tags">
+                    ${applications.map(app => `<span class="app-tag">${app}</span>`).join('')}
+                </div>
+                
+                <div class="quote-form">
+                    <h3>Get Free Sample / Request Quote</h3>
+                    <input type="text" id="inqName" placeholder="Your Name *">
+                    <input type="email" id="inqEmail" placeholder="Your Email *">
+                    <input type="text" id="inqCompany" placeholder="Company Name">
+                    <select id="inqType">
+                        <option value="">Inquiry Type</option>
+                        <option value="Sample">Free Sample</option>
+                        <option value="Quote">Price Quotation</option>
+                        <option value="Technical">Technical Support</option>
+                    </select>
+                    <textarea id="inqMessage" rows="4" placeholder="Tell us about your requirements... *"></textarea>
+                    <button class="btn btn-primary" onclick="sendInquiry()">Send Inquiry →</button>
+                    <div id="inqSuccess" style="display:none; margin-top:12px; padding:10px; background:#4ade80; border-radius:8px; text-align:center;">✅ Inquiry sent! We'll contact you soon.</div>
                 </div>
             </div>
         </div>
     `;
     
-    document.getElementById('product-content').innerHTML = html;
-    renderMainMedia();
-    updateThumbnails();
-    bindSwipeEvents();
+    renderMedia();
+}
+
+function renderMedia() {
+    const wrapper = document.getElementById("mainMediaWrapper");
+    if (!wrapper) return;
     
-    const waLink = document.getElementById('whatsappLink');
-    if (waLink && p.name) {
-        waLink.href = `https://wa.me/8613800000000?text=${encodeURIComponent(`Hello, I'm interested in ${p.name}. Please provide me with a quotation.`)}`;
+    wrapper.innerHTML = mediaList.map(media => `
+        <div class="main-media-item">
+            <img class="main-image" src="${media.url}" onerror="this.src='https://placehold.co/800x800'">
+        </div>
+    `).join('');
+    
+    const thumbContainer = document.getElementById("thumbnails");
+    if (thumbContainer && mediaList.length > 1) {
+        thumbContainer.innerHTML = mediaList.map((media, idx) => `
+            <img src="${media.url}" class="thumbnail ${idx === currentMediaIndex ? 'active' : ''}" onclick="goToMedia(${idx})" onerror="this.src='https://placehold.co/70x70'">
+        `).join('');
     }
 }
 
-function toggleInquiryForm() {
-    const form = document.getElementById('inquiryForm');
-    if (form) form.classList.toggle('show');
+function changeMedia(delta) {
+    if (mediaList.length <= 1) return;
+    currentMediaIndex = (currentMediaIndex + delta + mediaList.length) % mediaList.length;
+    const wrapper = document.getElementById("mainMediaWrapper");
+    if (wrapper) wrapper.style.transform = `translateX(-${currentMediaIndex * 100}%)`;
+    
+    document.querySelectorAll(".thumbnail").forEach((thumb, idx) => {
+        if (idx === currentMediaIndex) thumb.classList.add("active");
+        else thumb.classList.remove("active");
+    });
+}
+
+function goToMedia(index) {
+    currentMediaIndex = index;
+    const wrapper = document.getElementById("mainMediaWrapper");
+    if (wrapper) wrapper.style.transform = `translateX(-${currentMediaIndex * 100}%)`;
+    
+    document.querySelectorAll(".thumbnail").forEach((thumb, idx) => {
+        if (idx === currentMediaIndex) thumb.classList.add("active");
+        else thumb.classList.remove("active");
+    });
 }
 
 async function sendInquiry() {
-    const name = document.getElementById('inqName')?.value.trim();
-    const email = document.getElementById('inqEmail')?.value.trim();
-    const message = document.getElementById('inqMessage')?.value.trim();
+    const name = document.getElementById("inqName")?.value.trim();
+    const email = document.getElementById("inqEmail")?.value.trim();
+    const message = document.getElementById("inqMessage")?.value.trim();
+    
     if (!name || !email || !message) {
         alert("Please fill in name, email and message");
         return;
     }
-    const company = document.getElementById('inqCompany')?.value.trim() || '';
-    const quantity = document.getElementById('inqQuantity')?.value.trim() || '';
+    
+    const company = document.getElementById("inqCompany")?.value.trim() || "";
+    const inquiryType = document.getElementById("inqType")?.value || "";
+    const fullMessage = `Inquiry Type: ${inquiryType}\nProduct: ${productData?.name || ""}\nCompany: ${company}\nMessage: ${message}`;
+    
     try {
-        const { error } = await sb.from('inquiries').insert([{
-            name, email, product: productData?.name || '',
-            message: `Company: ${company}\nQuantity: ${quantity}\nMessage: ${message}`,
-            status: 'new', created_at: new Date().toISOString()
+        const { error } = await sb.from("inquiries").insert([{
+            name, email, product: productData?.name || "", message: fullMessage, status: "new", created_at: new Date().toISOString()
         }]);
-        if (error) alert('Failed: ' + error.message);
+        if (error) alert("Failed: " + error.message);
         else {
-            alert('✅ Inquiry sent!');
-            toggleInquiryForm();
-            ['inqName', 'inqEmail', 'inqCompany', 'inqQuantity', 'inqMessage'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = '';
-            });
+            document.getElementById("inqSuccess").style.display = "block";
+            document.getElementById("inqName").value = "";
+            document.getElementById("inqEmail").value = "";
+            document.getElementById("inqCompany").value = "";
+            document.getElementById("inqType").value = "";
+            document.getElementById("inqMessage").value = "";
+            setTimeout(() => {
+                document.getElementById("inqSuccess").style.display = "none";
+            }, 3000);
         }
-    } catch (err) { alert('Error: ' + err.message); }
+    } catch(e) { alert("Error: " + e.message); }
 }
 
-async function loadProduct() {
-    const contentDiv = document.getElementById('product-content');
-    if (!productId) { contentDiv.innerHTML = '<div class="error">Invalid Product Link</div>'; return; }
-    try {
-        const { data, error } = await sb.from('products').select('*').eq('id', productId).single();
-        if (error || !data) { contentDiv.innerHTML = '<div class="error">Product Not Found</div>'; return; }
-        productData = data;
-        renderProduct();
-    } catch (err) { contentDiv.innerHTML = `<div class="error">Error: ${err.message}</div>`; }
+function escapeHtml(str) {
+    if (!str) return "";
+    return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]);
 }
-
-window.goToMedia = goToMedia;
-window.prevMedia = prevMedia;
-window.nextMedia = nextMedia;
-window.toggleInquiryForm = toggleInquiryForm;
-window.sendInquiry = sendInquiry;
 
 loadProduct();
-
+window.goToMedia = goToMedia;
+window.changeMedia = changeMedia;
+window.sendInquiry = sendInquiry;
 </script>
-
 </body>
 </html>
