@@ -114,6 +114,12 @@ body {
     font-family: monospace;
     margin-bottom: 16px;
 }
+.price {
+    font-size: 28px;
+    font-weight: 700;
+    color: #00bfff;
+    margin: 16px 0;
+}
 .performance-tags {
     display: flex;
     flex-wrap: wrap;
@@ -296,6 +302,36 @@ body {
     color: #00bfff;
     font-weight: 500;
 }
+.variant-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+.variant-table th,
+.variant-table td {
+    padding: 12px;
+    border: 1px solid #eef2ff;
+    text-align: left;
+}
+.variant-table th {
+    background: #f8fafc;
+    font-weight: 600;
+}
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+}
+.feature-card {
+    background: #eef2ff;
+    padding: 20px;
+    border-radius: 24px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f2b3d;
+}
 .loading-state {
     text-align: center;
     padding: 80px;
@@ -325,6 +361,7 @@ body {
     .tab-headers { gap: 20px; overflow-x: auto; }
     .tab-btn { font-size: 14px; white-space: nowrap; }
     .cta-row { flex-direction: column; }
+    .feature-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -365,7 +402,6 @@ const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// 安全的字符串转义函数
 function escapeHtml(str) {
     if (str === null || str === undefined) return '';
     return String(str).replace(/[&<>]/g, function(m) {
@@ -376,7 +412,6 @@ function escapeHtml(str) {
     });
 }
 
-// 安全获取数组
 function safeArray(arr) {
     if (!arr) return [];
     if (Array.isArray(arr)) return arr;
@@ -424,12 +459,46 @@ function renderProductDetail(p) {
     const leadTime = p.lead_time === 'fast' ? '7-15 days' : (p.lead_time === 'custom' ? 'Custom' : '20-30 days');
     const oemLevel = p.oem_level || 'OEM';
     const sku = p.sku || 'N/A';
+    const price = p.price || '';
     
-    // 商务信号
     const hasLowMOQ = businessTags.includes('Low MOQ');
     const hasFastDelivery = businessTags.includes('Fast Delivery');
     const hasOEM = businessTags.includes('OEM Available') || p.oem_level === 'OEM';
     const hasSample = businessTags.includes('Sample Available') || businessTags.includes('Sample Service');
+    
+    // 构建变体表格（如果数据库有 variants 字段，否则显示默认）
+    let variantsHtml = '';
+    if (p.variants && Array.isArray(p.variants) && p.variants.length > 0) {
+        variantsHtml = `
+            <h4 style="margin-bottom: 16px; margin-top: 24px; color: #0f2b3d;">📊 Available Variants</h4>
+            <table class="variant-table">
+                <tr><th>Style</th><th>Price</th><th>Stock</th></tr>
+                ${p.variants.map(v => `<tr><td>${escapeHtml(v.style)}</td><td>${escapeHtml(v.price)}</td><td>${escapeHtml(v.stock)}</td></tr>`).join('')}
+            </table>
+        `;
+    }
+    
+    // 构建应用场景网格（更丰富的展示）
+    let appsGridHtml = '';
+    if (applications.length > 0) {
+        appsGridHtml = `
+            <h4 style="margin-bottom: 16px; margin-top: 24px; color: #0f2b3d;">🎯 Applications</h4>
+            <div class="feature-grid">
+                ${applications.map(app => `<div class="feature-card">${escapeHtml(app)}</div>`).join('')}
+            </div>
+        `;
+    }
+    
+    // 构建性能特点网格
+    let featuresGridHtml = '';
+    if (features.length > 0) {
+        featuresGridHtml = `
+            <h4 style="margin-bottom: 16px; color: #0f2b3d;">✨ Key Features</h4>
+            <div class="feature-grid">
+                ${features.map(f => `<div class="feature-card">${escapeHtml(f)}</div>`).join('')}
+            </div>
+        `;
+    }
     
     const html = `
         <div class="detail-grid">
@@ -439,6 +508,7 @@ function renderProductDetail(p) {
             <div class="product-info-section">
                 <h1 class="product-name">${escapeHtml(p.name)}</h1>
                 <div class="sku">SKU: ${escapeHtml(sku)}</div>
+                ${price ? `<div class="price">${escapeHtml(price)}</div>` : ''}
                 
                 <div class="performance-tags">
                     ${features.slice(0, 5).map(f => `<span class="perf-tag">${escapeHtml(f)}</span>`).join('')}
@@ -472,7 +542,7 @@ function renderProductDetail(p) {
         <div class="detail-tabs">
             <div class="tab-headers">
                 <button class="tab-btn active" data-tab="specs">📋 Specifications</button>
-                <button class="tab-btn" data-tab="description">📝 Description</button>
+                <button class="tab-btn" data-tab="features">✨ Features</button>
                 <button class="tab-btn" data-tab="applications">🎯 Applications</button>
                 <button class="tab-btn" data-tab="certifications">✅ Certifications</button>
             </div>
@@ -488,28 +558,15 @@ function renderProductDetail(p) {
                     <tr><td>Width</td><td>${escapeHtml(p.width || 'Standard 140cm / Custom')}</td></tr>
                     <tr><td>Color</td><td>${escapeHtml(p.color || 'Black / Custom')}</td></tr>
                 </table>
+                ${variantsHtml}
             </div>
             
-            <div class="tab-content" id="tab-description">
-                <div style="line-height: 1.8; color: #334155;">
-                    <h4 style="margin-bottom: 16px; color: #0f2b3d;">✨ Key Features</h4>
-                    <ul style="margin-left: 20px; margin-bottom: 24px;">
-                        ${features.map(f => `<li style="margin-bottom: 8px;">${escapeHtml(f)}</li>`).join('')}
-                    </ul>
-                    <h4 style="margin-bottom: 12px; color: #0f2b3d;">📦 Packaging & Shipping</h4>
-                    <p>Packaged in rolls or sheets with protective wrapping. Standard export carton or pallet. Samples available upon request.</p>
-                    <p style="margin-top: 12px;">● MOQ: ${escapeHtml(moq)}<br>
-                    ● Lead Time: ${escapeHtml(leadTime)}<br>
-                    ● Shipping: Sea / Air / Express (DHL, FedEx, UPS)</p>
-                    <p style="margin-top: 12px;">${escapeHtml(p.description || 'Professional neoprene fabric suitable for various applications. OEM/ODM services available.')}</p>
-                </div>
+            <div class="tab-content" id="tab-features">
+                ${featuresGridHtml || '<p>No features data available.</p>'}
             </div>
             
             <div class="tab-content" id="tab-applications">
-                <h4 style="margin-bottom: 16px; color: #0f2b3d;">🎯 Suitable Applications</h4>
-                <div class="app-scene-list">
-                    ${applications.length ? applications.map(app => `<span class="app-scene">${escapeHtml(app)}</span>`).join('') : '<span>Wetsuits, Sportswear, Bags, Medical Supports, Outdoor Gear</span>'}
-                </div>
+                ${appsGridHtml || '<p>No applications data available.</p>'}
             </div>
             
             <div class="tab-content" id="tab-certifications">
@@ -541,7 +598,6 @@ function goToQuote(productName) {
     window.location.href = `contact.html?product=${encodeURIComponent(productName)}`;
 }
 
-// 页面加载
 loadProduct();
 </script>
 </body>
