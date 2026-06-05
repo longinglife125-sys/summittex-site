@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>Siyin 后台管理 V4 | 完整版</title>
+<title>Siyin 后台管理 V5 | 完整商品管理</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 * { box-sizing: border-box; }
@@ -100,7 +100,7 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
       <div id="step1" class="step-content active">
         <div class="row">
           <input type="text" id="p_name" placeholder="产品名称 *">
-          <input type="text" id="p_sku" placeholder="SKU / 产品编码 (如: SBR-NEO-03)">
+          <input type="text" id="p_sku" placeholder="SKU / 产品编码">
         </div>
         <div class="row">
           <select id="p_category">
@@ -113,11 +113,24 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
             <option value="Industrial & Protective Fabrics">🛡️ Industrial & Protective Fabrics</option>
             <option value="Custom OEM & Lamination">⚙️ Custom OEM & Lamination</option>
           </select>
-          <input type="text" id="p_subcategory" placeholder="二级分类 (如: CR Neoprene Fabric)">
+          <select id="p_subcategory">
+            <option value="">— 选择二级分类 —</option>
+            <option value="CR Neoprene">CR Neoprene</option>
+            <option value="SBR Neoprene">SBR Neoprene</option>
+            <option value="TPU Laminated Fabric">TPU Laminated Fabric</option>
+            <option value="Double Laminated Neoprene">Double Laminated Neoprene</option>
+            <option value="Stretch Spandex">Stretch Spandex</option>
+            <option value="Breathable Mesh">Breathable Mesh</option>
+            <option value="Laminated Canvas">Laminated Canvas</option>
+            <option value="Eco Recycled Fabric">Eco Recycled Fabric</option>
+            <option value="Waterproof Ripstop">Waterproof Ripstop</option>
+            <option value="Medical Grade Neoprene">Medical Grade Neoprene</option>
+            <option value="Custom Lamination">Custom Lamination</option>
+          </select>
         </div>
         <div class="row">
           <select id="p_lead_time">
-            <option value="fast">⏱️ Fast (7-15 days)</option>
+            <option value="fast">⚡ Fast (7-15 days)</option>
             <option value="normal">📦 Normal (20-30 days)</option>
             <option value="custom">⚙️ Custom</option>
           </select>
@@ -131,6 +144,9 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
           <label style="display:flex; align-items:center; gap:10px;">
             <input type="checkbox" id="p_is_hot" style="width:20px; margin:0;"> 🔥 标记为热门产品
           </label>
+          <input type="text" id="p_price" placeholder="价格区间 (例: ¥18 - ¥32 / yard)">
+        </div>
+        <div class="row">
           <input type="text" id="p_slogan" placeholder="一句话卖点（用于首页/SEO）">
         </div>
         <button class="btn-next" onclick="goToStep(2)">下一步 →</button>
@@ -151,15 +167,15 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
           <input type="text" id="p_gsm" placeholder="GSM (克重)">
           <select id="p_base_fabric">
             <option value="">基布类型</option>
-            <option value="N cloth">N cloth</option>
-            <option value="T cloth">T cloth</option>
-            <option value="Terry cloth">Terry cloth</option>
-            <option value="Bare Rubber">Bare Rubber</option>
+            <option value="N cloth">N cloth (尼龙)</option>
+            <option value="T cloth">T cloth (涤纶)</option>
+            <option value="Terry cloth">Terry cloth (毛巾布)</option>
+            <option value="Bare Rubber">Bare Rubber (裸胶)</option>
           </select>
         </div>
         <div class="row">
-          <input type="text" id="p_width" placeholder="宽度 / 尺寸">
-          <input type="text" id="p_color" placeholder="颜色">
+          <input type="text" id="p_width" placeholder="宽度 / 尺寸 (例: 150cm)">
+          <input type="text" id="p_color" placeholder="颜色 (例: Black, 可定制)">
         </div>
         <div class="row">
           <input type="text" id="p_moq" placeholder="MOQ (最小订购量)">
@@ -168,10 +184,9 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
             <option value="Rolls">Rolls (卷材)</option>
             <option value="Sheets">Sheets (片材)</option>
             <option value="Cut Pieces">Cut Pieces (裁片)</option>
-            <option value="Finished Lamination">Finished Lamination (成品复合)</option>
           </select>
         </div>
-        <input type="text" id="p_material" placeholder="材料结构 (如: Neoprene + Polyester)">
+        <input type="text" id="p_material" placeholder="材料结构 (例: TPU + Polyester)">
         <button class="btn-next" onclick="goToStep(4)">下一步 →</button>
       </div>
 
@@ -201,7 +216,7 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
           <div class="tag" data-val="Outdoor">🏕️ Outdoor</div>
           <div class="tag" data-val="Yoga">🧘 Yoga</div>
           <div class="tag" data-val="Camping">⛺ Camping</div>
-          <div class="tag" data-val="Protective Gear">🛡️ Protective Gear</div>
+          <div class="tag" data-val="Industrial">🏭 Industrial</div>
         </div>
 
         <h4>💰 商务信号 (Commercial)</h4>
@@ -266,7 +281,7 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
   </div>
 </div>
 
-<!-- 编辑产品模态框（增强版） -->
+<!-- 编辑产品模态框 -->
 <div id="editModal" class="modal">
   <div class="modal-content">
     <h3>✏️ 编辑产品</h3>
@@ -276,7 +291,8 @@ button:hover { background: #0099cc; transform: translateY(-2px); }
       <input type="text" id="editSku" placeholder="SKU">
     </div>
     <div class="row">
-      <select id="editCategory"><option value="">选择分类</option>
+      <select id="editCategory">
+        <option value="">选择分类</option>
         <option value="Neoprene Fabric">Neoprene Fabric</option>
         <option value="Sports & Fitness Textiles">Sports & Fitness Textiles</option>
         <option value="Bag & Luggage Materials">Bag & Luggage Materials</option>
@@ -327,7 +343,6 @@ let selectedApps = [];
 let selectedCommercial = [];
 let selectedCerts = [];
 
-// 登录
 document.getElementById("loginBtn").onclick = function() {
   if (document.getElementById("pass").value === "123456") {
     document.getElementById("loginBox").style.display = "none";
@@ -339,7 +354,6 @@ document.getElementById("loginBtn").onclick = function() {
   } else alert("密码错误");
 };
 
-// 标签页切换
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.onclick = function() {
     document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -363,7 +377,6 @@ function goToStep(step) {
   currentStep = step;
 }
 
-// 标签选择初始化
 function initTagSelection(containerId, selectedArray) {
   document.querySelectorAll(`#${containerId} .tag`).forEach(tag => {
     tag.onclick = function() {
@@ -383,7 +396,6 @@ initTagSelection("appsTags", selectedApps);
 initTagSelection("commercialTags", selectedCommercial);
 initTagSelection("certTags", selectedCerts);
 
-// 图片上传
 document.getElementById("uploadBox").onclick = () => document.getElementById("fileInput").click();
 document.getElementById("fileInput").onchange = (e) => {
   selectedFiles = Array.from(e.target.files);
@@ -402,7 +414,6 @@ function renderPreview() {
 }
 function removeFile(idx) { selectedFiles.splice(idx, 1); renderPreview(); }
 
-// 提交产品（完整版）
 async function submitProduct() {
   const name = document.getElementById("p_name").value.trim();
   if (!name) { alert("请填写产品名称"); return; }
@@ -431,6 +442,7 @@ async function submitProduct() {
     width: document.getElementById("p_width").value,
     color: document.getElementById("p_color").value,
     moq: document.getElementById("p_moq").value,
+    price: document.getElementById("p_price").value,
     material: document.getElementById("p_material").value,
     base_fabric: document.getElementById("p_base_fabric").value,
     product_forms: document.getElementById("p_product_form").value ? [document.getElementById("p_product_form").value] : [],
@@ -454,7 +466,6 @@ async function submitProduct() {
   btn.innerText = "🚀 发布产品";
 }
 
-// 加载产品列表
 async function loadProducts() {
   const { data } = await sb.from("products").select("*").order("id", { ascending: false });
   let html = "";
@@ -473,7 +484,6 @@ async function loadProducts() {
   document.getElementById("productList").innerHTML = html || "<div>暂无产品</div>";
 }
 
-// 打开编辑模态框（增强版）
 function openEditModal(product) {
   document.getElementById("editId").value = product.id;
   document.getElementById("editName").value = product.name || "";
@@ -517,7 +527,6 @@ document.getElementById("saveEditBtn").onclick = saveEdit;
 document.getElementById("cancelEditBtn").onclick = () => document.getElementById("editModal").style.display = "none";
 document.getElementById("refreshBtn").onclick = loadProducts;
 
-// 工厂照片
 let currentFactoryFile = null;
 document.getElementById("factoryUploadBox").onclick = () => document.getElementById("factoryFile").click();
 document.getElementById("factoryFile").onchange = (e) => { if (e.target.files[0]) { currentFactoryFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("factoryPreview").innerHTML = `<img src="${ev.target.result}" class="preview-img">`; reader.readAsDataURL(currentFactoryFile); } };
@@ -536,7 +545,6 @@ async function loadFactoryPhotos() {
 }
 async function deleteFactoryPhoto(id) { if (confirm("删除？")) { await sb.from("factory_photos").delete().eq("id", id); loadFactoryPhotos(); } }
 
-// 统计
 async function loadStats() {
   const { data: products } = await sb.from("products").select("*");
   const { data: inquiries } = await sb.from("inquiries").select("*");
@@ -546,7 +554,6 @@ async function loadStats() {
   document.getElementById("kpiHot").innerText = hotProducts;
 }
 
-// 背景图
 let currentHeroFile = null;
 document.getElementById("heroUploadBox").onclick = () => document.getElementById("heroFile").click();
 document.getElementById("heroFile").onchange = (e) => { if (e.target.files[0]) { currentHeroFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("heroPreview").innerHTML = `<img src="${ev.target.result}" style="width:100px;border-radius:8px;">`; reader.readAsDataURL(currentHeroFile); } };
