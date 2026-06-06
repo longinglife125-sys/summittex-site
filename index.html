@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Siyin | Neoprene Lamination Expert</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Siyin | Neoprene Lamination Expert | 专业氯丁橡胶层压材料制造商</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
 * {
     margin: 0;
@@ -27,30 +28,39 @@ body {
     padding: 0 32px;
 }
 
-/* ================= 导航栏 - 精简版 ================= */
+/* ================= 导航栏 - 增强版 ================= */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 16px 40px;
-    background: white;
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(10px);
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    transition: all 0.3s;
 }
 
 .logo {
-    font-size: 24px;
-    font-weight: 700;
+    font-size: 26px;
+    font-weight: 800;
     color: #0f3b5c;
     letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #0f3b5c 0%, #00bfff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 .logo span {
-    color: #00bfff;
+    background: linear-gradient(135deg, #00bfff 0%, #0099cc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 .nav-links {
@@ -64,11 +74,95 @@ body {
     font-weight: 500;
     font-size: 14px;
     transition: color 0.2s;
+    position: relative;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #00bfff;
+    transition: width 0.2s;
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+    width: 100%;
 }
 
 .nav-links a:hover,
 .nav-links a.active {
     color: #00bfff;
+}
+
+/* 移动端菜单 */
+.menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #0f3b5c;
+}
+
+.mobile-nav {
+    position: fixed;
+    top: 0;
+    right: -280px;
+    width: 280px;
+    height: 100%;
+    background: white;
+    z-index: 1001;
+    padding: 80px 30px 30px;
+    transition: right 0.3s ease;
+    box-shadow: -2px 0 20px rgba(0,0,0,0.1);
+}
+
+.mobile-nav.active {
+    right: 0;
+}
+
+.mobile-nav a {
+    display: block;
+    padding: 15px 0;
+    text-decoration: none;
+    color: #1f2937;
+    font-weight: 500;
+    border-bottom: 1px solid #eef2ff;
+}
+
+.mobile-nav a:hover {
+    color: #00bfff;
+}
+
+.close-menu {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #64748b;
+}
+
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+}
+
+.menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
 }
 
 /* ================= 按钮 ================= */
@@ -81,20 +175,23 @@ body {
     transition: all 0.2s;
     cursor: pointer;
     border: none;
+    font-size: 14px;
 }
 
 .btn-primary {
     background: #00bfff;
     color: #0f172a;
+    box-shadow: 0 4px 12px rgba(0,191,255,0.25);
 }
 
 .btn-primary:hover {
     background: #0099cc;
     transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,191,255,0.35);
 }
 
 .btn-outline {
-    border: 1px solid #00bfff;
+    border: 1.5px solid #00bfff;
     color: #00bfff;
     background: transparent;
 }
@@ -104,10 +201,10 @@ body {
     transform: translateY(-2px);
 }
 
-/* ================= Hero ================= */
+/* ================= Hero 增强版 ================= */
 .hero {
     position: relative;
-    min-height: 90vh;
+    min-height: 85vh;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -121,8 +218,17 @@ body {
     height: 100%;
     background-size: cover;
     background-position: center;
-    filter: brightness(0.7);
     z-index: 0;
+}
+
+.hero-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(15,59,92,0.88) 0%, rgba(30,74,111,0.8) 100%);
 }
 
 .hero .container {
@@ -135,29 +241,32 @@ body {
 }
 
 .hero-content h1 {
-    font-size: 48px;
-    font-weight: 700;
+    font-size: 52px;
+    font-weight: 800;
     line-height: 1.2;
     color: white;
     margin-bottom: 20px;
+    letter-spacing: -1px;
 }
 
 .hero-content p {
     font-size: 18px;
-    color: rgba(255,255,255,0.85);
+    color: rgba(255,255,255,0.9);
     margin-bottom: 32px;
     line-height: 1.6;
 }
 
 .hero-badge {
     display: inline-block;
-    background: rgba(0,191,255,0.15);
-    color: #00bfff;
-    padding: 6px 14px;
+    background: rgba(0,191,255,0.2);
+    backdrop-filter: blur(4px);
+    color: #00e5ff;
+    padding: 6px 16px;
     border-radius: 40px;
     font-size: 12px;
     font-weight: 600;
     margin-bottom: 24px;
+    border: 1px solid rgba(0,191,255,0.3);
 }
 
 .btn-group {
@@ -174,9 +283,11 @@ body {
 
 .structure-image {
     width: 100%;
-    max-width: 500px;
-    border-radius: 20px;
-    box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    max-width: 480px;
+    border-radius: 28px;
+    box-shadow: 0 30px 45px -20px rgba(0,0,0,0.3);
+    background: linear-gradient(135deg, #1e4a6f, #0f3b5c);
+    object-fit: cover;
 }
 
 /* ================= 通用区块 ================= */
@@ -185,21 +296,25 @@ body {
 }
 
 .section-title {
-    font-size: 32px;
+    font-size: 36px;
     font-weight: 700;
     text-align: center;
     color: #0f3b5c;
     margin-bottom: 16px;
+    letter-spacing: -0.5px;
 }
 
 .section-subtitle {
     text-align: center;
     color: #64748b;
-    margin-bottom: 48px;
-    font-size: 16px;
+    margin-bottom: 56px;
+    font-size: 17px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/* ================= 大卡片样式 ================= */
+/* ================= 应用大卡片 ================= */
 .apps-grid-large {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -208,17 +323,17 @@ body {
 
 .app-card-large {
     background: white;
-    border-radius: 24px;
+    border-radius: 28px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
     transition: all 0.4s;
     cursor: pointer;
     border: 1px solid #eef2ff;
 }
 
 .app-card-large:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 25px 40px -12px rgba(0,0,0,0.2);
+    transform: translateY(-10px);
+    box-shadow: 0 30px 45px -15px rgba(0,0,0,0.2);
     border-color: #00bfff;
 }
 
@@ -289,20 +404,20 @@ body {
 .tech-card {
     background: white;
     border: 1px solid #eef2ff;
-    border-radius: 24px;
-    padding: 32px;
+    border-radius: 28px;
+    padding: 36px 28px;
     text-align: center;
     transition: all 0.3s;
 }
 
 .tech-card:hover {
-    transform: translateY(-6px);
+    transform: translateY(-8px);
     border-color: #00bfff;
-    box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1);
+    box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
 }
 
 .tech-icon {
-    font-size: 48px;
+    font-size: 52px;
     margin-bottom: 20px;
 }
 
@@ -319,12 +434,86 @@ body {
 }
 
 .tech-spec {
-    margin-top: 16px;
+    margin-top: 18px;
     padding-top: 16px;
     border-top: 1px solid #eef2ff;
     font-size: 12px;
     color: #00bfff;
-    font-weight: 500;
+    font-weight: 600;
+}
+
+/* ================= 制造流程板块 ================= */
+.process-section {
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    padding: 60px 0;
+    margin: 20px 0;
+}
+
+.process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-top: 20px;
+}
+
+.process-step {
+    background: white;
+    border-radius: 24px;
+    padding: 28px 20px;
+    text-align: center;
+    transition: all 0.3s;
+    border: 1px solid #eef2ff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.process-step:hover {
+    transform: translateY(-6px);
+    border-color: #00bfff;
+    box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1);
+}
+
+.step-number {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #0f3b5c, #1e4a6f);
+    color: white;
+    border-radius: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 20px;
+    margin: 0 auto 16px;
+}
+
+.step-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+}
+
+.process-step h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f3b5c;
+    margin: 8px 0;
+}
+
+.process-step p {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.5;
+    margin-top: 8px;
+}
+
+.process-tag {
+    display: inline-block;
+    background: #e0f7ff;
+    color: #00bfff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 30px;
+    margin-top: 12px;
 }
 
 /* ================= 产品网格 ================= */
@@ -337,22 +526,27 @@ body {
 .product-card {
     background: white;
     border: 1px solid #eef2ff;
-    border-radius: 20px;
+    border-radius: 24px;
     overflow: hidden;
     transition: all 0.3s;
     cursor: pointer;
 }
 
 .product-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 30px -12px rgba(0,0,0,0.12);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 35px -12px rgba(0,0,0,0.12);
     border-color: #00bfff;
 }
 
 .product-card img {
     width: 100%;
-    height: 220px;
+    height: 240px;
     object-fit: cover;
+    transition: 0.3s;
+}
+
+.product-card:hover img {
+    transform: scale(1.03);
 }
 
 .product-info {
@@ -360,7 +554,8 @@ body {
 }
 
 .product-info h3 {
-    font-size: 16px;
+    font-size: 17px;
+    font-weight: 700;
     margin-bottom: 6px;
     color: #0f3b5c;
 }
@@ -380,7 +575,7 @@ body {
 
 .quote-section h2 {
     color: white;
-    font-size: 28px;
+    font-size: 32px;
     margin-bottom: 12px;
     text-align: center;
 }
@@ -442,8 +637,8 @@ body {
 }
 
 .form-success {
-    background: #4ade80;
-    color: #0f172a;
+    background: #10b981;
+    color: white;
     padding: 14px;
     border-radius: 12px;
     text-align: center;
@@ -452,7 +647,7 @@ body {
     font-weight: 500;
 }
 
-/* ================= 最新文章模块 ================= */
+/* ================= 最新文章 ================= */
 .latest-posts {
     background: #f8fafc;
     padding: 60px 0;
@@ -462,6 +657,9 @@ body {
     font-size: 11px;
     color: #9ca3af;
     margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 /* ================= Footer ================= */
@@ -474,7 +672,7 @@ body {
 }
 
 .footer-logo {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     margin-bottom: 16px;
     color: white;
@@ -491,7 +689,7 @@ body {
     right: 24px;
     background: #25D366;
     color: white;
-    padding: 14px 20px;
+    padding: 12px 20px;
     border-radius: 50px;
     text-decoration: none;
     display: flex;
@@ -511,7 +709,7 @@ body {
 
 /* ================= 响应式 ================= */
 @media (max-width: 1024px) {
-    .apps-grid-large, .tech-grid, .products-grid {
+    .apps-grid-large, .tech-grid, .products-grid, .process-steps {
         grid-template-columns: repeat(2, 1fr);
     }
     .hero .container {
@@ -519,7 +717,7 @@ body {
         text-align: center;
     }
     .hero-content h1 {
-        font-size: 36px;
+        font-size: 38px;
     }
     .btn-group {
         justify-content: center;
@@ -533,17 +731,20 @@ body {
 }
 
 @media (max-width: 768px) {
-    .apps-grid-large, .tech-grid, .products-grid {
+    .apps-grid-large, .tech-grid, .products-grid, .process-steps {
         grid-template-columns: 1fr;
     }
     .nav-links {
         display: none;
     }
+    .menu-btn {
+        display: block;
+    }
     .hero-content h1 {
-        font-size: 28px;
+        font-size: 30px;
     }
     .section-title {
-        font-size: 26px;
+        font-size: 28px;
     }
     .container {
         padding: 0 20px;
@@ -551,15 +752,12 @@ body {
     .quote-section {
         padding: 40px 24px;
     }
-    .navbar {
-        padding: 12px 16px;
-    }
 }
 </style>
 </head>
 <body>
 
-<!-- 导航栏 - 精简版 -->
+<!-- 导航栏 - 链接指向独立页面 -->
 <nav class="navbar">
     <div class="logo">SY<span>siyin</span></div>
     <div class="nav-links">
@@ -569,24 +767,35 @@ body {
         <a href="contact.html">Contact</a>
         <a href="admin.html">Admin</a>
     </div>
+    <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
 </nav>
+
+<!-- 移动端菜单 -->
+<div class="menu-overlay" id="menuOverlay"></div>
+<div class="mobile-nav" id="mobileNav">
+    <div class="close-menu" id="closeMenu">&times;</div>
+    <a href="index.html">Home</a>
+    <a href="products.html">Products</a>
+    <a href="factory.html">Factory</a>
+    <a href="contact.html">Contact</a>
+    <a href="admin.html">Admin</a>
+</div>
 
 <!-- Hero 区域 -->
 <section class="hero">
     <div class="hero-bg" id="heroBg"></div>
     <div class="container">
         <div class="hero-content">
-            <div class="hero-badge">NEOPRENE LAMINATION EXPERT</div>
+            <div class="hero-badge">✨ NEOPRENE LAMINATION EXPERT</div>
             <h1>Premium Neoprene Lamination & Technical Fabric Solutions</h1>
             <p>Waterproof • Elastic • Durable • Custom Lamination for Sports, Medical & Industrial Applications</p>
             <div class="btn-group">
-                <a href="contact.html" class="btn btn-primary">Get Samples</a>
-                <a href="contact.html" class="btn btn-outline">Contact Factory</a>
+                <a href="contact.html" class="btn btn-primary">Get Samples →</a>
                 <a href="products.html" class="btn btn-outline">Explore Materials</a>
             </div>
         </div>
         <div class="hero-right">
-            <img src="images/structure.png" alt="Neoprene Lamination Structure" class="structure-image" id="structureImage">
+            <img src="https://placehold.co/500x450/0f3b5c/00bfff?text=Neoprene+Lamination+Structure" alt="Neoprene Lamination Structure" class="structure-image" id="structureImage">
         </div>
     </div>
 </section>
@@ -597,6 +806,20 @@ body {
         <div class="section-title">Applications</div>
         <div class="section-subtitle">High-performance fabrics for diverse industries</div>
         <div class="apps-grid-large" id="appsGridLarge"></div>
+    </div>
+</section>
+
+<!-- 制造流程板块 -->
+<section class="process-section" id="process">
+    <div class="container">
+        <div class="section-title">Manufacturing Process</div>
+        <div class="section-subtitle">From raw material to finished OEM product — precision at every stage</div>
+        <div class="process-steps">
+            <div class="process-step"><div class="step-number">01</div><div class="step-icon">🧻</div><h3>Raw Neoprene Sheet</h3><p>Premium CR/SBR/SCR neoprene sheets. Thickness 1.5mm–12mm.</p><div class="process-tag">Raw Material</div></div>
+            <div class="process-step"><div class="step-number">02</div><div class="step-icon">⚙️</div><h3>Fabric Lamination</h3><p>Hot-press bonding with Jersey, Nylon, Polyester to both sides.</p><div class="process-tag">Lamination Line</div></div>
+            <div class="process-step"><div class="step-number">03</div><div class="step-icon">✂️</div><h3>Precision Cutting</h3><p>CNC die-cutting to ±0.5mm tolerance. Custom templates supported.</p><div class="process-tag">CNC Cutting</div></div>
+            <div class="process-step"><div class="step-number">04</div><div class="step-icon">📦</div><h3>OEM Product Ready</h3><p>Assembly, branding, QC inspection. Ready for B2B/retail channels.</p><div class="process-tag">Finished Goods</div></div>
+        </div>
     </div>
 </section>
 
@@ -614,11 +837,11 @@ body {
 </section>
 
 <!-- Featured Products 区域 -->
-<section class="section">
+<section class="section" id="products">
     <div class="container">
         <div class="section-title">Featured Products</div>
         <div class="section-subtitle">High quality composite fabrics for your needs</div>
-        <div id="featured-products" class="products-grid"><div style="text-align: center;">Loading...</div></div>
+        <div id="featured-products" class="products-grid"><div style="text-align: center; padding: 40px;">Loading products...</div></div>
         <div style="text-align: center; margin-top: 40px;">
             <a href="products.html" class="btn btn-outline">View All Products →</a>
         </div>
@@ -660,7 +883,7 @@ body {
         <div class="section-title">Latest News & Insights</div>
         <div class="section-subtitle">Stay updated with industry trends and company news</div>
         <div id="latestPosts" class="products-grid" style="grid-template-columns: repeat(3, 1fr);">
-            <div style="text-align: center;">Loading...</div>
+            <div style="text-align: center; padding: 40px;">Loading posts...</div>
         </div>
         <div style="text-align: center; margin-top: 40px;">
             <a href="blog.html" class="btn btn-outline">View All →</a>
@@ -677,36 +900,39 @@ body {
     </div>
 </footer>
 
-<a href="https://wa.me/8613800000000?text=Hello, I'm interested in your neoprene lamination products" class="whatsapp" target="_blank">💬 WhatsApp Inquiry</a>
+<a href="https://wa.me/8613800000000?text=Hello%2C%20I'm%20interested%20in%20your%20neoprene%20lamination%20products" class="whatsapp" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp Inquiry</a>
 
 <script>
 const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ================= 加载背景图 =================
+// 加载背景图
 async function loadHeroBackground() {
     const heroBg = document.getElementById("heroBg");
     try {
         const { data } = await sb.from("site_settings").select("setting_value").eq("setting_key", "hero_background").maybeSingle();
         if (data && data.setting_value && data.setting_value.trim() !== "") {
             heroBg.style.backgroundImage = `url('${data.setting_value}')`;
-            heroBg.style.backgroundSize = "cover";
-            heroBg.style.backgroundPosition = "center";
         } else {
             heroBg.style.background = "linear-gradient(135deg, #0f3b5c 0%, #1e4a6f 100%)";
+            heroBg.style.backgroundImage = "none";
         }
     } catch(e) { console.log(e); }
 }
 
-document.getElementById("structureImage").src = "images/structure.png";
+// 图片容错
+const structureImg = document.getElementById("structureImage");
+if (structureImg) {
+    structureImg.onerror = function() { this.src = "https://placehold.co/500x450/0f3b5c/00bfff?text=Neoprene+Lamination"; };
+}
 
-// ================= 大卡片应用数据 =================
+// 应用卡片数据
 const applicationsLarge = [
-    { name: "Diving & Water Sports", desc: "Professional wetsuits for surfing, diving, and extreme water sports.", image: "https://images.unsplash.com/photo-1535223289827-42f1e9919769?q=80&w=800&auto=format", tags: ["Waterproof", "Flexibility", "Thermal"], link: "applications.html#diving" },
-    { name: "Sports Performance Gear", desc: "High-performance materials for fitness wear and compression garments.", image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=800&auto=format", tags: ["Elastic", "Durability", "Breathable"], link: "applications.html#sports" },
-    { name: "Industrial Protection", desc: "Heavy-duty laminated fabrics for safety equipment.", image: "https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?q=80&w=800&auto=format", tags: ["Resistant", "Safety", "Heavy-duty"], link: "applications.html#industrial" },
-    { name: "Bags & Outdoor Gear", desc: "Water-resistant fabrics for backpacks and outdoor equipment.", image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=800&auto=format", tags: ["Water Resistant", "Structure", "Lightweight"], link: "applications.html#bags" }
+    { name: "Diving & Water Sports", desc: "Professional wetsuits for surfing, diving, and extreme water sports.", image: "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=800&auto=format", tags: ["Waterproof", "Flexibility", "Thermal"], link: "applications.html#diving" },
+    { name: "Sports Performance Gear", desc: "High-performance materials for fitness wear and compression garments.", image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&auto=format", tags: ["Elastic", "Durability", "Breathable"], link: "applications.html#sports" },
+    { name: "Industrial Protection", desc: "Heavy-duty laminated fabrics for safety equipment.", image: "https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=800&auto=format", tags: ["Resistant", "Safety", "Heavy-duty"], link: "applications.html#industrial" },
+    { name: "Bags & Outdoor Gear", desc: "Water-resistant fabrics for backpacks and outdoor equipment.", image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&auto=format", tags: ["Water Resistant", "Structure", "Lightweight"], link: "applications.html#bags" }
 ];
 
 function renderLargeApps() {
@@ -714,96 +940,90 @@ function renderLargeApps() {
     if (!container) return;
     container.innerHTML = applicationsLarge.map(app => `
         <div class="app-card-large" onclick="location.href='${app.link}'">
-            <div class="hero-img" style="background-image:url('${app.image}');">
-                <div class="overlay"></div>
-            </div>
-            <div class="content">
-                <h3>${app.name}</h3>
-                <p class="desc">${app.desc}</p>
-                <div class="tags">${app.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
-                <a href="${app.link}" class="explore-btn">Explore Application →</a>
-            </div>
+            <div class="hero-img" style="background-image:url('${app.image}');"><div class="overlay"></div></div>
+            <div class="content"><h3>${app.name}</h3><p class="desc">${app.desc}</p><div class="tags">${app.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div><a href="${app.link}" class="explore-btn">Explore Application →</a></div>
         </div>
     `).join('');
 }
 
-// ================= 加载产品 =================
+// 加载产品
 async function loadFeaturedProducts() {
     try {
         const { data } = await sb.from("products").select("id, name, gsm, moq, image, category").not("image", "is", null).limit(3);
         const container = document.getElementById("featured-products");
         if (!data || data.length === 0) {
-            container.innerHTML = '<div style="text-align: center;">No products yet</div>';
+            container.innerHTML = `<div class="product-card" onclick="location.href='products.html'"><img src="https://placehold.co/400x240/e0e7ff/4f46e5?text=Neoprene+Sheet"><div class="product-info"><h3>Neoprene Sheet</h3><p>CR/SCR · Custom thickness</p></div></div><div class="product-card" onclick="location.href='products.html'"><img src="https://placehold.co/400x240/e0e7ff/4f46e5?text=Laminated+Fabric"><div class="product-info"><h3>Laminated Fabric</h3><p>Jersey/Nylon bonding</p></div></div><div class="product-card" onclick="location.href='products.html'"><img src="https://placehold.co/400x240/e0e7ff/4f46e5?text=Custom+Material"><div class="product-info"><h3>Custom Material</h3><p>Tailored solutions</p></div></div>`;
             return;
         }
         container.innerHTML = data.map(p => `
             <div class="product-card" onclick="location.href='product.html?id=${p.id}'">
-                <img src="${p.image}" onerror="this.src='https://placehold.co/400x220'">
-                <div class="product-info">
-                    <h3>${escapeHtml(p.name)}</h3>
-                    <p>${p.category || "Composite Fabric"} · GSM ${p.gsm || "—"} / MOQ ${p.moq || "Contact"}</p>
-                </div>
+                <img src="${p.image}" onerror="this.src='https://placehold.co/400x240/e0e7ff/4f46e5?text=Product'">
+                <div class="product-info"><h3>${escapeHtml(p.name)}</h3><p>${p.category || "Composite"} · GSM ${p.gsm || "—"}</p></div>
             </div>
         `).join('');
     } catch(e) { console.log(e); }
 }
 
-// ================= 加载最新文章 =================
+// 加载文章
 async function loadLatestPosts() {
     try {
         const { data } = await sb.from("posts").select("id, title, excerpt, image_url, published_at").eq("is_published", true).order("published_at", { ascending: false }).limit(3);
         const container = document.getElementById("latestPosts");
         if (!data || data.length === 0) {
-            container.innerHTML = '<div style="text-align: center;">No posts yet</div>';
+            container.innerHTML = `<div class="product-card" onclick="location.href='blog.html'"><img src="https://placehold.co/400x200/e0e7ff/4f46e5?text=Neoprene+Tech"><div class="product-info"><h3>Neoprene Lamination Guide</h3><p>Industry insights and best practices...</p><p class="post-date">📅 Coming soon</p></div></div><div class="product-card" onclick="location.href='blog.html'"><img src="https://placehold.co/400x200/e0e7ff/4f46e5?text=Industry+News"><div class="product-info"><h3>Manufacturing Innovation</h3><p>Latest advancements in lamination tech...</p><p class="post-date">📅 Coming soon</p></div></div><div class="product-card" onclick="location.href='blog.html'"><img src="https://placehold.co/400x200/e0e7ff/4f46e5?text=Quality+Control"><div class="product-info"><h3>Quality Assurance</h3><p>How we ensure consistent quality...</p><p class="post-date">📅 Coming soon</p></div></div>`;
             return;
         }
         container.innerHTML = data.map(post => `
             <div class="product-card" onclick="location.href='post.html?id=${post.id}'">
-                <img src="${post.image_url || 'https://placehold.co/400x220'}" onerror="this.src='https://placehold.co/400x220'">
-                <div class="product-info">
-                    <h3>${escapeHtml(post.title)}</h3>
-                    <p>${escapeHtml((post.excerpt || "").substring(0, 80))}...</p>
-                    <p class="post-date">📅 ${formatDate(post.published_at)}</p>
-                </div>
+                <img src="${post.image_url || 'https://placehold.co/400x200/e0e7ff/4f46e5?text=News'}" onerror="this.src='https://placehold.co/400x200/e0e7ff/4f46e5'">
+                <div class="product-info"><h3>${escapeHtml(post.title)}</h3><p>${escapeHtml((post.excerpt || "").substring(0, 70))}...</p><p class="post-date">📅 ${formatDate(post.published_at)}</p></div>
             </div>
         `).join('');
     } catch(e) { console.log(e); }
 }
 
-// ================= 发送询盘 =================
+// 询盘提交
 document.getElementById("sendQuoteBtn")?.addEventListener("click", async function() {
     const name = document.getElementById("quoteName")?.value.trim();
     const email = document.getElementById("quoteEmail")?.value.trim();
     const message = document.getElementById("quoteMessage")?.value.trim();
     if (!name || !email || !message) { alert("Please fill in name, email and message"); return; }
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) { alert("Please enter a valid email"); return; }
     const company = document.getElementById("quoteCompany")?.value.trim() || "";
     const inquiryType = document.getElementById("quoteInquiryType")?.value || "";
     const fullMessage = `Inquiry Type: ${inquiryType}\nCompany: ${company}\nMessage: ${message}`;
+    const btn = document.getElementById("sendQuoteBtn");
+    btn.disabled = true;
+    btn.textContent = "Sending...";
     try {
         const { error } = await sb.from("inquiries").insert([{ name, email, message: fullMessage, status: "new", created_at: new Date().toISOString() }]);
-        if (error) alert("Failed: " + error.message);
-        else {
-            document.getElementById("quoteSuccess").style.display = "block";
-            document.getElementById("quoteName").value = "";
-            document.getElementById("quoteEmail").value = "";
-            document.getElementById("quoteCompany").value = "";
-            document.getElementById("quoteInquiryType").value = "";
-            document.getElementById("quoteMessage").value = "";
-            setTimeout(() => { document.getElementById("quoteSuccess").style.display = "none"; }, 3000);
-        }
-    } catch(e) { alert("Error: " + e.message); }
+        if (error) throw error;
+        document.getElementById("quoteSuccess").style.display = "block";
+        document.getElementById("quoteName").value = "";
+        document.getElementById("quoteEmail").value = "";
+        document.getElementById("quoteCompany").value = "";
+        document.getElementById("quoteInquiryType").value = "";
+        document.getElementById("quoteMessage").value = "";
+        setTimeout(() => { document.getElementById("quoteSuccess").style.display = "none"; }, 4000);
+    } catch(e) { alert("Failed: " + e.message); }
+    finally { btn.disabled = false; btn.textContent = "Send Inquiry →"; }
 });
 
-function formatDate(dateStr) {
-    if (!dateStr) return "";
-    const date = new Date(dateStr);
-    return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
-}
+function formatDate(dateStr) { if(!dateStr) return ""; const d = new Date(dateStr); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function escapeHtml(str) { if(!str) return ""; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
 
-function escapeHtml(str) {
-    if (!str) return "";
-    return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]);
-}
+// 移动端菜单交互
+const menuBtn = document.getElementById("menuBtn");
+const mobileNav = document.getElementById("mobileNav");
+const menuOverlay = document.getElementById("menuOverlay");
+const closeMenu = document.getElementById("closeMenu");
+function openMenu() { mobileNav.classList.add("active"); menuOverlay.classList.add("active"); document.body.style.overflow = "hidden"; }
+function closeMenuFunc() { mobileNav.classList.remove("active"); menuOverlay.classList.remove("active"); document.body.style.overflow = ""; }
+menuBtn?.addEventListener("click", openMenu);
+closeMenu?.addEventListener("click", closeMenuFunc);
+menuOverlay?.addEventListener("click", closeMenuFunc);
+document.querySelectorAll(".mobile-nav a").forEach(link => link.addEventListener("click", closeMenuFunc));
 
 loadHeroBackground();
 renderLargeApps();
