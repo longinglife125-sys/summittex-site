@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-<title>Products | Technical Fabrics | Siyin</title>
-<meta name="description" content="Professional neoprene fabric, laminated composite, and functional textiles supplier. OEM/ODM services for wetsuits, bags, medical supports, and protective gear.">
+<title>Products | Neoprene & Laminated Fabrics | Siyin</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * {
     margin: 0;
@@ -30,7 +29,6 @@ body {
     position: sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 .nav-container {
     max-width: 1400px;
@@ -39,6 +37,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 64px;
 }
 .logo {
     font-size: 22px;
@@ -57,8 +56,6 @@ body {
     text-decoration: none;
     font-weight: 500;
     font-size: 14px;
-    padding: 20px 0;
-    transition: color 0.2s;
 }
 .nav-links a:hover, .nav-links a.active {
     color: #00bfff;
@@ -67,27 +64,34 @@ body {
 .slim-banner {
     background: linear-gradient(135deg, #1a4a6a 0%, #0f2b3d 100%);
     color: white;
-    padding: 32px 0 28px;
+    padding: 48px 0 40px;
     text-align: center;
+}
+.slim-banner h1 {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+.slim-banner p {
+    font-size: 16px;
+    opacity: 0.9;
+    margin-bottom: 24px;
 }
 .banner-buttons {
     display: flex;
     justify-content: center;
     gap: 20px;
-    margin-top: 18px;
 }
 .btn-sample, .btn-quote {
-    padding: 10px 28px;
+    padding: 12px 32px;
     border-radius: 40px;
     font-weight: 600;
     font-size: 14px;
     border: none;
     cursor: pointer;
     transition: all 0.2s;
-    display: inline-block;
 }
 .btn-sample {
-    background: #2c3e50;
+    background: transparent;
     color: white;
     border: 1px solid #00bfff;
 }
@@ -101,61 +105,24 @@ body {
 }
 .btn-quote:hover {
     background: #0099cc;
-    transform: translateY(-2px);
 }
-/* 顶部快捷栏 (6项) */
-.quick-strip {
-    margin: 24px auto 0;
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-.quick-chip {
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(4px);
-    padding: 8px 24px;
-    border-radius: 40px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: 1px solid rgba(255,255,255,0.3);
-}
-.quick-chip:hover, .quick-chip.active {
-    background: #00bfff;
-    color: #0f2b3d;
-    border-color: #00bfff;
-}
-/* 搜索+排序 */
-.search-sort-bar {
+/* 搜索栏 */
+.search-bar {
     background: white;
     border-radius: 60px;
-    padding: 6px 6px 6px 20px;
+    padding: 6px 6px 6px 24px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin: 32px 0 20px;
+    margin: 32px 0 24px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     border: 1px solid #e2e8f0;
-    flex-wrap: wrap;
 }
 .search-input {
-    flex: 2;
+    flex: 1;
     border: none;
     padding: 12px 0;
     font-size: 14px;
     outline: none;
-    min-width: 180px;
-}
-.sort-select {
-    border: 1px solid #e2e8f0;
-    border-radius: 40px;
-    padding: 8px 16px;
-    background: white;
-    font-size: 13px;
-    margin: 5px;
-    cursor: pointer;
 }
 /* 主布局 */
 .main-content {
@@ -163,96 +130,68 @@ body {
     gap: 32px;
     margin: 20px 0 40px;
 }
-/* 左侧筛选器 */
-.filter-sidebar {
-    width: 280px;
+/* 左侧分类 */
+.category-sidebar {
+    width: 260px;
     flex-shrink: 0;
     background: white;
-    border-radius: 24px;
+    border-radius: 20px;
     border: 1px solid #e2e8f0;
     position: sticky;
     top: 80px;
     height: fit-content;
 }
-.filter-header {
-    padding: 20px 20px 12px;
+.sidebar-header {
+    padding: 18px 20px 12px;
     border-bottom: 1px solid #eef2ff;
 }
-.filter-header h3 {
+.sidebar-header h3 {
     font-size: 16px;
+    font-weight: 500;
 }
-.filter-group {
-    padding: 0 20px 20px;
-    margin-bottom: 8px;
-    border-bottom: 1px solid #f1f5f9;
+.category-list {
+    padding: 8px 0;
 }
-.filter-title {
-    font-weight: 700;
-    font-size: 13px;
-    color: #0f2b3d;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.filter-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-.filter-option {
-    padding: 6px 14px;
-    border: 1px solid #e2e8f0;
-    border-radius: 30px;
-    font-size: 11px;
+.category-item {
+    padding: 12px 20px;
     cursor: pointer;
     transition: all 0.2s;
-    background: white;
-    color: #475569;
+    border-left: 3px solid transparent;
+    font-weight: 400;
+    font-size: 14px;
+    color: #334155;
 }
-.filter-option.active {
-    background: #00bfff;
-    color: white;
-    border-color: #00bfff;
+.category-item:hover {
+    background: #f8fafc;
+    color: #00bfff;
 }
-.advanced-toggle {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    padding: 12px 20px;
-    font-weight: 600;
-    font-size: 13px;
-    color: #0f2b3d;
-    border-top: 1px solid #eef2ff;
-    margin-top: 8px;
+.category-item.active {
+    background: #eef2ff;
+    border-left-color: #00bfff;
+    color: #00bfff;
 }
-.advanced-content {
+.subcategory-list {
+    padding-left: 32px;
     display: none;
-    padding-top: 8px;
 }
-.advanced-content.show {
+.subcategory-list.show {
     display: block;
 }
-.reset-filter-btn {
-    width: calc(100% - 40px);
-    margin: 0 20px 20px;
-    padding: 10px;
-    background: #f1f5f9;
-    color: #475569;
-    border: 1px solid #e2e8f0;
-    border-radius: 40px;
-    font-size: 12px;
-    font-weight: 600;
+.subcategory-item {
+    padding: 8px 20px;
     cursor: pointer;
+    font-size: 13px;
+    font-weight: 400;
+    color: #64748b;
     transition: all 0.2s;
 }
-.reset-filter-btn:hover {
-    background: #00bfff;
-    color: white;
-    border-color: #00bfff;
+.subcategory-item:hover {
+    color: #00bfff;
 }
-/* 右侧产品区 */
+.subcategory-item.active {
+    color: #00bfff;
+}
+/* 产品卡片 */
 .products-area {
     flex: 1;
 }
@@ -276,128 +215,143 @@ body {
     border: 1px solid #e2e8f0;
     border-radius: 20px;
     overflow: hidden;
-    transition: all 0.2s;
+    transition: all 0.3s;
     position: relative;
 }
 .product-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 24px -8px rgba(0,0,0,0.1);
+    box-shadow: 0 12px 24px -8px rgba(0,0,0,0.12);
     border-color: #00bfff;
 }
 .product-img {
     width: 100%;
-    height: 170px;
+    height: 220px;
     object-fit: cover;
     background: #f1f5f9;
     cursor: pointer;
 }
+.product-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    gap: 8px;
+}
+.badge-hot {
+    background: #ff4757;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 30px;
+    font-size: 10px;
+    font-weight: 600;
+}
+.badge-oem {
+    background: #f59e0b;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 30px;
+    font-size: 10px;
+    font-weight: 600;
+}
 .product-info {
-    padding: 14px;
+    padding: 16px;
 }
 .product-title {
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 400;
     margin-bottom: 8px;
     cursor: pointer;
     color: #1a2a3a;
+    line-height: 1.4;
 }
 .product-title:hover {
     color: #00bfff;
 }
-.perf-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin: 8px 0;
-}
-.perf-badge {
-    font-size: 10px;
-    padding: 2px 10px;
-    border-radius: 20px;
-    background: #eef2ff;
+.product-price {
+    font-size: 24px;
+    font-weight: 700;
     color: #00bfff;
+    margin: 10px 0 8px;
+}
+.product-price small {
+    font-size: 13px;
+    font-weight: 400;
+    color: #94a3b8;
 }
 .product-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 11px;
-    color: #475569;
-    margin: 8px 0 6px;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-.oem-badge {
-    background: #e8f4e8;
-    color: #2e7d32;
-    padding: 3px 8px;
-    border-radius: 20px;
-    font-size: 10px;
-    font-weight: 600;
-}
-.cta-buttons {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
+    font-size: 12px;
+    color: #64748b;
+    margin: 8px 0;
 }
 .cta-quote {
-    flex: 1;
+    width: 100%;
     background: #00bfff;
     border: none;
-    padding: 8px 0;
-    border-radius: 30px;
-    font-size: 12px;
-    font-weight: 600;
+    padding: 10px 0;
+    border-radius: 40px;
+    font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
+    color: white;
     transition: all 0.2s;
+    margin-top: 8px;
 }
 .cta-quote:hover {
     background: #0099cc;
-    transform: translateY(-2px);
 }
-.cta-wa {
-    background: #25D366;
+/* 分页 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 40px 0 50px;
+}
+.pagination button {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+}
+.pagination button.active {
+    background: #00bfff;
     color: white;
-    padding: 8px 12px;
-    border-radius: 30px;
-    font-size: 12px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    transition: all 0.2s;
+    border-color: #00bfff;
 }
-.cta-wa:hover {
-    background: #128C7E;
-    transform: translateY(-2px);
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 /* 移动端 */
-.mobile-filter-btn {
+.mobile-category-btn {
     display: none;
     background: white;
     border: 1px solid #e2e8f0;
-    padding: 10px 16px;
+    padding: 10px 20px;
     border-radius: 40px;
-    font-weight: 600;
+    font-weight: 500;
     margin-bottom: 16px;
     width: fit-content;
     cursor: pointer;
 }
-.filter-drawer {
+.category-drawer {
     position: fixed;
     top: 0;
     left: -100%;
     width: 85%;
-    max-width: 320px;
+    max-width: 300px;
     height: 100%;
     background: white;
     z-index: 1200;
     transition: left 0.3s;
-    box-shadow: 4px 0 20px rgba(0,0,0,0.2);
     overflow-y: auto;
     padding: 20px;
 }
-.filter-drawer.open {
+.category-drawer.open {
     left: 0;
 }
 .drawer-overlay {
@@ -418,44 +372,22 @@ body {
     font-size: 24px;
     cursor: pointer;
 }
-.pagination {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin: 30px 0;
-}
-.pagination button {
-    padding: 8px 14px;
-    border: 1px solid #e2e8f0;
-    background: white;
-    border-radius: 8px;
-    cursor: pointer;
-}
-.pagination button.active {
-    background: #00bfff;
-    color: white;
-    border-color: #00bfff;
-}
 .footer {
     background: #0f2b3d;
     color: #94a3b8;
     padding: 48px 0;
     text-align: center;
-    margin-top: 40px;
 }
 @media (max-width: 1024px) {
-    .products-grid { grid-template-columns: repeat(2,1fr); }
+    .products-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 768px) {
     .container { padding: 0 20px; }
     .main-content { flex-direction: column; }
-    .filter-sidebar { display: none; }
-    .mobile-filter-btn { display: inline-block; }
+    .category-sidebar { display: none; }
+    .mobile-category-btn { display: inline-block; }
     .products-grid { grid-template-columns: 1fr; }
-    .quick-strip { overflow-x: auto; justify-content: flex-start; flex-wrap: nowrap; padding-bottom: 8px; }
-    .quick-chip { white-space: nowrap; }
-    .search-sort-bar { flex-direction: column; align-items: stretch; border-radius: 24px; padding: 12px; gap: 8px; }
-    .search-input { width: 100%; }
+    .product-price { font-size: 22px; }
 }
 </style>
 </head>
@@ -476,77 +408,34 @@ body {
 
 <section class="slim-banner">
     <div class="container">
-        <h1 style="font-size: 28px;">Technical Fabrics & Composites</h1>
-        <p style="margin-top: 8px;">CR Neoprene · Laminated · Functional Textiles · Medical Grade</p>
+        <h1>Neoprene & Laminated Fabrics</h1>
+        <p>CR / SCR / SBR Neoprene | Laminated Composites | OEM Solutions</p>
         <div class="banner-buttons">
-            <button class="btn-sample" onclick="scrollToContactSample()">📦 Get Samples</button>
-            <button class="btn-quote" onclick="scrollToContactQuote()">💰 Request Quote</button>
-        </div>
-        <div class="quick-strip" id="quickStrip">
-            <span class="quick-chip" data-filter="Neoprene">Neoprene</span>
-            <span class="quick-chip" data-filter="Laminated Fabric">Laminated Fabric</span>
-            <span class="quick-chip" data-filter="Composite Fabric">Composite Fabric</span>
-            <span class="quick-chip" data-filter="Functional Textile">Functional Textile</span>
-            <span class="quick-chip" data-filter="Medical Material">Medical Material</span>
-            <span class="quick-chip" data-filter="OEM Service">OEM Service</span>
+            <button class="btn-sample" onclick="scrollToContact()">📦 Request Sample</button>
+            <button class="btn-quote" onclick="scrollToContact()">💰 Get Quote</button>
         </div>
     </div>
 </section>
 
 <section class="container">
-    <div class="search-sort-bar">
-        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search products... (name / features)">
-        <select id="sortSelect" class="sort-select">
-            <option value="popular">Most Popular</option>
-            <option value="newest">New Arrival</option>
-            <option value="low_moq">Low MOQ</option>
-            <option value="fast_delivery">Fast Delivery</option>
-        </select>
+    <div class="search-bar">
+        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search products...">
     </div>
-    <button class="mobile-filter-btn" id="mobileFilterBtn">⚙️ Filter & Options</button>
+    
+    <button class="mobile-category-btn" id="mobileCategoryBtn">📁 All Categories</button>
+    
     <div class="main-content">
-        <div class="filter-sidebar" id="desktopSidebar">
-            <div class="filter-header"><h3>Filter Products</h3></div>
-            <button class="reset-filter-btn" id="resetFiltersBtn">⟳ Reset All Filters</button>
-            <div class="filter-group">
-                <div class="filter-title">🎯 Application</div>
-                <div class="filter-options" id="appFilterMain"></div>
+        <div class="category-sidebar" id="categorySidebar">
+            <div class="sidebar-header">
+                <h3>All Categories</h3>
             </div>
-            <div class="filter-group">
-                <div class="filter-title">💰 Commercial</div>
-                <div class="filter-options" id="comFilterMain"></div>
-            </div>
-            <div class="filter-group">
-                <div class="filter-title">⚡ Performance</div>
-                <div class="filter-options" id="perfFilterMain"></div>
-            </div>
-            <!-- Advanced Filters 折叠区域，无括号文字 -->
-            <div class="advanced-toggle" id="advancedToggle">▶ Advanced Filters <span>▼</span></div>
-            <div class="advanced-content" id="advancedContent">
-                <div class="filter-group">
-                    <div class="filter-title">✅ Certification</div>
-                    <div class="filter-options" id="certFilterAdv"></div>
-                </div>
-                <div class="filter-group">
-                    <div class="filter-title">📦 Product Form</div>
-                    <div class="filter-options" id="formFilterAdv"></div>
-                </div>
-                <div class="filter-group">
-                    <div class="filter-title">📏 Thickness</div>
-                    <div class="filter-options" id="thickFilterAdv"></div>
-                </div>
-                <div class="filter-group">
-                    <div class="filter-title">📊 GSM</div>
-                    <div class="filter-options" id="gsmFilterAdv"></div>
-                </div>
-                <div class="filter-group">
-                    <div class="filter-title">📑 Base Fabric</div>
-                    <div class="filter-options" id="baseFabricAdv"></div>
-                </div>
-            </div>
+            <div class="category-list" id="categoryList"></div>
         </div>
+        
         <div class="products-area">
-            <div class="products-header"><div class="products-count" id="productsCount">Loading...</div></div>
+            <div class="products-header">
+                <div class="products-count" id="productsCount">Loading...</div>
+            </div>
             <div id="productsGrid" class="products-grid"></div>
             <div class="pagination" id="pagination"></div>
         </div>
@@ -554,10 +443,17 @@ body {
 </section>
 
 <div id="drawerOverlay" class="drawer-overlay"></div>
-<div id="filterDrawer" class="filter-drawer"><span class="close-drawer" id="closeDrawerBtn">✕</span><div id="drawerContent"></div></div>
+<div id="categoryDrawer" class="category-drawer">
+    <span class="close-drawer" id="closeDrawerBtn">✕</span>
+    <div id="drawerContent"></div>
+</div>
 
 <footer class="footer">
-    <div class="container"><div class="footer-logo">SY<span>siyin</span></div><p>Dongguan Siyin Sports Goods Co., Ltd.</p><p>© 2025 Siyin. All rights reserved.</p></div>
+    <div class="container">
+        <div class="logo" style="margin-bottom: 16px;">SY<span>siyin</span></div>
+        <p>Dongguan Siyin Sports Goods Co., Ltd.</p>
+        <p>© 2025 Siyin. All rights reserved.</p>
+    </div>
 </footer>
 
 <script>
@@ -565,220 +461,147 @@ const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// 7大分类
+const CATEGORY_TREE = [
+    { id: 1, name: "Neoprene by Material", subcategories: ["CR Neoprene", "SCR Neoprene", "SBR Neoprene", "Eco Neoprene"] },
+    { id: 2, name: "Laminated Neoprene Fabric", subcategories: ["Polyester Lamination", "Spandex Lamination", "Lycra Lamination", "Jersey Lamination", "OK Fabric Lamination", "Mesh Lamination", "Velvet Lamination", "TPU Lamination"] },
+    { id: 3, name: "Application Materials", subcategories: ["Wetsuit Materials", "Cup Sleeve Materials", "Footwear Materials", "Sports Protection Materials", "Bag Materials", "Medical Support Materials", "Fitness Materials"] },
+    { id: 4, name: "Functional Neoprene", subcategories: ["Waterproof", "Stretch", "Breathable", "Embossed", "Perforated", "Printed", "Thermal Insulation"] },
+    { id: 5, name: "Surface Fabric Options", subcategories: ["T Fabric", "Lycra", "OK Fabric", "Mesh", "Satin", "Brushed", "Milk Silk", "Velvet"] },
+    { id: 6, name: "OEM Custom Solutions", subcategories: ["Custom Thickness", "Custom Color", "Custom Lamination", "Sample Development"] },
+    { id: 7, name: "Best Sellers", subcategories: [] }
+];
+
 let allProducts = [];
-let selectedApps = [];
-let selectedCommercial = [];
-let selectedPerfs = [];
-let selectedCerts = [], selectedForms = [], selectedThicks = [], selectedGsms = [], selectedBaseFabrics = [];
-let currentPage = 1, totalPages = 1;
-let searchKeyword = "", sortBy = "popular";
-let activeQuickFilter = null;
+let selectedMainCategory = null;
+let selectedSubCategory = null;
+let currentPage = 1;
+let totalPages = 1;
+let searchKeyword = "";
 
-const APP_OPTS = ["Wetsuit", "Sportswear", "Bags", "Medical", "Outdoor", "Others"];
-const COM_OPTS = ["Low MOQ", "Fast Delivery", "OEM Ready", "Sample Available"];
-const PERF_OPTS = ["Waterproof", "Stretch", "Thermal", "Breathable"];
-const CERT_OPTS = ["REACH", "ROHS", "OEKO-TEX", "CA65", "ISO9001"];
-const FORM_OPTS = ["Rolls", "Sheets", "Cut Pieces", "Finished Lamination"];
-const THICK_OPTS = ["1mm", "2mm", "3mm", "4-5mm", "6-10mm"];
-const GSM_OPTS = ["<500", "500-1000", ">1000"];
-const BASE_OPTS = ["N cloth", "T cloth", "Terry cloth", "Bare Rubber"];
-
-const quickFilterMap = {
-    "Neoprene": ["Neoprene Fabric"],
-    "Laminated Fabric": ["Bag & Luggage Materials", "Outdoor & Camping Fabrics"],
-    "Composite Fabric": ["Industrial & Protective Fabrics", "Custom OEM & Lamination"],
-    "Functional Textile": ["Sports & Fitness Textiles"],
-    "Medical Material": ["Medical & Support Materials"],
-    "OEM Service": ["Custom OEM & Lamination"]
-};
-
-async function loadProducts() {
-    const { data, error } = await sb.from("products").select("*").order("id", { ascending: false });
-    if (!error && data) allProducts = data;
-    else allProducts = [];
-    renderFilterOptions();
-    applyFiltersAndRender();
-}
-
-function renderFilterOptions() {
-    // Application
-    const appContainer = document.getElementById("appFilterMain");
-    if (appContainer) {
-        appContainer.innerHTML = APP_OPTS.map(opt => `<span class="filter-option" data-app="${opt}">${opt}</span>`).join('');
-        appContainer.querySelectorAll(".filter-option").forEach(el => {
-            if (selectedApps.includes(el.dataset.app)) el.classList.add("active");
-            el.onclick = () => {
-                const val = el.dataset.app;
-                const idx = selectedApps.indexOf(val);
-                idx === -1 ? selectedApps.push(val) : selectedApps.splice(idx, 1);
-                el.classList.toggle("active");
-                currentPage = 1;
-                applyFiltersAndRender();
-            };
-        });
-    }
-    // Commercial
-    const comContainer = document.getElementById("comFilterMain");
-    if (comContainer) {
-        comContainer.innerHTML = COM_OPTS.map(opt => `<span class="filter-option" data-com="${opt}">${opt}</span>`).join('');
-        comContainer.querySelectorAll(".filter-option").forEach(el => {
-            if (selectedCommercial.includes(el.dataset.com)) el.classList.add("active");
-            el.onclick = () => {
-                const val = el.dataset.com;
-                const idx = selectedCommercial.indexOf(val);
-                idx === -1 ? selectedCommercial.push(val) : selectedCommercial.splice(idx, 1);
-                el.classList.toggle("active");
-                currentPage = 1;
-                applyFiltersAndRender();
-            };
-        });
-    }
-    // Performance
-    const perfContainer = document.getElementById("perfFilterMain");
-    if (perfContainer) {
-        perfContainer.innerHTML = PERF_OPTS.map(opt => `<span class="filter-option" data-perf="${opt}">${opt}</span>`).join('');
-        perfContainer.querySelectorAll(".filter-option").forEach(el => {
-            if (selectedPerfs.includes(el.dataset.perf)) el.classList.add("active");
-            el.onclick = () => {
-                const val = el.dataset.perf;
-                const idx = selectedPerfs.indexOf(val);
-                idx === -1 ? selectedPerfs.push(val) : selectedPerfs.splice(idx, 1);
-                el.classList.toggle("active");
-                currentPage = 1;
-                applyFiltersAndRender();
-            };
-        });
-    }
-    // Advanced Filters
-    const renderAdv = (id, options, arr) => {
-        const container = document.getElementById(id);
-        if (!container) return;
-        container.innerHTML = options.map(opt => `<span class="filter-option" data-adv="${opt}">${opt}</span>`).join('');
-        container.querySelectorAll(".filter-option").forEach(el => {
-            if (arr.includes(el.dataset.adv)) el.classList.add("active");
-            el.onclick = () => {
-                const val = el.dataset.adv;
-                const idx = arr.indexOf(val);
-                idx === -1 ? arr.push(val) : arr.splice(idx, 1);
-                el.classList.toggle("active");
-                currentPage = 1;
-                applyFiltersAndRender();
-            };
-        });
-    };
-    renderAdv("certFilterAdv", CERT_OPTS, selectedCerts);
-    renderAdv("formFilterAdv", FORM_OPTS, selectedForms);
-    renderAdv("thickFilterAdv", THICK_OPTS, selectedThicks);
-    renderAdv("gsmFilterAdv", GSM_OPTS, selectedGsms);
-    renderAdv("baseFabricAdv", BASE_OPTS, selectedBaseFabrics);
-}
-
-function filterProductsGlobal() {
-    return allProducts.filter(p => {
-        if (activeQuickFilter && quickFilterMap[activeQuickFilter]) {
-            const allowedCats = quickFilterMap[activeQuickFilter];
-            if (!allowedCats.includes(p.category)) return false;
-        }
-        // Application
-        if (selectedApps.length) {
-            let appMatch = false;
-            for (let app of selectedApps) {
-                if (app === "Others") {
-                    const standardApps = ["Wetsuit", "Sportswear", "Bags", "Medical", "Outdoor"];
-                    const productApps = p.applications || [];
-                    const hasStandard = standardApps.some(s => productApps.includes(s));
-                    if (!hasStandard) { appMatch = true; break; }
-                } else {
-                    if ((p.applications || []).includes(app)) { appMatch = true; break; }
-                }
+// 渲染左侧分类
+function renderCategorySidebar() {
+    const container = document.getElementById("categoryList");
+    let html = "";
+    CATEGORY_TREE.forEach(cat => {
+        const hasSubcats = cat.subcategories.length > 0;
+        const isActive = selectedMainCategory === cat.name;
+        html += `
+            <div class="category-item ${isActive ? 'active' : ''}" data-category="${cat.name}">${cat.name}</div>
+            <div class="subcategory-list ${isActive ? 'show' : ''}" data-parent="${cat.name}">
+                ${hasSubcats ? cat.subcategories.map(sub => `
+                    <div class="subcategory-item ${selectedSubCategory === sub ? 'active' : ''}" data-sub="${sub}">${sub}</div>
+                `).join('') : '<div style="padding: 8px 20px; font-size: 12px; color: #94a3b8;">—</div>'}
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+    
+    document.querySelectorAll(".category-item").forEach(item => {
+        item.onclick = () => {
+            const category = item.dataset.category;
+            if (selectedMainCategory === category) {
+                selectedMainCategory = null;
+                selectedSubCategory = null;
+                document.querySelectorAll(".category-item").forEach(c => c.classList.remove("active"));
+                document.querySelectorAll(".subcategory-list").forEach(sub => sub.classList.remove("show"));
+            } else {
+                selectedMainCategory = category;
+                selectedSubCategory = null;
+                document.querySelectorAll(".category-item").forEach(c => c.classList.remove("active"));
+                item.classList.add("active");
+                document.querySelectorAll(".subcategory-list").forEach(sub => sub.classList.remove("show"));
+                const subList = document.querySelector(`.subcategory-list[data-parent="${category}"]`);
+                if (subList) subList.classList.add("show");
             }
-            if (!appMatch) return false;
-        }
-        // Commercial
-        if (selectedCommercial.length && !selectedCommercial.some(com => (p.business_tags || []).includes(com))) return false;
-        // Performance
-        if (selectedPerfs.length && !selectedPerfs.some(perf => (p.features || []).includes(perf))) return false;
-        // Advanced
-        if (selectedCerts.length && !selectedCerts.some(cert => (p.certifications || []).includes(cert))) return false;
-        if (selectedForms.length && !selectedForms.some(f => (p.product_forms || []).includes(f))) return false;
-        if (selectedThicks.length) {
-            let thick = p.thickness || "";
-            let match = selectedThicks.some(t => {
-                if (t === "1mm" && thick.includes("1")) return true;
-                if (t === "2mm" && thick.includes("2")) return true;
-                if (t === "3mm" && thick.includes("3")) return true;
-                if (t === "4-5mm" && (thick.includes("4") || thick.includes("5"))) return true;
-                if (t === "6-10mm" && (thick.includes("6") || thick.includes("8") || thick.includes("10"))) return true;
-                return false;
-            });
-            if (!match) return false;
-        }
-        if (selectedGsms.length) {
-            let gsmVal = parseInt(p.gsm) || 0;
-            let match = selectedGsms.some(g => {
-                if (g === "<500" && gsmVal < 500) return true;
-                if (g === "500-1000" && gsmVal >= 500 && gsmVal <= 1000) return true;
-                if (g === ">1000" && gsmVal > 1000) return true;
-                return false;
-            });
-            if (!match) return false;
-        }
-        if (selectedBaseFabrics.length && !selectedBaseFabrics.includes(p.base_fabric || "")) return false;
+            currentPage = 1;
+            applyFiltersAndRender();
+        };
+    });
+    
+    document.querySelectorAll(".subcategory-item").forEach(item => {
+        item.onclick = (e) => {
+            e.stopPropagation();
+            const sub = item.dataset.sub;
+            selectedSubCategory = selectedSubCategory === sub ? null : sub;
+            document.querySelectorAll(".subcategory-item").forEach(s => s.classList.remove("active"));
+            if (selectedSubCategory) item.classList.add("active");
+            currentPage = 1;
+            applyFiltersAndRender();
+        };
+    });
+}
+
+// 加载产品
+async function loadProducts() {
+    try {
+        const { data, error } = await sb.from("products").select("*");
+        if (error) throw error;
+        allProducts = data || [];
+        renderCategorySidebar();
+        applyFiltersAndRender();
+    } catch (err) {
+        console.error(err);
+        allProducts = [];
+        applyFiltersAndRender();
+    }
+}
+
+function filterProducts() {
+    return allProducts.filter(p => {
+        if (selectedMainCategory && p.main_category !== selectedMainCategory) return false;
+        if (selectedSubCategory && p.sub_category !== selectedSubCategory) return false;
         if (searchKeyword.trim()) {
-            let kw = searchKeyword.toLowerCase();
-            return (p.name?.toLowerCase().includes(kw) || (p.features || []).some(f => f.toLowerCase().includes(kw)));
+            return p.name?.toLowerCase().includes(searchKeyword.toLowerCase());
         }
         return true;
     });
 }
 
-function sortProducts(products) {
-    let list = [...products];
-    if (sortBy === "popular") return list.sort((a, b) => (b.is_hot ? 1 : 0) - (a.is_hot ? 1 : 0));
-    if (sortBy === "newest") return list.sort((a, b) => (b.created_at || b.id) - (a.created_at || a.id));
-    if (sortBy === "low_moq") return list.sort((a, b) => (parseInt(a.moq) || 999) - (parseInt(b.moq) || 999));
-    if (sortBy === "fast_delivery") return list.sort((a, b) => (a.lead_time === "fast" ? 0 : 1) - (b.lead_time === "fast" ? 0 : 1));
-    return list;
-}
-
 function applyFiltersAndRender() {
-    let filtered = filterProductsGlobal();
-    filtered = sortProducts(filtered);
+    let filtered = filterProducts();
     totalPages = Math.ceil(filtered.length / 9);
-    if (currentPage > totalPages) currentPage = 1;
+    if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
     const paginated = filtered.slice((currentPage - 1) * 9, currentPage * 9);
     renderProductGrid(paginated);
-    document.getElementById("productsCount").innerHTML = `Found ${filtered.length} products`;
     renderPagination();
+    document.getElementById("productsCount").innerHTML = `Found ${filtered.length} products`;
 }
 
 function renderProductGrid(products) {
     const container = document.getElementById("productsGrid");
     if (!products.length) {
-        container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:60px;">No products found.</div>';
+        container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:60px;">No products found.</div>`;
         return;
     }
+    
     container.innerHTML = products.map(p => {
+        let priceHtml = '';
+        if (p.price && p.price > 0) {
+            priceHtml = `<div class="product-price">$${p.price}<small> / yard</small></div>`;
+        } else {
+            priceHtml = `<div class="product-price" style="font-size:18px;">Contact for Price</div>`;
+        }
+        
         const moq = p.moq || "Contact";
-        const lead = p.lead_time === "fast" ? "7-15 days" : (p.lead_time === "custom" ? "Custom" : "20-30 days");
-        const oemLevel = p.oem_level || "OEM";
         const isHot = p.is_hot;
-        const perfList = (p.features || []).slice(0, 3);
+        const isOem = p.is_oem;
+        
         return `<div class="product-card">
-            ${isHot ? '<div style="position:absolute; top:12px; left:12px; background:#ff4757; color:white; padding:4px 10px; border-radius:30px; font-size:10px; font-weight:700;">🔥 HOT</div>' : ''}
-            <img src="${p.image || 'https://placehold.co/400x260/1a2a3a/white?text=Product'}" class="product-img" onclick="location.href='product.html?id=${p.id}'" onerror="this.src='https://placehold.co/400x260/1a2a3a/white?text=Product'">
+            <div class="product-badge">
+                ${isHot ? '<span class="badge-hot">🔥 HOT</span>' : ''}
+                ${isOem ? '<span class="badge-oem">🔧 OEM</span>' : ''}
+            </div>
+            <img src="${p.image || 'https://placehold.co/400x260/1a2a3a/white?text=Neoprene'}" 
+                 class="product-img" 
+                 onclick="location.href='product.html?id=${p.id}'" 
+                 onerror="this.src='https://placehold.co/400x260/1a2a3a/white?text=Neoprene'">
             <div class="product-info">
                 <div class="product-title" onclick="location.href='product.html?id=${p.id}'">${escapeHtml(p.name)}</div>
-                <div class="perf-tags">${perfList.map(f => `<span class="perf-badge">${escapeHtml(f)}</span>`).join('')}</div>
-                <div class="product-meta">
-                    <span>📦 MOQ: ${moq}</span>
-                    <span>⏱️ ${lead}</span>
-                    <span class="oem-badge">${oemLevel.toUpperCase()}</span>
-                </div>
-                <div class="cta-buttons">
-                    <button class="cta-quote" onclick="goToQuote('${p.id}', '${escapeHtml(p.name)}')">Get Quote →</button>
-                    <a href="https://wa.me/8613800000000?text=Hello%2C%20I'm%20interested%20in%20${encodeURIComponent(p.name)}" class="cta-wa" target="_blank">💬 WhatsApp</a>
-                </div>
+                ${priceHtml}
+                <div class="product-meta">📦 MOQ: ${escapeHtml(moq)}</div>
+                <button class="cta-quote" onclick="goToQuote('${p.id}', '${escapeHtml(p.name)}')">💰 Get Quote</button>
             </div>
         </div>`;
     }).join('');
@@ -788,71 +611,65 @@ function renderPagination() {
     const container = document.getElementById("pagination");
     if (totalPages <= 1) { container.innerHTML = ""; return; }
     let html = `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>‹ Prev</button>`;
-    for (let i = 1; i <= totalPages; i++) html += `<button class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+    for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+        html += `<button class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+    }
+    if (totalPages > 5) html += `<button disabled>...</button><button onclick="goToPage(${totalPages})">${totalPages}</button>`;
     html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next ›</button>`;
     container.innerHTML = html;
 }
 
-function goToPage(page) { if (page < 1 || page > totalPages) return; currentPage = page; applyFiltersAndRender(); window.scrollTo({ top: 400 }); }
-function resetAllFilters() {
-    selectedApps = []; selectedCommercial = []; selectedPerfs = [];
-    selectedCerts = []; selectedForms = []; selectedThicks = []; selectedGsms = []; selectedBaseFabrics = [];
-    searchKeyword = ""; sortBy = "popular"; activeQuickFilter = null;
-    document.getElementById("searchInput").value = "";
-    document.getElementById("sortSelect").value = "popular";
-    document.querySelectorAll(".quick-chip").forEach(chip => chip.classList.remove("active"));
-    currentPage = 1;
-    document.querySelectorAll(".filter-option").forEach(el => el.classList.remove("active"));
-    applyFiltersAndRender();
+function goToPage(page) { 
+    if (page < 1 || page > totalPages) return; 
+    currentPage = page; 
+    applyFiltersAndRender(); 
+    window.scrollTo({ top: 450, behavior: 'smooth' }); 
 }
-function goToQuote(id, name) { window.location.href = `contact.html?product=${encodeURIComponent(name)}`; }
-function escapeHtml(str) { if (!str) return ""; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[m]); }
-function scrollToContactSample() { window.location.href = "contact.html?sample=true"; }
-function scrollToContactQuote() { window.location.href = "contact.html?quote=true"; }
 
-// 快捷栏
-document.querySelectorAll(".quick-chip").forEach(chip => {
-    chip.addEventListener("click", () => {
-        const filterVal = chip.dataset.filter;
-        if (activeQuickFilter === filterVal) {
-            activeQuickFilter = null;
-            chip.classList.remove("active");
-        } else {
-            document.querySelectorAll(".quick-chip").forEach(c => c.classList.remove("active"));
-            activeQuickFilter = filterVal;
-            chip.classList.add("active");
-        }
-        currentPage = 1;
-        applyFiltersAndRender();
-    });
-});
+function goToQuote(id, name) { 
+    window.location.href = `contact.html?product=${encodeURIComponent(name)}`; 
+}
 
-// 高级折叠
-document.getElementById("advancedToggle")?.addEventListener("click", () => {
-    let ac = document.getElementById("advancedContent");
-    ac.classList.toggle("show");
-    document.getElementById("advancedToggle").innerHTML = ac.classList.contains("show") ? "▼ Advanced Filters" : "▶ Advanced Filters";
-});
+function scrollToContact() { 
+    window.location.href = "contact.html"; 
+}
 
-document.getElementById("searchInput").addEventListener("input", (e) => { searchKeyword = e.target.value; currentPage = 1; applyFiltersAndRender(); });
-document.getElementById("sortSelect").addEventListener("change", (e) => { sortBy = e.target.value; currentPage = 1; applyFiltersAndRender(); });
-document.getElementById("resetFiltersBtn").addEventListener("click", resetAllFilters);
+function escapeHtml(str) { 
+    if (!str) return ""; 
+    return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[m]); 
+}
 
-// 移动端抽屉
+document.getElementById("searchInput")?.addEventListener("input", (e) => { searchKeyword = e.target.value; currentPage = 1; applyFiltersAndRender(); });
+
+// 移动端
 function buildDrawer() {
     const drawerDiv = document.getElementById("drawerContent");
-    const desktopClone = document.querySelector(".filter-sidebar").cloneNode(true);
-    desktopClone.id = "";
+    const clone = document.querySelector(".category-sidebar").cloneNode(true);
+    clone.id = "";
     drawerDiv.innerHTML = "";
-    drawerDiv.appendChild(desktopClone);
-    drawerDiv.querySelectorAll(".filter-option").forEach(opt => { opt.onclick = () => { opt.click(); setTimeout(() => applyFiltersAndRender(), 50); }; });
-    drawerDiv.querySelector("#resetFiltersBtn")?.addEventListener("click", resetAllFilters);
-    const advToggle = drawerDiv.querySelector("#advancedToggle");
-    if (advToggle) advToggle.onclick = () => { const ac = drawerDiv.querySelector("#advancedContent"); if(ac) ac.classList.toggle("show"); };
+    drawerDiv.appendChild(clone);
+    clone.querySelectorAll(".category-item").forEach(item => {
+        item.onclick = () => {
+            const category = item.dataset.category;
+            if (selectedMainCategory === category) {
+                selectedMainCategory = null;
+                selectedSubCategory = null;
+            } else {
+                selectedMainCategory = category;
+                selectedSubCategory = null;
+            }
+            currentPage = 1;
+            applyFiltersAndRender();
+            document.getElementById("categoryDrawer").classList.remove("open");
+            document.getElementById("drawerOverlay").classList.remove("open");
+            renderCategorySidebar();
+        };
+    });
 }
-document.getElementById("mobileFilterBtn").onclick = () => { if (!document.getElementById("drawerContent").innerHTML) buildDrawer(); document.getElementById("filterDrawer").classList.add("open"); document.getElementById("drawerOverlay").classList.add("open"); };
-document.getElementById("closeDrawerBtn").onclick = () => { document.getElementById("filterDrawer").classList.remove("open"); document.getElementById("drawerOverlay").classList.remove("open"); };
-document.getElementById("drawerOverlay").onclick = () => { document.getElementById("filterDrawer").classList.remove("open"); document.getElementById("drawerOverlay").classList.remove("open"); };
+
+document.getElementById("mobileCategoryBtn")?.addEventListener("click", () => { if (!document.getElementById("drawerContent").innerHTML) buildDrawer(); document.getElementById("categoryDrawer").classList.add("open"); document.getElementById("drawerOverlay").classList.add("open"); });
+document.getElementById("closeDrawerBtn")?.addEventListener("click", () => { document.getElementById("categoryDrawer").classList.remove("open"); document.getElementById("drawerOverlay").classList.remove("open"); });
+document.getElementById("drawerOverlay")?.addEventListener("click", () => { document.getElementById("categoryDrawer").classList.remove("open"); document.getElementById("drawerOverlay").classList.remove("open"); });
 
 loadProducts();
 </script>
