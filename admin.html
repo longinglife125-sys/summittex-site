@@ -2,332 +2,199 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>Siyin 后台管理 V5 | 完整商品管理</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Siyin 企业后台 | 完整产品管理</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; }
-body { margin: 0; font-family: 'Inter', Arial, sans-serif; background: #0b1220; color: white; }
-#loginBox { max-width: 360px; margin: 120px auto; background: white; color: black; padding: 24px; border-radius: 16px; }
-#panelBox { display: none; padding: 20px; }
-.box { background: #111827; padding: 24px; border-radius: 20px; margin-bottom: 20px; }
-h3 { margin-bottom: 16px; color: #e2e8f0; font-size: 18px; }
-h4 { margin: 16px 0 10px; color: #cbd5e1; font-size: 14px; }
-
-.step-nav { display: flex; gap: 12px; margin-bottom: 30px; }
-.step { flex: 1; padding: 12px; text-align: center; border-radius: 40px; background: #1e293b; color: #94a3b8; font-weight: 500; }
-.step.active { background: #00bfff; color: #0f172a; }
-.step-content { display: none; }
-.step-content.active { display: block; }
-
-input, select, textarea { width: 100%; padding: 12px; margin-bottom: 16px; border-radius: 12px; border: none; background: #1f2a3e; color: white; font-size: 14px; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { margin: 0; font-family: 'Inter', sans-serif; background: #0b1220; color: #eef2ff; }
+#loginBox { max-width: 380px; margin: 120px auto; background: white; color: #0f172a; padding: 28px 24px; border-radius: 28px; box-shadow: 0 20px 35px -12px rgba(0,0,0,0.35); }
+#loginBox h3 { margin-bottom: 20px; font-size: 1.6rem; text-align: center; }
+#loginBox input { width: 100%; padding: 14px 16px; margin-bottom: 16px; border-radius: 40px; border: 1px solid #cbd5e1; font-size: 1rem; outline: none; }
+#loginBox button { width: 100%; background: #2563eb; border: none; padding: 12px; border-radius: 40px; font-weight: bold; font-size: 1rem; color: white; cursor: pointer; }
+#panelBox { display: none; padding: 20px; max-width: 1600px; margin: 0 auto; }
+.nav-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; border-bottom: 1px solid #1f2a3e; padding-bottom: 12px; }
+.nav-tab { background: transparent; border: none; padding: 12px 28px; border-radius: 40px; font-weight: 600; font-size: 14px; cursor: pointer; color: #94a3b8; transition: all 0.2s; }
+.nav-tab:hover { color: #00bfff; background: #1e293b; }
+.nav-tab.active { background: #00bfff; color: #0f172a; }
+.box { background: #111827; border-radius: 20px; padding: 24px; margin-bottom: 24px; border: 1px solid #1f2a3e; }
+.box h3 { font-size: 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; border-left: 4px solid #00bfff; padding-left: 14px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid #1f2a3e; font-size: 13px; }
+th { color: #00bfff; font-weight: 600; }
+input, select, textarea { width: 100%; padding: 12px 14px; margin-bottom: 16px; border-radius: 12px; border: 1px solid #2d3a5e; background: #1e293b; color: #f1f5f9; font-size: 14px; outline: none; }
+input:focus, select:focus, textarea:focus { border-color: #00bfff; }
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-.row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
-
-.upload-box { border: 2px dashed #4b5563; border-radius: 16px; padding: 30px; text-align: center; cursor: pointer; background: #1e293b; margin-bottom: 15px; }
-.upload-box:hover { border-color: #00bfff; background: #334155; }
-.preview-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin: 5px; }
-
-.tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-.tag { padding: 8px 18px; border: 1px solid #334155; border-radius: 40px; cursor: pointer; background: #1f2a3e; color: #cbd5e1; font-size: 13px; transition: all 0.2s; }
+.tags-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.tag { padding: 6px 16px; border: 1px solid #334155; border-radius: 30px; cursor: pointer; background: #1f2a3e; color: #cbd5e1; font-size: 12px; transition: all 0.2s; }
 .tag:hover { border-color: #00bfff; }
 .tag.active { background: #00bfff; color: #0f172a; border-color: #00bfff; }
-
-button { padding: 12px 24px; background: #00bfff; color: #0f172a; border: none; border-radius: 40px; cursor: pointer; font-weight: 600; margin-top: 10px; }
-button:hover { background: #0099cc; transform: translateY(-2px); }
-
-.tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-.tab-btn { flex: 1; background: #1e293b; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 500; color: white; }
-.tab-btn.active { background: #00bfff; color: #0f172a; }
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-
-.item { background: white; color: black; padding: 15px; border-radius: 12px; margin-top: 12px; }
-.item-actions { display: flex; gap: 10px; margin-top: 12px; justify-content: flex-end; flex-wrap: wrap; }
-.edit-btn { background: #f59e0b; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; }
-.delete-btn { background: #dc2626; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; }
-.preview-btn { background: #22c55e; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; }
-
-.dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 20px; }
-.kpi-box { background: #1e293b; padding: 20px; border-radius: 16px; text-align: center; }
-.kpi-number { font-size: 32px; font-weight: 700; color: #00bfff; }
-
+.btn { padding: 10px 24px; background: #00bfff; color: #0f172a; border: none; border-radius: 40px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; }
+.btn:hover { background: #0099cc; transform: translateY(-1px); }
+.btn-danger { background: #dc2626; color: white; }
+.btn-warning { background: #f59e0b; color: white; }
+.btn-outline { background: transparent; border: 1px solid #00bfff; color: #00bfff; }
+.btn-sm { padding: 5px 12px; font-size: 11px; }
+.upload-box { border: 2px dashed #4b5563; border-radius: 16px; padding: 30px; text-align: center; cursor: pointer; background: #1e293b; margin-bottom: 15px; transition: all 0.2s; }
+.upload-box:hover { border-color: #00bfff; background: #334155; }
+.preview-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin: 5px; }
+.product-item { background: #1e293b; border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+.product-header { display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; margin-bottom: 10px; }
+.product-name { font-weight: 700; font-size: 16px; color: #facc15; }
+.product-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.product-details { font-size: 12px; color: #94a3b8; margin-top: 8px; display: flex; flex-wrap: wrap; gap: 16px; }
 .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center; }
-.modal-content { background: #1e293b; border-radius: 20px; padding: 28px; width: 90%; max-width: 750px; max-height: 85vh; overflow-y: auto; }
-.modal-buttons { display: flex; gap: 12px; margin-top: 20px; }
-
-.section-title { font-size: 14px; font-weight: 600; margin: 15px 0 10px; color: #00bfff; }
+.modal-content { background: #1e293b; border-radius: 24px; padding: 28px; width: 90%; max-width: 800px; max-height: 85vh; overflow-y: auto; }
+.modal-buttons { display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end; }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 24px; }
+.kpi-card { background: #1e293b; padding: 20px; border-radius: 16px; text-align: center; }
+.kpi-number { font-size: 32px; font-weight: 800; color: #00bfff; }
+.kpi-label { font-size: 13px; color: #94a3b8; margin-top: 6px; }
+.section-title { font-size: 13px; font-weight: 600; margin: 16px 0 12px; color: #00bfff; text-transform: uppercase; letter-spacing: 1px; }
+.info-note { background: #1e293b; padding: 12px; border-radius: 12px; margin-bottom: 20px; font-size: 13px; color: #facc15; border-left: 3px solid #00bfff; }
+@media (max-width: 768px) { .row { grid-template-columns: 1fr; } .nav-tab { padding: 8px 16px; font-size: 12px; } }
 </style>
 </head>
 <body>
 
 <div id="loginBox">
-  <h3>管理员登录</h3>
-  <input type="password" id="pass" placeholder="请输入密码">
-  <button id="loginBtn">登录</button>
-  <div style="font-size:12px;margin-top:10px;text-align:center;">密码：123456</div>
+  <h3>🔐 管理员登录</h3>
+  <input type="password" id="adminPass" placeholder="请输入密码" autocomplete="off">
+  <button id="loginBtn">登录系统</button>
+  <div style="font-size:12px; margin-top:15px; text-align:center;">密码: 123456</div>
 </div>
 
 <div id="panelBox">
-  <div class="tab-buttons">
-    <button class="tab-btn active" data-tab="dashboard">📊 Dashboard</button>
-    <button class="tab-btn" data-tab="products">📦 产品管理</button>
-    <button class="tab-btn" data-tab="factory">🏭 工厂管理</button>
-    <button class="tab-btn" data-tab="settings">⚙️ 网站设置</button>
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-tab="dashboard">📊 仪表盘</button>
+    <button class="nav-tab" data-tab="products">📦 产品管理</button>
+    <button class="nav-tab" data-tab="categories">📁 分类管理</button>
+    <button class="nav-tab" data-tab="homepage">🏠 首页内容</button>
+    <button class="nav-tab" data-tab="factory">🏭 工厂照片</button>
+    <button class="nav-tab" data-tab="crm">📩 询盘管理</button>
   </div>
 
-  <!-- Dashboard -->
-  <div id="dashboardTab" class="tab-content active">
-    <div class="dashboard">
-      <div class="kpi-box"><div class="kpi-number" id="kpiProducts">0</div><div>📦 产品总数</div></div>
-      <div class="kpi-box"><div class="kpi-number" id="kpiInquiries">0</div><div>📩 询盘总数</div></div>
-      <div class="kpi-box"><div class="kpi-number" id="kpiHot">0</div><div>🔥 热门产品</div></div>
+  <div id="dashboardTab" class="tab-content" style="display: block;">
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-number" id="kpiProducts">0</div><div class="kpi-label">📦 产品总数</div></div>
+      <div class="kpi-card"><div class="kpi-number" id="kpiCategories">0</div><div class="kpi-label">📁 产品分类</div></div>
+      <div class="kpi-card"><div class="kpi-number" id="kpiInquiries">0</div><div class="kpi-label">📩 询盘总数</div></div>
+      <div class="kpi-card"><div class="kpi-number" id="kpiHot">0</div><div class="kpi-label">🔥 热门产品</div></div>
     </div>
   </div>
 
-  <!-- 产品管理 -->
   <div id="productsTab" class="tab-content">
     <div class="box">
-      <h3>📤 快速上架新产品</h3>
-      
-      <div class="step-nav">
-        <div class="step active" data-step="1">1. 基础信息</div>
-        <div class="step" data-step="2">2. 图片上传</div>
-        <div class="step" data-step="3">3. 规格参数</div>
-        <div class="step" data-step="4">4. 标签与发布</div>
+      <h3>📤 产品管理</h3>
+      <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+        <button class="btn" id="showAddProductBtn">+ 新增产品</button>
+        <button class="btn btn-outline" id="refreshProductsBtn">🔄 刷新列表</button>
       </div>
-
-      <!-- Step 1：基础信息 -->
-      <div id="step1" class="step-content active">
-        <div class="row">
-          <input type="text" id="p_name" placeholder="产品名称 *">
-          <input type="text" id="p_sku" placeholder="SKU / 产品编码">
-        </div>
-        <div class="row">
-          <select id="p_category">
-            <option value="">— 选择一级分类 —</option>
-            <option value="Neoprene Fabric">🧵 Neoprene Fabric</option>
-            <option value="Sports & Fitness Textiles">🏃 Sports & Fitness Textiles</option>
-            <option value="Bag & Luggage Materials">🎒 Bag & Luggage Materials</option>
-            <option value="Outdoor & Camping Fabrics">🏕️ Outdoor & Camping Fabrics</option>
-            <option value="Medical & Support Materials">🏥 Medical & Support Materials</option>
-            <option value="Industrial & Protective Fabrics">🛡️ Industrial & Protective Fabrics</option>
-            <option value="Custom OEM & Lamination">⚙️ Custom OEM & Lamination</option>
-          </select>
-          <select id="p_subcategory">
-            <option value="">— 选择二级分类 —</option>
-            <option value="CR Neoprene">CR Neoprene</option>
-            <option value="SBR Neoprene">SBR Neoprene</option>
-            <option value="TPU Laminated Fabric">TPU Laminated Fabric</option>
-            <option value="Double Laminated Neoprene">Double Laminated Neoprene</option>
-            <option value="Stretch Spandex">Stretch Spandex</option>
-            <option value="Breathable Mesh">Breathable Mesh</option>
-            <option value="Laminated Canvas">Laminated Canvas</option>
-            <option value="Eco Recycled Fabric">Eco Recycled Fabric</option>
-            <option value="Waterproof Ripstop">Waterproof Ripstop</option>
-            <option value="Medical Grade Neoprene">Medical Grade Neoprene</option>
-            <option value="Custom Lamination">Custom Lamination</option>
-          </select>
-        </div>
-        <div class="row">
-          <select id="p_lead_time">
-            <option value="fast">⚡ Fast (7-15 days)</option>
-            <option value="normal">📦 Normal (20-30 days)</option>
-            <option value="custom">⚙️ Custom</option>
-          </select>
-          <select id="p_oem_level">
-            <option value="OEM">🔧 OEM</option>
-            <option value="ODM">🎨 ODM</option>
-            <option value="OEM/ODM">🏭 OEM/ODM</option>
-          </select>
-        </div>
-        <div class="row">
-          <label style="display:flex; align-items:center; gap:10px;">
-            <input type="checkbox" id="p_is_hot" style="width:20px; margin:0;"> 🔥 标记为热门产品
-          </label>
-          <input type="text" id="p_price" placeholder="价格区间 (例: ¥18 - ¥32 / yard)">
-        </div>
-        <div class="row">
-          <input type="text" id="p_slogan" placeholder="一句话卖点（用于首页/SEO）">
-        </div>
-        <button class="btn-next" onclick="goToStep(2)">下一步 →</button>
-      </div>
-
-      <!-- Step 2：图片上传 -->
-      <div id="step2" class="step-content">
-        <div class="upload-box" id="uploadBox">📸 点击上传产品图片（可多选）</div>
-        <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
-        <div id="previewArea" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:15px;"></div>
-        <button class="btn-next" onclick="goToStep(3)">下一步 →</button>
-      </div>
-
-      <!-- Step 3：规格参数 -->
-      <div id="step3" class="step-content">
-        <div class="row-3">
-          <input type="text" id="p_thickness" placeholder="厚度 (mm)">
-          <input type="text" id="p_gsm" placeholder="GSM (克重)">
-          <select id="p_base_fabric">
-            <option value="">基布类型</option>
-            <option value="N cloth">N cloth (尼龙)</option>
-            <option value="T cloth">T cloth (涤纶)</option>
-            <option value="Terry cloth">Terry cloth (毛巾布)</option>
-            <option value="Bare Rubber">Bare Rubber (裸胶)</option>
-          </select>
-        </div>
-        <div class="row">
-          <input type="text" id="p_width" placeholder="宽度 / 尺寸 (例: 150cm)">
-          <input type="text" id="p_color" placeholder="颜色 (例: Black, 可定制)">
-        </div>
-        <div class="row">
-          <input type="text" id="p_moq" placeholder="MOQ (最小订购量)">
-          <select id="p_product_form">
-            <option value="">产品形态</option>
-            <option value="Rolls">Rolls (卷材)</option>
-            <option value="Sheets">Sheets (片材)</option>
-            <option value="Cut Pieces">Cut Pieces (裁片)</option>
-          </select>
-        </div>
-        <input type="text" id="p_material" placeholder="材料结构 (例: TPU + Polyester)">
-        <button class="btn-next" onclick="goToStep(4)">下一步 →</button>
-      </div>
-
-      <!-- Step 4：标签与发布 -->
-      <div id="step4" class="step-content">
-        <h4>⚡ 性能特点 (Performance)</h4>
-        <div class="tags" id="featuresTags">
-          <div class="tag" data-val="Waterproof">💧 Waterproof</div>
-          <div class="tag" data-val="Stretch">🔄 Stretch</div>
-          <div class="tag" data-val="Thermal">🔥 Thermal</div>
-          <div class="tag" data-val="Breathable">🌬️ Breathable</div>
-          <div class="tag" data-val="Durable">🛡️ Durable</div>
-          <div class="tag" data-val="Shock Absorbent">📦 Shock Absorbent</div>
-          <div class="tag" data-val="UV Resistant">☀️ UV Resistant</div>
-          <div class="tag" data-val="Flame Retardant">🔥 Flame Retardant</div>
-          <div class="tag" data-val="Anti-Bacterial">🦠 Anti-Bacterial</div>
-          <div class="tag" data-val="Eco-friendly">🌱 Eco-friendly</div>
-          <div class="tag" data-val="Lightweight">🪶 Lightweight</div>
-        </div>
-
-        <h4>🎯 应用场景 (Application)</h4>
-        <div class="tags" id="appsTags">
-          <div class="tag" data-val="Wetsuit">🏄 Wetsuit</div>
-          <div class="tag" data-val="Sportswear">🏃 Sportswear</div>
-          <div class="tag" data-val="Bags">🎒 Bags</div>
-          <div class="tag" data-val="Medical">🏥 Medical</div>
-          <div class="tag" data-val="Outdoor">🏕️ Outdoor</div>
-          <div class="tag" data-val="Yoga">🧘 Yoga</div>
-          <div class="tag" data-val="Camping">⛺ Camping</div>
-          <div class="tag" data-val="Industrial">🏭 Industrial</div>
-        </div>
-
-        <h4>💰 商务信号 (Commercial)</h4>
-        <div class="tags" id="commercialTags">
-          <div class="tag" data-val="Low MOQ">📦 Low MOQ</div>
-          <div class="tag" data-val="Fast Delivery">⚡ Fast Delivery</div>
-          <div class="tag" data-val="OEM Ready">🔧 OEM Ready</div>
-          <div class="tag" data-val="Sample Available">📋 Sample Available</div>
-          <div class="tag" data-val="Factory Direct">🏭 Factory Direct</div>
-          <div class="tag" data-val="Bulk Order">📦 Bulk Order</div>
-        </div>
-
-        <h4>✅ 认证资质 (Certification)</h4>
-        <div class="tags" id="certTags">
-          <div class="tag" data-val="REACH">✅ REACH</div>
-          <div class="tag" data-val="ROHS">✅ ROHS</div>
-          <div class="tag" data-val="OEKO-TEX">✅ OEKO-TEX</div>
-          <div class="tag" data-val="CA65">✅ CA65</div>
-          <div class="tag" data-val="ISO9001">✅ ISO9001</div>
-        </div>
-
-        <textarea id="p_desc" rows="4" placeholder="产品详细描述..."></textarea>
-        <input type="text" id="p_video" placeholder="视频链接 (YouTube)">
-        
-        <button onclick="submitProduct()">🚀 发布产品</button>
-        <div id="submitMsg" style="margin-top:15px;"></div>
-      </div>
-    </div>
-
-    <!-- 产品列表 -->
-    <div class="box">
-      <h3>📦 已有产品</h3>
-      <button id="refreshBtn">刷新列表</button>
-      <div id="productList"></div>
+      <div id="productsList"></div>
     </div>
   </div>
 
-  <!-- 工厂管理 -->
+  <div id="categoriesTab" class="tab-content">
+    <div class="box">
+      <h3>📁 分类管理</h3>
+      <div class="row" style="margin-bottom: 20px;">
+        <select id="parentCatSelect" style="margin-bottom: 0;">
+          <option value="">— 作为一级分类 —</option>
+        </select>
+        <input type="text" id="newCatName" placeholder="分类名称">
+        <button class="btn" id="addCategoryBtn">+ 添加分类</button>
+      </div>
+      <div id="categoriesTree"></div>
+    </div>
+  </div>
+
+  <div id="homepageTab" class="tab-content">
+    <div class="box">
+      <h3>🏠 首页配置</h3>
+      <div class="row">
+        <div>
+          <div class="section-title">HERO 主标题</div>
+          <input type="text" id="heroTitle">
+          <div class="section-title">HERO 副标题</div>
+          <input type="text" id="heroSubtitle">
+          <div class="section-title">公司全称</div>
+          <input type="text" id="companyFullName">
+        </div>
+        <div>
+          <div class="section-title">联系方式</div>
+          <input type="text" id="contactEmail" placeholder="邮箱">
+          <input type="text" id="contactPhone" placeholder="电话">
+          <input type="text" id="contactWhatsapp" placeholder="WhatsApp">
+        </div>
+      </div>
+      <button class="btn" id="saveHomepageBtn">💾 保存设置</button>
+    </div>
+  </div>
+
   <div id="factoryTab" class="tab-content">
     <div class="box">
       <h3>🏭 工厂照片</h3>
-      <div class="upload-box" id="factoryUploadBox">📸 点击上传工厂照片</div>
+      <div class="upload-box" id="factoryUploadBox">📸 点击上传照片</div>
       <input type="file" id="factoryFile" accept="image/*" style="display:none">
       <div id="factoryPreview"></div>
-      <input type="text" id="factoryTitle" placeholder="照片标题">
-      <select id="factoryCategory"><option value="facility">工厂设施</option><option value="production">生产线</option></select>
-      <input type="number" id="factoryOrder" placeholder="排序" value="0">
-      <button id="addFactoryBtn">添加工厂照片</button>
-      <div id="factoryList"></div>
+      <div class="row">
+        <input type="text" id="factoryTitle" placeholder="照片标题">
+        <select id="factoryCategory"><option value="facility">工厂设施</option><option value="production">生产线</option></select>
+        <input type="number" id="factoryOrder" placeholder="排序" value="0">
+      </div>
+      <button class="btn" id="addFactoryBtn">+ 添加</button>
+      <div id="factoryList" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 15px;"></div>
     </div>
   </div>
 
-  <!-- 网站设置 -->
-  <div id="settingsTab" class="tab-content">
+  <div id="crmTab" class="tab-content">
     <div class="box">
-      <h3>🏠 首页背景图</h3>
-      <div class="upload-box" id="heroUploadBox">📸 点击上传背景图</div>
-      <input type="file" id="heroFile" accept="image/*" style="display:none">
-      <div id="heroPreview"></div>
-      <button id="saveHeroBtn">保存背景图</button>
+      <h3>📩 询盘管理</h3>
+      <button class="btn btn-outline" id="refreshCrmBtn">🔄 刷新</button>
+      <div id="crmList" style="margin-top: 20px;"></div>
     </div>
   </div>
 </div>
 
-<!-- 编辑产品模态框 -->
-<div id="editModal" class="modal">
+<!-- 产品模态框 -->
+<div id="productModal" class="modal">
   <div class="modal-content">
-    <h3>✏️ 编辑产品</h3>
+    <h3 id="modalTitle">✏️ 产品</h3>
     <input type="hidden" id="editId">
     <div class="row">
-      <input type="text" id="editName" placeholder="产品名称">
+      <input type="text" id="editName" placeholder="产品名称 *">
       <input type="text" id="editSku" placeholder="SKU">
     </div>
     <div class="row">
-      <select id="editCategory">
-        <option value="">选择分类</option>
-        <option value="Neoprene Fabric">Neoprene Fabric</option>
-        <option value="Sports & Fitness Textiles">Sports & Fitness Textiles</option>
-        <option value="Bag & Luggage Materials">Bag & Luggage Materials</option>
-        <option value="Outdoor & Camping Fabrics">Outdoor & Camping Fabrics</option>
-        <option value="Medical & Support Materials">Medical & Support Materials</option>
-        <option value="Industrial & Protective Fabrics">Industrial & Protective Fabrics</option>
-        <option value="Custom OEM & Lamination">Custom OEM & Lamination</option>
-      </select>
-      <select id="editLeadTime">
-        <option value="fast">Fast (7-15 days)</option>
-        <option value="normal">Normal (20-30 days)</option>
-        <option value="custom">Custom</option>
-      </select>
+      <select id="editCategoryId"><option value="">— 选择分类 —</option></select>
+      <input type="text" id="editPrice" placeholder="价格 (例: $12.99 / yard)">
     </div>
     <div class="row">
-      <input type="text" id="editThickness" placeholder="厚度">
+      <input type="text" id="editThickness" placeholder="厚度 (mm)">
       <input type="text" id="editGsm" placeholder="GSM">
     </div>
     <div class="row">
-      <input type="text" id="editWidth" placeholder="宽度">
-      <input type="text" id="editColor" placeholder="颜色">
-    </div>
-    <div class="row">
-      <input type="text" id="editMoq" placeholder="MOQ">
+      <input type="text" id="editMoq" placeholder="Min. Order (最小起订量)">
       <select id="editOemLevel">
-        <option value="OEM">OEM</option>
-        <option value="ODM">ODM</option>
-        <option value="OEM/ODM">OEM/ODM</option>
+        <option value="">— 定制能力 —</option>
+        <option value="OEM">⚙️ OEM Available</option>
+        <option value="ODM">🎨 ODM Available</option>
+        <option value="OEM/ODM">🏭 OEM/ODM Available</option>
       </select>
     </div>
     <label style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
-      <input type="checkbox" id="editIsHot"> 🔥 热门产品
+      <input type="checkbox" id="editIsHot"> 🔥 标记为热门产品
     </label>
+    <div class="section-title">产品特点</div>
+    <div class="tags-group" id="editFeaturesTags"></div>
+    <div class="section-title">应用场景</div>
+    <div class="tags-group" id="editAppsTags"></div>
     <textarea id="editDesc" rows="3" placeholder="产品描述"></textarea>
-    <div class="modal-buttons"><button id="saveEditBtn" style="background:#f59e0b;">保存</button><button id="cancelEditBtn" style="background:#6c757d;">取消</button></div>
+    <div class="upload-box" id="editUploadBox" style="padding:15px;">📸 点击上传图片</div>
+    <input type="file" id="editFile" accept="image/*" style="display:none">
+    <div id="editPreviewArea"></div>
+    <div class="modal-buttons"><button class="btn" id="saveProductBtn">💾 保存</button><button class="btn btn-danger" id="cancelModalBtn">取消</button></div>
   </div>
 </div>
 
@@ -336,248 +203,402 @@ const SUPABASE_URL = "https://tpcxaelljrudshchuzia.supabase.co";
 const SUPABASE_KEY = "sb_publishable_c0xeymh6AnE-Ld7StbxpgA_YN3ig8qt";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let currentStep = 1;
-let selectedFiles = [];
-let selectedFeatures = [];
-let selectedApps = [];
-let selectedCommercial = [];
-let selectedCerts = [];
+const FEATURE_OPTS = ["Waterproof", "Stretch", "Breathable", "Thermal", "Embossed", "Perforated"];
+const APP_OPTS = ["Wetsuit", "Sportswear", "Bags", "Medical", "Outdoor", "Footwear"];
 
-document.getElementById("loginBtn").onclick = function() {
-  if (document.getElementById("pass").value === "123456") {
+let allCategories = [];
+let currentEditFile = null;
+let currentEditFeatures = [];
+let currentEditApps = [];
+
+// ========== 预置分类数据 ==========
+const PRESET_CATEGORIES = [
+  { name: "Neoprene Fabric", parent_id: null, sort_order: 1 },
+  { name: "Laminated Neoprene Fabric", parent_id: null, sort_order: 2 },
+  { name: "Application Materials", parent_id: null, sort_order: 3 },
+  { name: "Functional Fabric", parent_id: null, sort_order: 4 },
+  { name: "Surface Fabric Options", parent_id: null, sort_order: 5 },
+  { name: "OEM & Custom Solutions", parent_id: null, sort_order: 6 },
+  { name: "Best Sellers", parent_id: null, sort_order: 7 },
+  // Neoprene Fabric 的子分类
+  { name: "SBR Neoprene", parent_name: "Neoprene Fabric", sort_order: 1 },
+  { name: "SCR Neoprene", parent_name: "Neoprene Fabric", sort_order: 2 },
+  { name: "CR Neoprene", parent_name: "Neoprene Fabric", sort_order: 3 },
+  { name: "Laminated Neoprene", parent_name: "Neoprene Fabric", sort_order: 4 },
+  // Laminated Neoprene Fabric 的子分类
+  { name: "Polyester Lamination", parent_name: "Laminated Neoprene Fabric", sort_order: 1 },
+  { name: "Spandex Lamination", parent_name: "Laminated Neoprene Fabric", sort_order: 2 },
+  { name: "Lycra Lamination", parent_name: "Laminated Neoprene Fabric", sort_order: 3 },
+  { name: "Jersey Lamination", parent_name: "Laminated Neoprene Fabric", sort_order: 4 },
+  { name: "OK Fabric Lamination", parent_name: "Laminated Neoprene Fabric", sort_order: 5 },
+  { name: "Mesh Lamination", parent_name: "Laminated Neoprene Fabric", sort_order: 6 },
+  { name: "TPU Lamination", parent_name: "Laminated Neoprene Fabric", sort_order: 7 },
+  { name: "Velvet Lamination", parent_name: "Laminated Neoprene Fabric", sort_order: 8 },
+  // Application Materials 的子分类
+  { name: "Wetsuit Material", parent_name: "Application Materials", sort_order: 1 },
+  { name: "Cup Sleeve Material", parent_name: "Application Materials", sort_order: 2 },
+  { name: "Footwear Material", parent_name: "Application Materials", sort_order: 3 },
+  { name: "Sports Support Material", parent_name: "Application Materials", sort_order: 4 },
+  { name: "Bag Material", parent_name: "Application Materials", sort_order: 5 },
+  { name: "Medical Support Material", parent_name: "Application Materials", sort_order: 6 },
+  { name: "Fitness Product Material", parent_name: "Application Materials", sort_order: 7 },
+  // Functional Fabric 的子分类
+  { name: "Waterproof", parent_name: "Functional Fabric", sort_order: 1 },
+  { name: "Stretch", parent_name: "Functional Fabric", sort_order: 2 },
+  { name: "Thermal Insulation", parent_name: "Functional Fabric", sort_order: 3 },
+  { name: "Shock Absorption", parent_name: "Functional Fabric", sort_order: 4 },
+  { name: "Breathable", parent_name: "Functional Fabric", sort_order: 5 },
+  { name: "Embossed", parent_name: "Functional Fabric", sort_order: 6 },
+  { name: "Printed", parent_name: "Functional Fabric", sort_order: 7 },
+  // Surface Fabric Options 的子分类
+  { name: "Lycra Fabric", parent_name: "Surface Fabric Options", sort_order: 1 },
+  { name: "T Fabric", parent_name: "Surface Fabric Options", sort_order: 2 },
+  { name: "Jersey Fabric", parent_name: "Surface Fabric Options", sort_order: 3 },
+  { name: "OK Fabric", parent_name: "Surface Fabric Options", sort_order: 4 },
+  { name: "Mesh Fabric", parent_name: "Surface Fabric Options", sort_order: 5 },
+  { name: "Satin Fabric", parent_name: "Surface Fabric Options", sort_order: 6 },
+  { name: "Milk Silk Fabric", parent_name: "Surface Fabric Options", sort_order: 7 },
+  { name: "Velvet Fabric", parent_name: "Surface Fabric Options", sort_order: 8 },
+  { name: "Brushed Fabric", parent_name: "Surface Fabric Options", sort_order: 9 },
+  // OEM & Custom Solutions 的子分类
+  { name: "Custom Thickness", parent_name: "OEM & Custom Solutions", sort_order: 1 },
+  { name: "Custom Lamination", parent_name: "OEM & Custom Solutions", sort_order: 2 },
+  { name: "Custom Color", parent_name: "OEM & Custom Solutions", sort_order: 3 },
+  { name: "Sample Development", parent_name: "OEM & Custom Solutions", sort_order: 4 }
+];
+
+async function initPresetCategories() {
+  // 检查是否有分类数据
+  const { data: existing, count } = await sb.from("categories").select("*", { count: "exact" });
+  if (count > 0) return;
+  
+  // 先插入一级分类，记录ID映射
+  const parentMap = {};
+  for (let cat of PRESET_CATEGORIES.filter(c => !c.parent_name)) {
+    const { data } = await sb.from("categories").insert([{ name: cat.name, parent_id: null, sort_order: cat.sort_order }]).select();
+    if (data) parentMap[cat.name] = data[0].id;
+  }
+  
+  // 再插入二级分类
+  for (let cat of PRESET_CATEGORIES.filter(c => c.parent_name)) {
+    const parentId = parentMap[cat.parent_name];
+    if (parentId) {
+      await sb.from("categories").insert([{ name: cat.name, parent_id: parentId, sort_order: cat.sort_order }]);
+    }
+  }
+}
+
+// ========== 登录 ==========
+document.getElementById("loginBtn").onclick = async () => {
+  if (document.getElementById("adminPass").value === "123456") {
     document.getElementById("loginBox").style.display = "none";
     document.getElementById("panelBox").style.display = "block";
-    loadProducts();
-    loadFactoryPhotos();
-    loadStats();
-    loadHeroBackground();
+    await initPresetCategories();
+    await loadAllData();
   } else alert("密码错误");
 };
 
-document.querySelectorAll(".tab-btn").forEach(btn => {
-  btn.onclick = function() {
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-    this.classList.add("active");
-    let tab = this.dataset.tab;
-    document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
-    if (tab === "dashboard") document.getElementById("dashboardTab").classList.add("active");
-    if (tab === "products") { document.getElementById("productsTab").classList.add("active"); loadProducts(); }
-    if (tab === "factory") { document.getElementById("factoryTab").classList.add("active"); loadFactoryPhotos(); }
-    if (tab === "settings") document.getElementById("settingsTab").classList.add("active");
+document.querySelectorAll(".nav-tab").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".nav-tab").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll(".tab-content").forEach(t => t.style.display = "none");
+    document.getElementById(`${btn.dataset.tab}Tab`).style.display = "block";
+    if (btn.dataset.tab === "products") loadProducts();
+    if (btn.dataset.tab === "categories") loadCategoriesTree();
+    if (btn.dataset.tab === "crm") loadCRM();
+    if (btn.dataset.tab === "factory") loadFactoryPhotos();
   };
 });
 
-function goToStep(step) {
-  document.querySelectorAll(".step-content").forEach(el => el.classList.remove("active"));
-  document.getElementById(`step${step}`).classList.add("active");
-  document.querySelectorAll(".step").forEach((el, idx) => {
-    if (idx + 1 <= step) el.classList.add("active");
-    else el.classList.remove("active");
-  });
-  currentStep = step;
+async function loadAllData() {
+  await loadCategories();
+  await loadProducts();
+  await loadStats();
+  await loadCategoriesTree();
+  await loadHomepageSettings();
+  await loadFactoryPhotos();
+  await loadCRM();
 }
 
-function initTagSelection(containerId, selectedArray) {
-  document.querySelectorAll(`#${containerId} .tag`).forEach(tag => {
-    tag.onclick = function() {
-      this.classList.toggle("active");
-      const val = this.dataset.val;
-      if (selectedArray.includes(val)) {
-        const idx = selectedArray.indexOf(val);
-        selectedArray.splice(idx, 1);
-      } else {
-        selectedArray.push(val);
-      }
-    };
-  });
+async function loadStats() {
+  const { data: products } = await sb.from("products").select("*", { count: "exact" });
+  const { data: categories } = await sb.from("categories").select("*", { count: "exact" });
+  const { data: inquiries } = await sb.from("inquiries").select("*", { count: "exact" });
+  document.getElementById("kpiProducts").innerText = products?.length || 0;
+  document.getElementById("kpiCategories").innerText = categories?.length || 0;
+  document.getElementById("kpiInquiries").innerText = inquiries?.length || 0;
+  document.getElementById("kpiHot").innerText = (products || []).filter(p => p.is_hot).length || 0;
 }
-initTagSelection("featuresTags", selectedFeatures);
-initTagSelection("appsTags", selectedApps);
-initTagSelection("commercialTags", selectedCommercial);
-initTagSelection("certTags", selectedCerts);
 
-document.getElementById("uploadBox").onclick = () => document.getElementById("fileInput").click();
-document.getElementById("fileInput").onchange = (e) => {
-  selectedFiles = Array.from(e.target.files);
-  renderPreview();
-};
-function renderPreview() {
-  const container = document.getElementById("previewArea");
-  container.innerHTML = "";
-  selectedFiles.forEach((file, idx) => {
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      container.innerHTML += `<div style="position:relative; display:inline-block;"><img src="${ev.target.result}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;"><button onclick="removeFile(${idx})" style="position:absolute;top:-5px;right:-5px;background:red;border-radius:50%;width:20px;height:20px;">×</button></div>`;
-    };
-    reader.readAsDataURL(file);
-  });
+async function loadCategories() {
+  const { data, error } = await sb.from("categories").select("*").order("sort_order");
+  if (!error) allCategories = data || [];
+  return allCategories;
 }
-function removeFile(idx) { selectedFiles.splice(idx, 1); renderPreview(); }
 
-async function submitProduct() {
-  const name = document.getElementById("p_name").value.trim();
-  if (!name) { alert("请填写产品名称"); return; }
-  const btn = event.target;
-  btn.disabled = true;
-  btn.innerText = "发布中...";
+async function loadCategoriesTree() {
+  await loadCategories();
+  const container = document.getElementById("categoriesTree");
+  const parentSelect = document.getElementById("parentCatSelect");
+  const topLevel = allCategories.filter(c => !c.parent_id);
   
-  const imageUrls = [];
-  for (let f of selectedFiles) {
-    const fn = Date.now() + "_" + f.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-    const { error } = await sb.storage.from("images").upload(fn, f);
-    if (!error) {
-      const { data } = sb.storage.from("images").getPublicUrl(fn);
-      imageUrls.push(data.publicUrl);
-    }
-  }
+  parentSelect.innerHTML = '<option value="">— 作为一级分类 —</option>' + 
+    allCategories.map(c => `<option value="${c.id}">${"——".repeat(c.level || 0)}${escapeHtml(c.name)}</option>`).join('');
   
-  const productData = {
-    name: name,
-    sku: document.getElementById("p_sku").value || null,
-    category: document.getElementById("p_category").value,
-    subcategory: document.getElementById("p_subcategory").value,
-    slogan: document.getElementById("p_slogan").value,
-    thickness: document.getElementById("p_thickness").value,
-    gsm: document.getElementById("p_gsm").value,
-    width: document.getElementById("p_width").value,
-    color: document.getElementById("p_color").value,
-    moq: document.getElementById("p_moq").value,
-    price: document.getElementById("p_price").value,
-    material: document.getElementById("p_material").value,
-    base_fabric: document.getElementById("p_base_fabric").value,
-    product_forms: document.getElementById("p_product_form").value ? [document.getElementById("p_product_form").value] : [],
-    features: selectedFeatures,
-    applications: selectedApps,
-    business_tags: selectedCommercial,
-    certifications: selectedCerts,
-    lead_time: document.getElementById("p_lead_time").value,
-    oem_level: document.getElementById("p_oem_level").value,
-    is_hot: document.getElementById("p_is_hot").checked,
-    description: document.getElementById("p_desc").value,
-    video_url: document.getElementById("p_video").value || null,
-    image: imageUrls[0] || "",
-    images: imageUrls
+  let html = '<table><thead><tr><th>分类名称</th><th>类型</th><th>排序</th><th>操作</th></tr></thead><tbody>';
+  const renderTree = (items, level = 0) => {
+    items.forEach(cat => {
+      html += `<tr>
+        <td>${"&nbsp;&nbsp;".repeat(level)}📁 ${escapeHtml(cat.name)}</td>
+        <td>${cat.parent_id ? "子分类" : "一级分类"}</td>
+        <td><input type="number" value="${cat.sort_order || 0}" style="width:70px;" onchange="updateSortOrder(${cat.id}, this.value)"></td>
+        <td><button class="btn btn-sm btn-warning" onclick="editCategory(${cat.id}, '${escapeHtml(cat.name)}')">编辑</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteCategory(${cat.id})">删除</button></td>
+      </tr>`;
+      const children = allCategories.filter(c => c.parent_id === cat.id);
+      if (children.length) renderTree(children, level + 1);
+    });
   };
-  
-  const { error } = await sb.from("products").insert([productData]);
-  if (error) alert("失败：" + error.message);
-  else { alert("✅ 发布成功！"); location.reload(); }
-  btn.disabled = false;
-  btn.innerText = "🚀 发布产品";
+  renderTree(topLevel);
+  html += '</tbody><table>';
+  container.innerHTML = html || "<div>暂无分类</div>";
 }
+
+async function updateSortOrder(id, val) {
+  await sb.from("categories").update({ sort_order: parseInt(val) || 0 }).eq("id", id);
+  loadCategoriesTree();
+}
+
+document.getElementById("addCategoryBtn").onclick = async () => {
+  const name = document.getElementById("newCatName").value.trim();
+  const parentId = document.getElementById("parentCatSelect").value;
+  if (!name) { alert("请输入分类名称"); return; }
+  const { error } = await sb.from("categories").insert([{ name, parent_id: parentId || null, sort_order: 0 }]);
+  if (error) alert("添加失败: " + error.message);
+  else { alert("✅ 添加成功"); document.getElementById("newCatName").value = ""; await loadCategoriesTree(); await loadCategories(); }
+};
+
+window.editCategory = async (id, oldName) => {
+  const newName = prompt("修改分类名称:", oldName);
+  if (newName && newName !== oldName) {
+    await sb.from("categories").update({ name: newName }).eq("id", id);
+    await loadCategoriesTree();
+    await loadCategories();
+  }
+};
+
+window.deleteCategory = async (id) => {
+  const hasChildren = allCategories.some(c => c.parent_id === id);
+  if (hasChildren) { alert("请先删除子分类"); return; }
+  if (confirm("删除分类后，产品将变为未分类，确定删除？")) {
+    await sb.from("products").update({ category_id: null }).eq("category_id", id);
+    await sb.from("categories").delete().eq("id", id);
+    await loadCategoriesTree();
+    await loadCategories();
+    await loadProducts();
+  }
+};
 
 async function loadProducts() {
-  const { data } = await sb.from("products").select("*").order("id", { ascending: false });
-  let html = "";
+  const { data, error } = await sb.from("products").select("*, categories(name)").order("id", { ascending: false });
+  if (error) { console.error(error); return; }
+  let html = '';
   (data || []).forEach(p => {
-    html += `<div class="item">
-      <b>${escapeHtml(p.name)}</b> ${p.is_hot ? '🔥' : ''}<br>
-      📁 ${escapeHtml(p.category || "-")} | SKU: ${escapeHtml(p.sku || "-")}<br>
-      📏 ${escapeHtml(p.thickness || "-")}mm | ${escapeHtml(p.gsm || "-")}gsm | MOQ: ${escapeHtml(p.moq || "-")}<br>
-      <div class="item-actions">
-        <button class="edit-btn" onclick='openEditModal(${JSON.stringify(p).replace(/'/g, "&#39;")})'>✏️ 编辑</button>
-        <button class="preview-btn" onclick="window.open('product.html?id=${p.id}','_blank')">👁️ 预览</button>
-        <button class="delete-btn" onclick="deleteProduct(${p.id})">🗑️ 删除</button>
+    html += `<div class="product-item">
+      <div class="product-header">
+        <div><span class="product-name">${escapeHtml(p.name)}</span> ${p.is_hot ? '🔥' : ''}</div>
+        <div class="product-actions">
+          <button class="btn btn-sm" onclick='openProductModal(${JSON.stringify(p).replace(/'/g, "&#39;")})'>✏️ 编辑</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteProduct(${p.id})">🗑️ 删除</button>
+        </div>
+      </div>
+      <div class="product-details">
+        <span>📁 ${escapeHtml(p.categories?.name || "未分类")}</span>
+        <span>💰 ${escapeHtml(p.price || "询价")}</span>
+        <span>📏 ${escapeHtml(p.thickness || "-")}mm</span>
+        <span>📦 Min.Order: ${escapeHtml(p.moq || "联系")}</span>
+        ${p.oem_level ? `<span>${getOemIcon(p.oem_level)} ${escapeHtml(p.oem_level)}</span>` : ''}
       </div>
     </div>`;
   });
-  document.getElementById("productList").innerHTML = html || "<div>暂无产品</div>";
+  document.getElementById("productsList").innerHTML = html || "<div>暂无产品，点击新增</div>";
 }
 
-function openEditModal(product) {
-  document.getElementById("editId").value = product.id;
-  document.getElementById("editName").value = product.name || "";
-  document.getElementById("editSku").value = product.sku || "";
-  document.getElementById("editCategory").value = product.category || "";
-  document.getElementById("editLeadTime").value = product.lead_time || "normal";
-  document.getElementById("editThickness").value = product.thickness || "";
-  document.getElementById("editGsm").value = product.gsm || "";
-  document.getElementById("editWidth").value = product.width || "";
-  document.getElementById("editColor").value = product.color || "";
-  document.getElementById("editMoq").value = product.moq || "";
-  document.getElementById("editOemLevel").value = product.oem_level || "OEM";
-  document.getElementById("editIsHot").checked = product.is_hot || false;
-  document.getElementById("editDesc").value = product.description || "";
-  document.getElementById("editModal").style.display = "flex";
+function getOemIcon(level) {
+  if (level === "OEM") return "⚙️";
+  if (level === "ODM") return "🎨";
+  if (level === "OEM/ODM") return "🏭";
+  return "";
 }
 
-async function saveEdit() {
+document.getElementById("showAddProductBtn").onclick = () => openProductModal(null);
+document.getElementById("refreshProductsBtn").onclick = loadProducts;
+document.getElementById("cancelModalBtn").onclick = () => document.getElementById("productModal").style.display = "none";
+
+async function loadCategoriesForSelect(selectedId) {
+  const { data } = await sb.from("categories").select("*").order("sort_order");
+  allCategories = data || [];
+  const catSelect = document.getElementById("editCategoryId");
+  const buildOptions = (items, level = 0) => {
+    let html = '';
+    items.forEach(cat => {
+      html += `<option value="${cat.id}" ${selectedId == cat.id ? 'selected' : ''}>${"——".repeat(level)}${escapeHtml(cat.name)}</option>`;
+      const children = allCategories.filter(c => c.parent_id === cat.id);
+      if (children.length) html += buildOptions(children, level + 1);
+    });
+    return html;
+  };
+  const topLevel = allCategories.filter(c => !c.parent_id);
+  catSelect.innerHTML = '<option value="">— 选择分类 —</option>' + buildOptions(topLevel);
+}
+
+function openProductModal(product) {
+  const isEdit = product !== null;
+  document.getElementById("modalTitle").innerText = isEdit ? "✏️ 编辑产品" : "➕ 新增产品";
+  document.getElementById("editId").value = product?.id || "";
+  document.getElementById("editName").value = product?.name || "";
+  document.getElementById("editSku").value = product?.sku || "";
+  document.getElementById("editPrice").value = product?.price || "";
+  document.getElementById("editThickness").value = product?.thickness || "";
+  document.getElementById("editGsm").value = product?.gsm || "";
+  document.getElementById("editMoq").value = product?.moq || "";
+  document.getElementById("editOemLevel").value = product?.oem_level || "";
+  document.getElementById("editIsHot").checked = product?.is_hot || false;
+  document.getElementById("editDesc").value = product?.description || "";
+  
+  loadCategoriesForSelect(product?.category_id || null);
+  
+  currentEditFeatures = product?.features || [];
+  currentEditApps = product?.applications || [];
+  renderEditTags();
+  
+  if (product?.image) {
+    document.getElementById("editPreviewArea").innerHTML = `<img src="${product.image}" class="preview-img">`;
+  } else {
+    document.getElementById("editPreviewArea").innerHTML = "";
+  }
+  currentEditFile = null;
+  document.getElementById("productModal").style.display = "flex";
+}
+
+function renderEditTags() {
+  const featuresHtml = FEATURE_OPTS.map(opt => `<span class="tag ${currentEditFeatures.includes(opt) ? 'active' : ''}" data-val="${opt}">${opt}</span>`).join('');
+  const appsHtml = APP_OPTS.map(opt => `<span class="tag ${currentEditApps.includes(opt) ? 'active' : ''}" data-val="${opt}">${opt}</span>`).join('');
+  document.getElementById("editFeaturesTags").innerHTML = featuresHtml;
+  document.getElementById("editAppsTags").innerHTML = appsHtml;
+  
+  document.querySelectorAll("#editFeaturesTags .tag").forEach(t => {
+    t.onclick = () => { t.classList.toggle("active"); const val = t.dataset.val; if (currentEditFeatures.includes(val)) currentEditFeatures = currentEditFeatures.filter(v => v !== val); else currentEditFeatures.push(val); };
+  });
+  document.querySelectorAll("#editAppsTags .tag").forEach(t => {
+    t.onclick = () => { t.classList.toggle("active"); const val = t.dataset.val; if (currentEditApps.includes(val)) currentEditApps = currentEditApps.filter(v => v !== val); else currentEditApps.push(val); };
+  });
+}
+
+document.getElementById("editUploadBox").onclick = () => document.getElementById("editFile").click();
+document.getElementById("editFile").onchange = (e) => {
+  if (e.target.files[0]) {
+    currentEditFile = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (ev) => document.getElementById("editPreviewArea").innerHTML = `<img src="${ev.target.result}" class="preview-img">`;
+    reader.readAsDataURL(currentEditFile);
+  }
+};
+
+document.getElementById("saveProductBtn").onclick = async () => {
+  const name = document.getElementById("editName").value.trim();
+  if (!name) { alert("请填写产品名称"); return; }
   const id = document.getElementById("editId").value;
-  const { error } = await sb.from("products").update({
-    name: document.getElementById("editName").value,
-    sku: document.getElementById("editSku").value,
-    category: document.getElementById("editCategory").value,
-    lead_time: document.getElementById("editLeadTime").value,
+  let imageUrl = "";
+  if (currentEditFile) {
+    const fn = "products/" + Date.now() + "_" + currentEditFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    await sb.storage.from("images").upload(fn, currentEditFile);
+    const { data } = sb.storage.from("images").getPublicUrl(fn);
+    imageUrl = data.publicUrl;
+  }
+  const productData = {
+    name: name,
+    sku: document.getElementById("editSku").value || null,
+    category_id: document.getElementById("editCategoryId").value || null,
+    price: document.getElementById("editPrice").value,
     thickness: document.getElementById("editThickness").value,
     gsm: document.getElementById("editGsm").value,
-    width: document.getElementById("editWidth").value,
-    color: document.getElementById("editColor").value,
     moq: document.getElementById("editMoq").value,
-    oem_level: document.getElementById("editOemLevel").value,
+    oem_level: document.getElementById("editOemLevel").value || null,
     is_hot: document.getElementById("editIsHot").checked,
-    description: document.getElementById("editDesc").value
-  }).eq("id", id);
-  if (error) alert("失败：" + error.message);
-  else { alert("✅ 已更新"); document.getElementById("editModal").style.display = "none"; loadProducts(); }
+    features: currentEditFeatures,
+    applications: currentEditApps,
+    description: document.getElementById("editDesc").value,
+    ...(imageUrl && { image: imageUrl })
+  };
+  let error;
+  if (id) error = (await sb.from("products").update(productData).eq("id", id)).error;
+  else error = (await sb.from("products").insert([productData])).error;
+  if (error) alert("保存失败: " + error.message);
+  else { alert("✅ 保存成功"); document.getElementById("productModal").style.display = "none"; loadProducts(); }
+};
+
+window.deleteProduct = async (id) => {
+  if (confirm("确定删除？")) {
+    await sb.from("products").delete().eq("id", id);
+    loadProducts();
+  }
+};
+
+async function loadHomepageSettings() {
+  const { data } = await sb.from("site_settings").select("*");
+  const settings = data || [];
+  document.getElementById("heroTitle").value = settings.find(s => s.key === "hero_title")?.value || "OEM / ODM | Custom Lamination | Global Supply";
+  document.getElementById("heroSubtitle").value = settings.find(s => s.key === "hero_subtitle")?.value || "Custom neoprene and composite fabrics for wetsuits, sportswear, bags, and industrial gear.";
+  document.getElementById("companyFullName").value = settings.find(s => s.key === "company_name")?.value || "Dongguan Siyin Sports Goods Co., Ltd.";
+  document.getElementById("contactEmail").value = settings.find(s => s.key === "contact_email")?.value || "sales@siyin.com";
+  document.getElementById("contactPhone").value = settings.find(s => s.key === "contact_phone")?.value || "+86 138 0000 0000";
+  document.getElementById("contactWhatsapp").value = settings.find(s => s.key === "contact_whatsapp")?.value || "+86 138 0000 0000";
 }
 
-async function deleteProduct(id) { if (confirm("确定删除？")) { await sb.from("products").delete().eq("id", id); loadProducts(); } }
-
-document.getElementById("saveEditBtn").onclick = saveEdit;
-document.getElementById("cancelEditBtn").onclick = () => document.getElementById("editModal").style.display = "none";
-document.getElementById("refreshBtn").onclick = loadProducts;
+document.getElementById("saveHomepageBtn").onclick = async () => {
+  const settings = [
+    { key: "hero_title", value: document.getElementById("heroTitle").value },
+    { key: "hero_subtitle", value: document.getElementById("heroSubtitle").value },
+    { key: "company_name", value: document.getElementById("companyFullName").value },
+    { key: "contact_email", value: document.getElementById("contactEmail").value },
+    { key: "contact_phone", value: document.getElementById("contactPhone").value },
+    { key: "contact_whatsapp", value: document.getElementById("contactWhatsapp").value }
+  ];
+  for (let s of settings) {
+    await sb.from("site_settings").upsert({ key: s.key, value: s.value }, { onConflict: "key" });
+  }
+  alert("✅ 已保存");
+};
 
 let currentFactoryFile = null;
 document.getElementById("factoryUploadBox").onclick = () => document.getElementById("factoryFile").click();
-document.getElementById("factoryFile").onchange = (e) => { if (e.target.files[0]) { currentFactoryFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("factoryPreview").innerHTML = `<img src="${ev.target.result}" class="preview-img">`; reader.readAsDataURL(currentFactoryFile); } };
-document.getElementById("addFactoryBtn").onclick = async function() {
+document.getElementById("factoryFile").onchange = (e) => { if (e.target.files[0]) { currentFactoryFile = e.target.files[0]; const reader = new FileReader(); reader.onload = (ev) => document.getElementById("factoryPreview").innerHTML = `<img src="${ev.target.result}" class="preview-img">`; reader.readAsDataURL(currentFactoryFile); } };
+document.getElementById("addFactoryBtn").onclick = async () => {
   if (!currentFactoryFile) { alert("请选择图片"); return; }
-  let fn = "factory/" + Date.now() + "_" + currentFactoryFile.name;
+  const fn = "factory/" + Date.now() + "_" + currentFactoryFile.name;
   await sb.storage.from("images").upload(fn, currentFactoryFile);
-  let { data } = sb.storage.from("images").getPublicUrl(fn);
+  const { data } = sb.storage.from("images").getPublicUrl(fn);
   await sb.from("factory_photos").insert([{ image_url: data.publicUrl, title: document.getElementById("factoryTitle").value, category: document.getElementById("factoryCategory").value, sort_order: parseInt(document.getElementById("factoryOrder").value) || 0 }]);
   alert("添加成功"); location.reload();
 };
 async function loadFactoryPhotos() {
-  let { data } = await sb.from("factory_photos").select("*").order("sort_order");
-  let html = ""; (data || []).forEach(p => { html += `<div style="display:inline-block; margin:10px;"><img src="${p.image_url}" style="width:100px;border-radius:8px;"><div>${p.title || "照片"}</div><button onclick="deleteFactoryPhoto(${p.id})" style="background:#dc2626;">删除</button></div>`; });
-  document.getElementById("factoryList").innerHTML = html || "<div>暂无</div>";
+  const { data } = await sb.from("factory_photos").select("*").order("sort_order");
+  const container = document.getElementById("factoryList");
+  container.innerHTML = (data || []).map(p => `<div><img src="${p.image_url}" style="width:100px;border-radius:8px;"><div>${p.title || "照片"}</div><button class="btn btn-sm btn-danger" onclick="deleteFactoryPhoto(${p.id})">删除</button></div>`).join('');
 }
-async function deleteFactoryPhoto(id) { if (confirm("删除？")) { await sb.from("factory_photos").delete().eq("id", id); loadFactoryPhotos(); } }
+window.deleteFactoryPhoto = async (id) => { if (confirm("删除？")) { await sb.from("factory_photos").delete().eq("id", id); loadFactoryPhotos(); } };
 
-async function loadStats() {
-  const { data: products } = await sb.from("products").select("*");
-  const { data: inquiries } = await sb.from("inquiries").select("*");
-  document.getElementById("kpiProducts").innerText = products?.length || 0;
-  document.getElementById("kpiInquiries").innerText = inquiries?.length || 0;
-  const hotProducts = (products || []).filter(p => p.is_hot === true).length;
-  document.getElementById("kpiHot").innerText = hotProducts;
+async function loadCRM() {
+  const { data } = await sb.from("inquiries").select("*").order("created_at", { ascending: false });
+  document.getElementById("crmList").innerHTML = (data || []).map(c => `<div class="product-item"><div><b>${escapeHtml(c.name)}</b> | ${escapeHtml(c.email || "")}</div><div>📌 ${escapeHtml(c.product || "未指定")}</div><div>💬 ${escapeHtml(c.message || "")}</div><div style="font-size:11px; color:#64748b;">${new Date(c.created_at).toLocaleString()}</div></div>`).join("") || "<div>暂无询盘</div>";
 }
+document.getElementById("refreshCrmBtn").onclick = loadCRM;
 
-let currentHeroFile = null;
-document.getElementById("heroUploadBox").onclick = () => document.getElementById("heroFile").click();
-document.getElementById("heroFile").onchange = (e) => { if (e.target.files[0]) { currentHeroFile = e.target.files[0]; let reader = new FileReader(); reader.onload = (ev) => document.getElementById("heroPreview").innerHTML = `<img src="${ev.target.result}" style="width:100px;border-radius:8px;">`; reader.readAsDataURL(currentHeroFile); } };
-document.getElementById("saveHeroBtn").onclick = async function() {
-  if (!currentHeroFile) { alert("请选择图片"); return; }
-  let fn = "hero/" + Date.now() + "_" + currentHeroFile.name;
-  await sb.storage.from("images").upload(fn, currentHeroFile);
-  let { data } = sb.storage.from("images").getPublicUrl(fn);
-  await sb.from("site_settings").upsert({ setting_key: "hero_background", setting_value: data.publicUrl }, { onConflict: "setting_key" });
-  alert("背景图已更新");
-};
-async function loadHeroBackground() {
-  let { data } = await sb.from("site_settings").select("setting_value").eq("setting_key", "hero_background").maybeSingle();
-  if (data && data.setting_value) document.getElementById("heroPreview").innerHTML = `<img src="${data.setting_value}" style="width:100px;border-radius:8px;">`;
-}
+function escapeHtml(str) { if (!str) return ""; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[m]); }
 
-function escapeHtml(str) { if (!str) return ""; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
-
-window.goToStep = goToStep;
-window.removeFile = removeFile;
-window.submitProduct = submitProduct;
-window.deleteProduct = deleteProduct;
-window.openEditModal = openEditModal;
-window.deleteFactoryPhoto = deleteFactoryPhoto;
+loadCategories();
 </script>
 </body>
 </html>
