@@ -20,9 +20,6 @@ body { margin: 0; font-family: 'Inter', sans-serif; background: #0b1220; color: 
 .nav-tab.active { background: #00bfff; color: #0f172a; }
 .box { background: #111827; border-radius: 20px; padding: 24px; margin-bottom: 24px; border: 1px solid #1f2a3e; }
 .box h3 { font-size: 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; border-left: 4px solid #00bfff; padding-left: 14px; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid #1f2a3e; font-size: 13px; }
-th { color: #00bfff; font-weight: 600; }
 input, select, textarea { width: 100%; padding: 12px 14px; margin-bottom: 16px; border-radius: 12px; border: 1px solid #2d3a5e; background: #1e293b; color: #f1f5f9; font-size: 14px; outline: none; }
 input:focus, select:focus, textarea:focus { border-color: #00bfff; }
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -36,9 +33,10 @@ input:focus, select:focus, textarea:focus { border-color: #00bfff; }
 .btn-warning { background: #f59e0b; color: white; }
 .btn-outline { background: transparent; border: 1px solid #00bfff; color: #00bfff; }
 .btn-sm { padding: 5px 12px; font-size: 11px; }
-.upload-box { border: 2px dashed #4b5563; border-radius: 16px; padding: 30px; text-align: center; cursor: pointer; background: #1e293b; margin-bottom: 15px; transition: all 0.2s; }
-.upload-box:hover { border-color: #00bfff; background: #334155; }
+.upload-box, .video-upload-box { border: 2px dashed #4b5563; border-radius: 16px; padding: 20px; text-align: center; cursor: pointer; background: #1e293b; margin-bottom: 15px; transition: all 0.2s; }
+.upload-box:hover, .video-upload-box:hover { border-color: #00bfff; background: #334155; }
 .preview-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin: 5px; }
+.video-preview { width: 120px; border-radius: 8px; margin: 5px; }
 .product-item { background: #1e293b; border-radius: 16px; padding: 16px; margin-bottom: 12px; }
 .product-header { display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; margin-bottom: 10px; }
 .product-name { font-weight: 700; font-size: 16px; color: #facc15; }
@@ -52,7 +50,6 @@ input:focus, select:focus, textarea:focus { border-color: #00bfff; }
 .kpi-number { font-size: 32px; font-weight: 800; color: #00bfff; }
 .kpi-label { font-size: 13px; color: #94a3b8; margin-top: 6px; }
 .section-title { font-size: 13px; font-weight: 600; margin: 16px 0 12px; color: #00bfff; text-transform: uppercase; letter-spacing: 1px; }
-.info-note { background: #1e293b; padding: 12px; border-radius: 12px; margin-bottom: 20px; font-size: 13px; color: #facc15; border-left: 3px solid #00bfff; }
 @media (max-width: 768px) { .row { grid-template-columns: 1fr; } .nav-tab { padding: 8px 16px; font-size: 12px; } }
 </style>
 </head>
@@ -99,9 +96,7 @@ input:focus, select:focus, textarea:focus { border-color: #00bfff; }
     <div class="box">
       <h3>📁 分类管理</h3>
       <div class="row" style="margin-bottom: 20px;">
-        <select id="parentCatSelect" style="margin-bottom: 0;">
-          <option value="">— 作为一级分类 —</option>
-        </select>
+        <select id="parentCatSelect" style="margin-bottom: 0;"><option value="">— 作为一级分类 —</option></select>
         <input type="text" id="newCatName" placeholder="分类名称">
         <button class="btn" id="addCategoryBtn">+ 添加分类</button>
       </div>
@@ -164,7 +159,7 @@ input:focus, select:focus, textarea:focus { border-color: #00bfff; }
     <input type="hidden" id="editId">
     <div class="row">
       <input type="text" id="editName" placeholder="产品名称 *">
-      <input type="text" id="editSku" placeholder="SKU">
+      <input type="text" id="editSku" placeholder="SKU / 商品编码">
     </div>
     <div class="row">
       <select id="editCategoryId"><option value="">— 选择分类 —</option></select>
@@ -178,9 +173,9 @@ input:focus, select:focus, textarea:focus { border-color: #00bfff; }
       <input type="text" id="editMoq" placeholder="Min. Order (最小起订量)">
       <select id="editOemLevel">
         <option value="">— 定制能力 —</option>
-        <option value="OEM">⚙️ OEM Available</option>
-        <option value="ODM">🎨 ODM Available</option>
-        <option value="OEM/ODM">🏭 OEM/ODM Available</option>
+        <option value="OEM">OEM</option>
+        <option value="ODM">ODM</option>
+        <option value="OEM/ODM">OEM/ODM</option>
       </select>
     </div>
     <label style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
@@ -191,9 +186,20 @@ input:focus, select:focus, textarea:focus { border-color: #00bfff; }
     <div class="section-title">应用场景</div>
     <div class="tags-group" id="editAppsTags"></div>
     <textarea id="editDesc" rows="3" placeholder="产品描述"></textarea>
-    <div class="upload-box" id="editUploadBox" style="padding:15px;">📸 点击上传图片</div>
+    
+    <div class="section-title">产品视频</div>
+    <div class="row">
+      <div class="video-upload-box" id="videoUploadBox">🎬 点击上传 MP4 视频</div>
+      <input type="file" id="videoFile" accept="video/mp4" style="display:none">
+      <input type="text" id="editVideoUrl" placeholder="或粘贴视频链接 (YouTube/Vimeo)">
+    </div>
+    <div id="videoPreviewArea"></div>
+    
+    <div class="section-title">产品图片</div>
+    <div class="upload-box" id="editUploadBox">📸 点击上传图片</div>
     <input type="file" id="editFile" accept="image/*" style="display:none">
     <div id="editPreviewArea"></div>
+    
     <div class="modal-buttons"><button class="btn" id="saveProductBtn">💾 保存</button><button class="btn btn-danger" id="cancelModalBtn">取消</button></div>
   </div>
 </div>
@@ -208,10 +214,11 @@ const APP_OPTS = ["Wetsuit", "Sportswear", "Bags", "Medical", "Outdoor", "Footwe
 
 let allCategories = [];
 let currentEditFile = null;
+let currentEditVideoFile = null;
 let currentEditFeatures = [];
 let currentEditApps = [];
 
-// ========== 预置分类数据 ==========
+// 预置分类数据
 const PRESET_CATEGORIES = [
   { name: "Neoprene Fabric", parent_id: null, sort_order: 1 },
   { name: "Laminated Neoprene Fabric", parent_id: null, sort_order: 2 },
@@ -220,12 +227,10 @@ const PRESET_CATEGORIES = [
   { name: "Surface Fabric Options", parent_id: null, sort_order: 5 },
   { name: "OEM & Custom Solutions", parent_id: null, sort_order: 6 },
   { name: "Best Sellers", parent_id: null, sort_order: 7 },
-  // Neoprene Fabric 的子分类
   { name: "SBR Neoprene", parent_name: "Neoprene Fabric", sort_order: 1 },
   { name: "SCR Neoprene", parent_name: "Neoprene Fabric", sort_order: 2 },
   { name: "CR Neoprene", parent_name: "Neoprene Fabric", sort_order: 3 },
   { name: "Laminated Neoprene", parent_name: "Neoprene Fabric", sort_order: 4 },
-  // Laminated Neoprene Fabric 的子分类
   { name: "Polyester Lamination", parent_name: "Laminated Neoprene Fabric", sort_order: 1 },
   { name: "Spandex Lamination", parent_name: "Laminated Neoprene Fabric", sort_order: 2 },
   { name: "Lycra Lamination", parent_name: "Laminated Neoprene Fabric", sort_order: 3 },
@@ -234,7 +239,6 @@ const PRESET_CATEGORIES = [
   { name: "Mesh Lamination", parent_name: "Laminated Neoprene Fabric", sort_order: 6 },
   { name: "TPU Lamination", parent_name: "Laminated Neoprene Fabric", sort_order: 7 },
   { name: "Velvet Lamination", parent_name: "Laminated Neoprene Fabric", sort_order: 8 },
-  // Application Materials 的子分类
   { name: "Wetsuit Material", parent_name: "Application Materials", sort_order: 1 },
   { name: "Cup Sleeve Material", parent_name: "Application Materials", sort_order: 2 },
   { name: "Footwear Material", parent_name: "Application Materials", sort_order: 3 },
@@ -242,7 +246,6 @@ const PRESET_CATEGORIES = [
   { name: "Bag Material", parent_name: "Application Materials", sort_order: 5 },
   { name: "Medical Support Material", parent_name: "Application Materials", sort_order: 6 },
   { name: "Fitness Product Material", parent_name: "Application Materials", sort_order: 7 },
-  // Functional Fabric 的子分类
   { name: "Waterproof", parent_name: "Functional Fabric", sort_order: 1 },
   { name: "Stretch", parent_name: "Functional Fabric", sort_order: 2 },
   { name: "Thermal Insulation", parent_name: "Functional Fabric", sort_order: 3 },
@@ -250,7 +253,6 @@ const PRESET_CATEGORIES = [
   { name: "Breathable", parent_name: "Functional Fabric", sort_order: 5 },
   { name: "Embossed", parent_name: "Functional Fabric", sort_order: 6 },
   { name: "Printed", parent_name: "Functional Fabric", sort_order: 7 },
-  // Surface Fabric Options 的子分类
   { name: "Lycra Fabric", parent_name: "Surface Fabric Options", sort_order: 1 },
   { name: "T Fabric", parent_name: "Surface Fabric Options", sort_order: 2 },
   { name: "Jersey Fabric", parent_name: "Surface Fabric Options", sort_order: 3 },
@@ -260,7 +262,6 @@ const PRESET_CATEGORIES = [
   { name: "Milk Silk Fabric", parent_name: "Surface Fabric Options", sort_order: 7 },
   { name: "Velvet Fabric", parent_name: "Surface Fabric Options", sort_order: 8 },
   { name: "Brushed Fabric", parent_name: "Surface Fabric Options", sort_order: 9 },
-  // OEM & Custom Solutions 的子分类
   { name: "Custom Thickness", parent_name: "OEM & Custom Solutions", sort_order: 1 },
   { name: "Custom Lamination", parent_name: "OEM & Custom Solutions", sort_order: 2 },
   { name: "Custom Color", parent_name: "OEM & Custom Solutions", sort_order: 3 },
@@ -268,27 +269,20 @@ const PRESET_CATEGORIES = [
 ];
 
 async function initPresetCategories() {
-  // 检查是否有分类数据
   const { data: existing, count } = await sb.from("categories").select("*", { count: "exact" });
   if (count > 0) return;
-  
-  // 先插入一级分类，记录ID映射
   const parentMap = {};
   for (let cat of PRESET_CATEGORIES.filter(c => !c.parent_name)) {
     const { data } = await sb.from("categories").insert([{ name: cat.name, parent_id: null, sort_order: cat.sort_order }]).select();
     if (data) parentMap[cat.name] = data[0].id;
   }
-  
-  // 再插入二级分类
   for (let cat of PRESET_CATEGORIES.filter(c => c.parent_name)) {
     const parentId = parentMap[cat.parent_name];
-    if (parentId) {
-      await sb.from("categories").insert([{ name: cat.name, parent_id: parentId, sort_order: cat.sort_order }]);
-    }
+    if (parentId) await sb.from("categories").insert([{ name: cat.name, parent_id: parentId, sort_order: cat.sort_order }]);
   }
+  await loadCategories();
 }
 
-// ========== 登录 ==========
 document.getElementById("loginBtn").onclick = async () => {
   if (document.getElementById("adminPass").value === "123456") {
     document.getElementById("loginBox").style.display = "none";
@@ -342,34 +336,21 @@ async function loadCategoriesTree() {
   const container = document.getElementById("categoriesTree");
   const parentSelect = document.getElementById("parentCatSelect");
   const topLevel = allCategories.filter(c => !c.parent_id);
-  
-  parentSelect.innerHTML = '<option value="">— 作为一级分类 —</option>' + 
-    allCategories.map(c => `<option value="${c.id}">${"——".repeat(c.level || 0)}${escapeHtml(c.name)}</option>`).join('');
-  
+  parentSelect.innerHTML = '<option value="">— 作为一级分类 —</option>' + allCategories.map(c => `<option value="${c.id}">${"——".repeat(c.level || 0)}${escapeHtml(c.name)}</option>`).join('');
   let html = '<table><thead><tr><th>分类名称</th><th>类型</th><th>排序</th><th>操作</th></tr></thead><tbody>';
   const renderTree = (items, level = 0) => {
     items.forEach(cat => {
-      html += `<tr>
-        <td>${"&nbsp;&nbsp;".repeat(level)}📁 ${escapeHtml(cat.name)}</td>
-        <td>${cat.parent_id ? "子分类" : "一级分类"}</td>
-        <td><input type="number" value="${cat.sort_order || 0}" style="width:70px;" onchange="updateSortOrder(${cat.id}, this.value)"></td>
-        <td><button class="btn btn-sm btn-warning" onclick="editCategory(${cat.id}, '${escapeHtml(cat.name)}')">编辑</button>
-        <button class="btn btn-sm btn-danger" onclick="deleteCategory(${cat.id})">删除</button></td>
-      </tr>`;
+      html += `<tr><td>${"&nbsp;&nbsp;".repeat(level)}📁 ${escapeHtml(cat.name)}</td><td>${cat.parent_id ? "子分类" : "一级分类"}</td><td><input type="number" value="${cat.sort_order || 0}" style="width:70px;" onchange="updateSortOrder(${cat.id}, this.value)"></td><td><button class="btn btn-sm btn-warning" onclick="editCategory(${cat.id}, '${escapeHtml(cat.name)}')">编辑</button> <button class="btn btn-sm btn-danger" onclick="deleteCategory(${cat.id})">删除</button></td></tr>`;
       const children = allCategories.filter(c => c.parent_id === cat.id);
       if (children.length) renderTree(children, level + 1);
     });
   };
   renderTree(topLevel);
-  html += '</tbody><table>';
+  html += '</tbody></table>';
   container.innerHTML = html || "<div>暂无分类</div>";
 }
 
-async function updateSortOrder(id, val) {
-  await sb.from("categories").update({ sort_order: parseInt(val) || 0 }).eq("id", id);
-  loadCategoriesTree();
-}
-
+async function updateSortOrder(id, val) { await sb.from("categories").update({ sort_order: parseInt(val) || 0 }).eq("id", id); loadCategoriesTree(); }
 document.getElementById("addCategoryBtn").onclick = async () => {
   const name = document.getElementById("newCatName").value.trim();
   const parentId = document.getElementById("parentCatSelect").value;
@@ -378,25 +359,17 @@ document.getElementById("addCategoryBtn").onclick = async () => {
   if (error) alert("添加失败: " + error.message);
   else { alert("✅ 添加成功"); document.getElementById("newCatName").value = ""; await loadCategoriesTree(); await loadCategories(); }
 };
-
 window.editCategory = async (id, oldName) => {
   const newName = prompt("修改分类名称:", oldName);
-  if (newName && newName !== oldName) {
-    await sb.from("categories").update({ name: newName }).eq("id", id);
-    await loadCategoriesTree();
-    await loadCategories();
-  }
+  if (newName && newName !== oldName) { await sb.from("categories").update({ name: newName }).eq("id", id); await loadCategoriesTree(); await loadCategories(); }
 };
-
 window.deleteCategory = async (id) => {
   const hasChildren = allCategories.some(c => c.parent_id === id);
   if (hasChildren) { alert("请先删除子分类"); return; }
   if (confirm("删除分类后，产品将变为未分类，确定删除？")) {
     await sb.from("products").update({ category_id: null }).eq("category_id", id);
     await sb.from("categories").delete().eq("id", id);
-    await loadCategoriesTree();
-    await loadCategories();
-    await loadProducts();
+    await loadCategoriesTree(); await loadCategories(); await loadProducts();
   }
 };
 
@@ -404,32 +377,30 @@ async function loadProducts() {
   const { data, error } = await sb.from("products").select("*, categories(name)").order("id", { ascending: false });
   if (error) { console.error(error); return; }
   let html = '';
-  (data || []).forEach(p => {
-    html += `<div class="product-item">
-      <div class="product-header">
-        <div><span class="product-name">${escapeHtml(p.name)}</span> ${p.is_hot ? '🔥' : ''}</div>
-        <div class="product-actions">
-          <button class="btn btn-sm" onclick='openProductModal(${JSON.stringify(p).replace(/'/g, "&#39;")})'>✏️ 编辑</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteProduct(${p.id})">🗑️ 删除</button>
+  if (!data || data.length === 0) html = '<div style="padding:20px; text-align:center; color:#94a3b8;">暂无产品，点击“新增产品”添加</div>';
+  else {
+    data.forEach(p => {
+      html += `<div class="product-item">
+        <div class="product-header">
+          <div><span class="product-name">${escapeHtml(p.name)}</span> ${p.is_hot ? '🔥' : ''}</div>
+          <div class="product-actions">
+            <button class="btn btn-sm btn-warning" onclick='openProductModal(${JSON.stringify(p).replace(/'/g, "&#39;")})'>✏️ 编辑</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteProduct(${p.id})">🗑️ 删除</button>
+          </div>
         </div>
-      </div>
-      <div class="product-details">
-        <span>📁 ${escapeHtml(p.categories?.name || "未分类")}</span>
-        <span>💰 ${escapeHtml(p.price || "询价")}</span>
-        <span>📏 ${escapeHtml(p.thickness || "-")}mm</span>
-        <span>📦 Min.Order: ${escapeHtml(p.moq || "联系")}</span>
-        ${p.oem_level ? `<span>${getOemIcon(p.oem_level)} ${escapeHtml(p.oem_level)}</span>` : ''}
-      </div>
-    </div>`;
-  });
-  document.getElementById("productsList").innerHTML = html || "<div>暂无产品，点击新增</div>";
-}
-
-function getOemIcon(level) {
-  if (level === "OEM") return "⚙️";
-  if (level === "ODM") return "🎨";
-  if (level === "OEM/ODM") return "🏭";
-  return "";
+        <div class="product-details">
+          <span>🔖 SKU: ${escapeHtml(p.sku || "未设置")}</span>
+          <span>📁 ${escapeHtml(p.categories?.name || "未分类")}</span>
+          <span>💰 ${escapeHtml(p.price || "询价")}</span>
+          <span>📏 ${escapeHtml(p.thickness || "-")}mm</span>
+          <span>📦 Min.Order: ${escapeHtml(p.moq || "联系")}</span>
+          ${p.oem_level ? `<span>🔧 ${escapeHtml(p.oem_level)}</span>` : ''}
+          ${p.video_url ? `<span>🎬 有视频</span>` : ''}
+        </div>
+      </div>`;
+    });
+  }
+  document.getElementById("productsList").innerHTML = html;
 }
 
 document.getElementById("showAddProductBtn").onclick = () => openProductModal(null);
@@ -466,6 +437,7 @@ function openProductModal(product) {
   document.getElementById("editOemLevel").value = product?.oem_level || "";
   document.getElementById("editIsHot").checked = product?.is_hot || false;
   document.getElementById("editDesc").value = product?.description || "";
+  document.getElementById("editVideoUrl").value = product?.video_url || "";
   
   loadCategoriesForSelect(product?.category_id || null);
   
@@ -473,12 +445,11 @@ function openProductModal(product) {
   currentEditApps = product?.applications || [];
   renderEditTags();
   
-  if (product?.image) {
-    document.getElementById("editPreviewArea").innerHTML = `<img src="${product.image}" class="preview-img">`;
-  } else {
-    document.getElementById("editPreviewArea").innerHTML = "";
-  }
+  document.getElementById("editPreviewArea").innerHTML = product?.image ? `<img src="${product.image}" class="preview-img">` : "";
+  document.getElementById("videoPreviewArea").innerHTML = product?.video_url ? (product.video_url.includes('mp4') ? `<video src="${product.video_url}" class="video-preview" controls style="width:120px;"></video>` : `<a href="${product.video_url}" target="_blank">📹 查看视频</a>`) : "";
+  
   currentEditFile = null;
+  currentEditVideoFile = null;
   document.getElementById("productModal").style.display = "flex";
 }
 
@@ -487,7 +458,6 @@ function renderEditTags() {
   const appsHtml = APP_OPTS.map(opt => `<span class="tag ${currentEditApps.includes(opt) ? 'active' : ''}" data-val="${opt}">${opt}</span>`).join('');
   document.getElementById("editFeaturesTags").innerHTML = featuresHtml;
   document.getElementById("editAppsTags").innerHTML = appsHtml;
-  
   document.querySelectorAll("#editFeaturesTags .tag").forEach(t => {
     t.onclick = () => { t.classList.toggle("active"); const val = t.dataset.val; if (currentEditFeatures.includes(val)) currentEditFeatures = currentEditFeatures.filter(v => v !== val); else currentEditFeatures.push(val); };
   });
@@ -497,26 +467,31 @@ function renderEditTags() {
 }
 
 document.getElementById("editUploadBox").onclick = () => document.getElementById("editFile").click();
-document.getElementById("editFile").onchange = (e) => {
-  if (e.target.files[0]) {
-    currentEditFile = e.target.files[0];
-    const reader = new FileReader();
-    reader.onload = (ev) => document.getElementById("editPreviewArea").innerHTML = `<img src="${ev.target.result}" class="preview-img">`;
-    reader.readAsDataURL(currentEditFile);
-  }
-};
+document.getElementById("editFile").onchange = (e) => { if (e.target.files[0]) { currentEditFile = e.target.files[0]; const reader = new FileReader(); reader.onload = (ev) => document.getElementById("editPreviewArea").innerHTML = `<img src="${ev.target.result}" class="preview-img">`; reader.readAsDataURL(currentEditFile); } };
+
+document.getElementById("videoUploadBox").onclick = () => document.getElementById("videoFile").click();
+document.getElementById("videoFile").onchange = (e) => { if (e.target.files[0]) { currentEditVideoFile = e.target.files[0]; document.getElementById("videoPreviewArea").innerHTML = `<video src="${URL.createObjectURL(currentEditVideoFile)}" class="video-preview" controls style="width:120px;"></video>`; } };
 
 document.getElementById("saveProductBtn").onclick = async () => {
   const name = document.getElementById("editName").value.trim();
   if (!name) { alert("请填写产品名称"); return; }
   const id = document.getElementById("editId").value;
   let imageUrl = "";
+  let videoUrl = document.getElementById("editVideoUrl").value;
+  
   if (currentEditFile) {
     const fn = "products/" + Date.now() + "_" + currentEditFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
     await sb.storage.from("images").upload(fn, currentEditFile);
     const { data } = sb.storage.from("images").getPublicUrl(fn);
     imageUrl = data.publicUrl;
   }
+  if (currentEditVideoFile) {
+    const fn = "videos/" + Date.now() + "_" + currentEditVideoFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    await sb.storage.from("images").upload(fn, currentEditVideoFile);
+    const { data } = sb.storage.from("images").getPublicUrl(fn);
+    videoUrl = data.publicUrl;
+  }
+  
   const productData = {
     name: name,
     sku: document.getElementById("editSku").value || null,
@@ -530,6 +505,7 @@ document.getElementById("saveProductBtn").onclick = async () => {
     features: currentEditFeatures,
     applications: currentEditApps,
     description: document.getElementById("editDesc").value,
+    video_url: videoUrl || null,
     ...(imageUrl && { image: imageUrl })
   };
   let error;
@@ -539,12 +515,7 @@ document.getElementById("saveProductBtn").onclick = async () => {
   else { alert("✅ 保存成功"); document.getElementById("productModal").style.display = "none"; loadProducts(); }
 };
 
-window.deleteProduct = async (id) => {
-  if (confirm("确定删除？")) {
-    await sb.from("products").delete().eq("id", id);
-    loadProducts();
-  }
-};
+window.deleteProduct = async (id) => { if (confirm("确定删除？")) { await sb.from("products").delete().eq("id", id); loadProducts(); } };
 
 async function loadHomepageSettings() {
   const { data } = await sb.from("site_settings").select("*");
@@ -566,9 +537,7 @@ document.getElementById("saveHomepageBtn").onclick = async () => {
     { key: "contact_phone", value: document.getElementById("contactPhone").value },
     { key: "contact_whatsapp", value: document.getElementById("contactWhatsapp").value }
   ];
-  for (let s of settings) {
-    await sb.from("site_settings").upsert({ key: s.key, value: s.value }, { onConflict: "key" });
-  }
+  for (let s of settings) await sb.from("site_settings").upsert({ key: s.key, value: s.value }, { onConflict: "key" });
   alert("✅ 已保存");
 };
 
