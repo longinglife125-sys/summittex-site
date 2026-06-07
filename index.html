@@ -25,24 +25,26 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
 .nav-sample{border:1px solid #00bfff;color:#fff}
 
 /* HERO */
-.hero{position:relative;min-height:85vh;display:flex;align-items:center;color:#fff}
-.hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0.35;z-index:0}
-.hero .container{position:relative;z-index:2}
+.hero{background:linear-gradient(135deg,#0f2b3d 0%,#1a4a6f 100%);padding:80px 0;min-height:85vh;display:flex;align-items:center}
+.hero .hero-container{display:flex;justify-content:space-between;align-items:center;gap:60px;flex-wrap:wrap}
+.hero-left{flex:1}
+.hero-right{flex:1}
 .hero-badge{font-size:13px;font-weight:700;color:#00bfff;letter-spacing:1px;margin-bottom:16px}
-.hero-left h1{font-size:48px;font-weight:800;margin-bottom:16px}
+.hero-left h1{font-size:48px;font-weight:800;color:#fff;margin-bottom:16px}
 .hero-left h1 span{color:#00bfff}
-.hero-desc{font-size:16px;color:#cbd5e1;margin-bottom:32px;max-width:600px}
+.hero-desc{font-size:16px;color:#cbd5e1;margin-bottom:32px}
 .hero-tags{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:32px}
-.hero-tag{background:rgba(255,255,255,0.1);padding:6px 16px;border-radius:30px;font-size:13px;font-weight:500}
-.btn-group{display:flex;gap:16px;margin-top:16px}
+.hero-tag{background:rgba(255,255,255,0.1);padding:6px 16px;border-radius:30px;font-size:13px;font-weight:500;color:#fff}
+.btn-group{display:flex;gap:16px}
 .btn{padding:12px 32px;border-radius:40px;font-weight:700;font-size:14px;cursor:pointer;border:none}
 .btn-primary{background:#00bfff;color:#0f172a}
 .btn-outline{background:transparent;border:1px solid #00bfff;color:#fff}
 
-/* 视频按钮 */
-.video-btn-container{position:absolute;bottom:30px;right:30px;z-index:10}
-.video-btn{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px);padding:12px 24px;border-radius:50px;text-decoration:none;color:#fff;font-weight:600;transition:all 0.3s}
-.video-btn:hover{background:#00bfff;color:#0f172a}
+/* 工厂照片卡片 */
+.factory-card{background:#1e4a6f;border-radius:20px;overflow:hidden;box-shadow:0 20px 35px -10px rgba(0,0,0,0.3)}
+.factory-img{width:100%;height:320px;object-fit:cover;background:#2a5a7a;display:flex;align-items:center;justify-content:center;color:#fff}
+.video-btn{display:flex;align-items:center;justify-content:center;gap:12px;padding:16px;background:#00bfff;color:#0f172a;text-decoration:none;font-weight:700;transition:all 0.3s}
+.video-btn:hover{background:#0099cc}
 .video-btn i{font-size:20px}
 
 /* 统计数据 */
@@ -57,6 +59,21 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
 .cert-item{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:#334155}
 .cert-item i{color:#00bfff}
 
+/* 产品轮播 */
+.carousel-section{padding:0 0 70px 0}
+.carousel-wrapper{position:relative;max-width:100%;margin:0 auto;background:#0f172a}
+.carousel-container{overflow-x:auto;scroll-snap-type:x mandatory;display:flex;gap:0;scroll-behavior:smooth}
+.carousel-container::-webkit-scrollbar{display:none}
+.carousel-slide{flex:0 0 100%;scroll-snap-align:start;position:relative}
+.carousel-slide img{width:100%;height:500px;object-fit:cover}
+.carousel-prev,.carousel-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:white;border:none;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:18px;transition:all 0.3s;z-index:10}
+.carousel-prev{left:20px}
+.carousel-next{right:20px}
+.carousel-prev:hover,.carousel-next:hover{background:#00bfff;color:#0f172a}
+.carousel-dots{position:absolute;bottom:15px;right:20px;display:flex;gap:8px;z-index:10}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.5);cursor:pointer}
+.dot.active{background:#00bfff;width:20px;border-radius:10px}
+
 /* 通用 */
 .section{padding:70px 0}
 .section-title{font-size:32px;font-weight:800;text-align:center;color:#0f172a;margin-bottom:12px}
@@ -66,7 +83,7 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
 .what-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:30px}
 .what-card{background:#ffffff;border-radius:20px;border:1px solid #eef2ff;overflow:hidden;transition:all 0.3s}
 .what-card:hover{transform:translateY(-4px);border-color:#00bfff}
-.what-img{width:100%;height:200px;object-fit:cover;background:#f1f5f9}
+.what-img{width:100%;height:200px;object-fit:cover;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#64748b}
 .what-content{padding:28px}
 .what-card h3{font-size:20px;font-weight:700;margin-bottom:12px;color:#0f172a}
 .what-card p{font-size:14px;color:#64748b;line-height:1.5}
@@ -104,21 +121,6 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
 .why-card h3{font-size:17px;font-weight:700;margin-bottom:8px}
 .why-card p{font-size:13px;color:#64748b}
 
-/* 产品轮播 */
-.carousel-section{padding:0 0 70px 0}
-.carousel-wrapper{position:relative;max-width:100%;margin:0 auto;background:#0f172a}
-.carousel-container{overflow-x:auto;scroll-snap-type:x mandatory;display:flex;gap:0;scroll-behavior:smooth}
-.carousel-container::-webkit-scrollbar{display:none}
-.carousel-slide{flex:0 0 100%;scroll-snap-align:start;position:relative}
-.carousel-slide img{width:100%;height:500px;object-fit:cover}
-.carousel-prev,.carousel-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:white;border:none;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:18px;transition:all 0.3s;z-index:10}
-.carousel-prev{left:20px}
-.carousel-next{right:20px}
-.carousel-prev:hover,.carousel-next:hover{background:#00bfff;color:#0f172a}
-.carousel-dots{position:absolute;bottom:15px;right:20px;display:flex;gap:8px;z-index:10}
-.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.5);cursor:pointer}
-.dot.active{background:#00bfff;width:20px;border-radius:10px}
-
 /* CTA */
 .cta-box{background:#0f2b3d;color:white;padding:56px 48px;text-align:center;border-radius:24px;margin:40px auto}
 .cta-box h2{font-size:28px;font-weight:700;margin-bottom:12px}
@@ -140,6 +142,10 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
 .footer-bottom{text-align:center;padding-top:40px;margin-top:40px;border-top:1px solid #1e293b;font-size:11px}
 
 @media(max-width:1024px){
+.hero .hero-container{flex-direction:column;text-align:center}
+.hero-left{text-align:center}
+.hero-tags{justify-content:center}
+.btn-group{justify-content:center}
 .what-grid{grid-template-columns:1fr}
 .products-grid,.apps-grid,.why-grid{grid-template-columns:repeat(2,1fr)}
 .carousel-slide img{height:350px}
@@ -147,10 +153,10 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
 @media(max-width:768px){
 .nav .container{flex-direction:column;gap:12px}
 .nav-links{flex-wrap:wrap;justify-content:center;gap:20px}
-.hero-left h1{font-size:28px}
+.hero-left h1{font-size:32px}
 .products-grid,.apps-grid,.why-grid{grid-template-columns:1fr}
 .stats-grid{flex-direction:column;align-items:center;gap:20px}
-.hero-tags{justify-content:center}
+.hero-tags{flex-direction:column;align-items:center}
 .btn-group{flex-direction:column;align-items:center}
 .process-steps{flex-direction:column;align-items:center}
 .carousel-slide img{height:250px}
@@ -178,33 +184,33 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
 </div></div>
 
 <!-- HERO -->
-<div class="hero">
-    <img src="https://placehold.co/1920x800/1e4a6f/white?text=Factory+Background+Photo" class="hero-bg" alt="Factory Background">
-    <div class="container">
-        <div class="hero-left">
-            <div class="hero-badge">⚡ YOUR TRUSTED</div>
-            <h1>NEOPRENE <span>PARTNER</span></h1>
-            <p class="hero-desc">We are a neoprene & laminated fabric manufacturer providing OEM/ODM solutions for global buyers.</p>
-            <div class="hero-tags">
-                <span class="hero-tag">OEM / ODM</span>
-                <span class="hero-tag">Custom Service</span>
-                <span class="hero-tag">3-7 Days Sample</span>
-                <span class="hero-tag">Low MOQ</span>
-                <span class="hero-tag">Global Supply</span>
-                <span class="hero-tag">Stable Production</span>
-            </div>
-            <div class="btn-group">
-                <button class="btn btn-primary">Get a Quote Now →</button>
-                <button class="btn btn-outline">Request Free Sample →</button>
-            </div>
+<div class="hero"><div class="container hero-container">
+    <div class="hero-left">
+        <div class="hero-badge">⚡ YOUR TRUSTED</div>
+        <h1>NEOPRENE <span>PARTNER</span></h1>
+        <p class="hero-desc">We are a neoprene & laminated fabric manufacturer providing OEM/ODM solutions for global buyers.</p>
+        <div class="hero-tags">
+            <span class="hero-tag">OEM / ODM</span>
+            <span class="hero-tag">Custom Service</span>
+            <span class="hero-tag">3-7 Days Sample</span>
+            <span class="hero-tag">Low MOQ</span>
+            <span class="hero-tag">Global Supply</span>
+            <span class="hero-tag">Stable Production</span>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="location.href='contact.html'">Get a Quote Now →</button>
+            <button class="btn btn-outline" onclick="location.href='contact.html'">Request Free Sample →</button>
         </div>
     </div>
-    <div class="video-btn-container">
-        <a href="#" class="video-btn" onclick="alert('播放工厂视频 - 请替换为您的视频链接'); return false;">
-            <i class="fas fa-play-circle"></i> Watch Factory Video
-        </a>
+    <div class="hero-right">
+        <div class="factory-card">
+            <div class="factory-img" style="display:flex;align-items:center;justify-content:center;">🏭 工厂照片</div>
+            <a href="#" class="video-btn" onclick="alert('播放工厂视频 - 请替换为您的视频链接'); return false;">
+                <i class="fas fa-play-circle"></i> Watch Factory Video
+            </a>
+        </div>
     </div>
-</div>
+</div></div>
 
 <!-- 统计数据 -->
 <div class="stats-bar"><div class="container stats-grid">
@@ -226,7 +232,12 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
 <div class="carousel-section">
     <div class="carousel-wrapper">
         <button class="carousel-prev" id="carouselPrev">❮</button>
-        <div class="carousel-container" id="carouselContainer"></div>
+        <div class="carousel-container" id="carouselContainer">
+            <div class="carousel-slide"><img src="https://placehold.co/1600x500/1e4a6f/white?text=CR+Neoprene+Sheet" alt="CR Neoprene"></div>
+            <div class="carousel-slide"><img src="https://placehold.co/1600x500/2a5a7a/white?text=Laminated+Fabric" alt="Laminated Fabric"></div>
+            <div class="carousel-slide"><img src="https://placehold.co/1600x500/1e4a6f/white?text=Embossed+Neoprene" alt="Embossed Neoprene"></div>
+            <div class="carousel-slide"><img src="https://placehold.co/1600x500/2a5a7a/white?text=Printed+Neoprene" alt="Printed Neoprene"></div>
+        </div>
         <button class="carousel-next" id="carouselNext">❯</button>
         <div class="carousel-dots" id="carouselDots"></div>
     </div>
@@ -237,10 +248,10 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
     <h2 class="section-title">WHAT WE DO</h2>
     <p class="section-subtitle">From material development to production, we provide one-stop neoprene & laminated fabric solutions for your business.</p>
     <div class="what-grid">
-        <div class="what-card"><img src="https://placehold.co/600x200/0f2b3d/white?text=Custom+Lamination" class="what-img"><div class="what-content"><h3>Custom Neoprene Lamination</h3><p>Thickness, structure, fabric combinations</p></div></div>
-        <div class="what-card"><img src="https://placehold.co/600x200/0f2b3d/white?text=OEM+ODM" class="what-img"><div class="what-content"><h3>OEM / ODM Fabric Development</h3><p>Customized designs for brands & factories</p></div></div>
-        <div class="what-card"><img src="https://placehold.co/600x200/0f2b3d/white?text=Sample+Development" class="what-img"><div class="what-content"><h3>Sample Development</h3><p>Fast 3-7 days sample lead time</p></div></div>
-        <div class="what-card"><img src="https://placehold.co/600x200/0f2b3d/white?text=Mass+Production" class="what-img"><div class="what-content"><h3>Mass Production</h3><p>Stable bulk production for industrial & sports</p></div></div>
+        <div class="what-card"><div class="what-img" style="display:flex;align-items:center;justify-content:center;">📸 图片占位</div><div class="what-content"><h3>Custom Neoprene Lamination</h3><p>Thickness, structure, fabric combinations</p></div></div>
+        <div class="what-card"><div class="what-img" style="display:flex;align-items:center;justify-content:center;">📸 图片占位</div><div class="what-content"><h3>OEM / ODM Fabric Development</h3><p>Customized designs for brands & factories</p></div></div>
+        <div class="what-card"><div class="what-img" style="display:flex;align-items:center;justify-content:center;">📸 图片占位</div><div class="what-content"><h3>Sample Development</h3><p>Fast 3-7 days sample lead time</p></div></div>
+        <div class="what-card"><div class="what-img" style="display:flex;align-items:center;justify-content:center;">📸 图片占位</div><div class="what-content"><h3>Mass Production</h3><p>Stable bulk production for industrial & sports</p></div></div>
     </div>
 </div></div>
 
@@ -305,8 +316,8 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
     <h2>LET'S START YOUR PROJECT</h2>
     <p>Tell us your requirements and get a professional solution within 24 hours.</p>
     <div class="btn-group">
-        <button class="btn btn-primary">Get a Quote Now →</button>
-        <button class="btn btn-outline" style="border-color:rgba(255,255,255,0.3);color:#fff">Request Free Sample →</button>
+        <button class="btn btn-primary" onclick="location.href='contact.html'">Get a Quote Now →</button>
+        <button class="btn btn-outline" style="border-color:rgba(255,255,255,0.3);color:#fff" onclick="location.href='contact.html'">Request Free Sample →</button>
     </div>
     <div class="cta-features">
         <div class="cta-feature"><i class="fas fa-clock"></i><span>24H Response</span></div>
@@ -327,67 +338,54 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
 </footer>
 
 <script>
-// 轮播图片数据
-const carouselSlides = [
-    { src: "https://placehold.co/1600x500/1e4a6f/white?text=CR+Neoprene+Sheet", alt: "CR Neoprene Sheet" },
-    { src: "https://placehold.co/1600x500/2a5a7a/white?text=Laminated+Fabric", alt: "Laminated Neoprene Fabric" },
-    { src: "https://placehold.co/1600x500/1e4a6f/white?text=Embossed+Neoprene", alt: "Embossed Neoprene" },
-    { src: "https://placehold.co/1600x500/2a5a7a/white?text=Printed+Neoprene", alt: "Printed Neoprene" },
-    { src: "https://placehold.co/1600x500/1e4a6f/white?text=Perforated+Neoprene", alt: "Perforated Neoprene" }
-];
-
+// 轮播功能
 let currentSlide = 0;
 const container = document.getElementById("carouselContainer");
+const slides = container ? container.children : [];
+const totalSlides = slides.length;
 const dotsContainer = document.getElementById("carouselDots");
 
-function renderCarousel() {
-    container.innerHTML = carouselSlides.map((slide, idx) => `
-        <div class="carousel-slide">
-            <img src="${slide.src}" alt="${slide.alt}">
-        </div>
-    `).join('');
-    
-    dotsContainer.innerHTML = carouselSlides.map((_, idx) => `
-        <div class="dot ${idx === currentSlide ? 'active' : ''}" data-index="${idx}"></div>
-    `).join('');
-    
-    document.querySelectorAll('.dot').forEach(dot => {
-        dot.addEventListener('click', () => {
-            currentSlide = parseInt(dot.dataset.index);
+function updateDots() {
+    if (!dotsContainer) return;
+    dotsContainer.innerHTML = '';
+    for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot' + (i === currentSlide ? ' active' : '');
+        dot.onclick = () => {
+            currentSlide = i;
             updateCarousel();
-        });
-    });
+        };
+        dotsContainer.appendChild(dot);
+    }
 }
 
 function updateCarousel() {
-    const scrollAmount = currentSlide * container.clientWidth;
-    container.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+    if (!container) return;
+    container.scrollTo({ left: currentSlide * container.clientWidth, behavior: 'smooth' });
     document.querySelectorAll('.dot').forEach((dot, idx) => {
         dot.classList.toggle('active', idx === currentSlide);
     });
 }
 
-container.addEventListener('scroll', () => {
-    const newIndex = Math.round(container.scrollLeft / container.clientWidth);
-    if (newIndex !== currentSlide && !isNaN(newIndex) && newIndex >= 0 && newIndex < carouselSlides.length) {
-        currentSlide = newIndex;
-        document.querySelectorAll('.dot').forEach((dot, idx) => {
-            dot.classList.toggle('active', idx === currentSlide);
-        });
-    }
-});
+if (container) {
+    container.addEventListener('scroll', () => {
+        const newIndex = Math.round(container.scrollLeft / container.clientWidth);
+        if (newIndex !== currentSlide && !isNaN(newIndex)) {
+            currentSlide = newIndex;
+            document.querySelectorAll('.dot').forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === currentSlide);
+            });
+        }
+    });
+    updateDots();
+}
 
-window.addEventListener('resize', () => updateCarousel());
-
-document.getElementById("carouselPrev").addEventListener('click', () => {
+document.getElementById("carouselPrev")?.addEventListener('click', () => {
     if (currentSlide > 0) { currentSlide--; updateCarousel(); }
 });
-
-document.getElementById("carouselNext").addEventListener('click', () => {
-    if (currentSlide < carouselSlides.length - 1) { currentSlide++; updateCarousel(); }
+document.getElementById("carouselNext")?.addEventListener('click', () => {
+    if (currentSlide < totalSlides - 1) { currentSlide++; updateCarousel(); }
 });
-
-renderCarousel();
 </script>
 </body>
 </html>
