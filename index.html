@@ -46,6 +46,11 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
 .btn-primary:hover{background:#0099cc}
 .btn-outline:hover{background:rgba(0,191,255,0.1)}
 
+/* 右下角视频按钮 */
+.video-btn-corner{position:absolute;bottom:30px;right:30px;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);padding:12px 24px;border-radius:40px;display:flex;align-items:center;gap:8px;text-decoration:none;color:#fff;font-size:14px;font-weight:600;z-index:10}
+.video-btn-corner:hover{background:#00bfff;color:#0f172a}
+.video-btn-corner i{font-size:16px}
+
 /* 统计数据 */
 .stats-bar{background:#fff;padding:40px 0;border-bottom:1px solid #eef2ff}
 .stats-grid{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap}
@@ -60,10 +65,12 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
 
 /* 通用区块 */
 .section{padding:70px 0}
-.section-title{font-size:32px;font-weight:800;color:#0f172a;margin-bottom:12px;text-align:center}
-.section-subtitle{color:#64748b;font-size:15px;max-width:700px;margin:0 auto 50px;text-align:center;line-height:1.5}
+.section-title-center{font-size:32px;font-weight:800;color:#0f172a;margin-bottom:12px;text-align:center}
+.section-subtitle-center{color:#64748b;font-size:15px;max-width:700px;margin:0 auto 50px;text-align:center;line-height:1.5}
+.section-title-left{font-size:32px;font-weight:800;color:#0f172a;margin-bottom:12px;text-align:left}
+.section-subtitle-left{color:#64748b;font-size:15px;max-width:700px;margin-bottom:50px;text-align:left;line-height:1.5}
 
-/* WHY CHOOSE US - 文字和照片并排 */
+/* WHY CHOOSE US */
 .why-wrapper{display:flex;gap:60px;align-items:center}
 .why-list{flex:1}
 .why-item{display:flex;gap:16px;margin-bottom:28px}
@@ -145,6 +152,7 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
 .cta-box{padding:35px 20px}
 .cta-box h2{font-size:24px}
 .footer-grid{grid-template-columns:1fr;text-align:center}
+.video-btn-corner{bottom:15px;right:15px;padding:8px 16px;font-size:12px}
 }
 </style>
 </head>
@@ -187,6 +195,8 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
       </div>
     </div>
   </div>
+  <!-- 右下角视频按钮 -->
+  <a href="#" class="video-btn-corner" onclick="alert('播放工厂视频'); return false;"><i class="fas fa-play-circle"></i> Factory Video</a>
 </div>
 
 <!-- 统计数据 -->
@@ -212,8 +222,8 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
 <!-- WHY CHOOSE US -->
 <div class="section">
   <div class="container">
-    <h2 class="section-title">WHY CHOOSE US</h2>
-    <p class="section-subtitle">We focus on quality, reliability and long-term partnership.<br>Your success is our priority.</p>
+    <h2 class="section-title-center">WHY CHOOSE US</h2>
+    <p class="section-subtitle-center">We focus on quality, reliability and long-term partnership.<br>Your success is our priority.</p>
     <div class="why-wrapper">
       <div class="why-list">
         <div class="why-item"><div class="why-icon"><i class="fas fa-clipboard-check"></i></div><div class="why-text"><h4>Strict Quality Control</h4><p>100% inspection before shipment</p></div></div>
@@ -226,11 +236,11 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
   </div>
 </div>
 
-<!-- WHAT WE DO -->
+<!-- WHAT WE DO - 标题和副标题居左 -->
 <div class="section" style="background:#f8fafc">
   <div class="container">
-    <h2 class="section-title">WHAT WE DO</h2>
-    <p class="section-subtitle">Provide one-stop neoprene & laminated fabric solutions from material development to mass production.</p>
+    <h2 class="section-title-left">WHAT WE DO</h2>
+    <p class="section-subtitle-left">Provide one-stop neoprene & laminated fabric solutions from material development to mass production.</p>
     <div class="what-grid">
       <div class="what-card"><img src="https://placehold.co/400x180/0f2b3d/white?text=Custom+Lamination" class="what-img"><div class="what-content"><h3>Custom Neoprene Lamination</h3><p>Thickness, structure, fabric combinations</p></div></div>
       <div class="what-card"><img src="https://placehold.co/400x180/0f2b3d/white?text=OEM+ODM" class="what-img"><div class="what-content"><h3>OEM / ODM Fabric Development</h3><p>Customized designs for brands & factories</p></div></div>
@@ -243,7 +253,7 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
 <!-- APPLICATIONS -->
 <div class="section">
   <div class="container">
-    <h2 class="section-title">APPLICATIONS</h2>
+    <h2 class="section-title-center">APPLICATIONS</h2>
     <div class="apps-grid">
       <div class="app-card"><img src="https://placehold.co/200x120/0f2b3d/white?text=Wetsuits"><h4>Wetsuits</h4></div>
       <div class="app-card"><img src="https://placehold.co/200x120/0f2b3d/white?text=Sports+Gear"><h4>Sports Gear</h4></div>
@@ -261,7 +271,7 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
 <div class="section" style="background:#f8fafc">
   <div class="container">
     <div class="products-header">
-      <h2 class="section-title" style="margin-bottom:0">MAIN PRODUCTS</h2>
+      <h2 class="section-title-center" style="margin-bottom:0">MAIN PRODUCTS</h2>
       <a href="products.html">View All Products →</a>
     </div>
     <div class="products-grid">
@@ -278,7 +288,7 @@ body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height
 <!-- FROM DESIGN TO MASS PRODUCTION -->
 <div class="section">
   <div class="container">
-    <h2 class="section-title">FROM DESIGN TO MASS PRODUCTION</h2>
+    <h2 class="section-title-center">FROM DESIGN TO MASS PRODUCTION</h2>
     <div class="process-steps">
       <div class="process-step"><div class="step-number">1</div><h4>Requirement</h4><p>Discussion</p></div>
       <div class="process-step"><div class="step-number">2</div><h4>Material</h4><p>Selection</p></div>
