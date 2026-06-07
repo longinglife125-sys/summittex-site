@@ -2,390 +2,486 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>Siyin | Neoprene & Laminated Fabric Manufacturer</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dongguan Siyin Sports Goods – Neoprene & Laminated Fabric Manufacturer | OEM/ODM</title>
+<meta name="description" content="Professional neoprene and laminated fabric manufacturer in Dongguan, China. CR/SBR/SCR neoprene sheets, custom fabric lamination, OEM/ODM for wetsuits, bottle sleeves, sports supports. Fast 3-7 day sampling.">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:#ffffff;color:#1e293b;line-height:1.4}
-.container{max-width:1280px;margin:0 auto;padding:0 32px}
+/* ========== CSS 变量定义 ========== */
+:root {
+    --blue: #0f2b3d;
+    --blue-lt: #1a4a6f;
+    --yellow: #00bfff;
+    --gray-bd: #e2e8f0;
+    --gray-lt: #f8fafc;
+    --text: #1e293b;
+    --mid: #64748b;
+    --muted: #94a3b8;
+    --max: 1280px;
+    --blue-bg: #e0f2fe;
+}
 
-/* 导航栏 */
-.nav{background:#0f2b3d;padding:16px 0;position:sticky;top:0;z-index:100}
-.nav .container{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
-.nav .logo{font-size:22px;font-weight:800;color:#fff}
-.nav .logo span{color:#00bfff}
-.nav-links{display:flex;gap:32px}
-.nav-links a{color:#fff;text-decoration:none;font-size:14px;font-weight:500;opacity:0.9}
-.nav-links a:hover{opacity:1;color:#00bfff}
-.nav-buttons{display:flex;gap:16px}
-.nav-quote,.nav-sample{font-size:13px;font-weight:600;text-decoration:none;padding:8px 20px;border-radius:30px}
-.nav-quote{background:#00bfff;color:#0f172a}
-.nav-sample{border:1px solid #00bfff;color:#fff}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#ffffff;color:var(--text);line-height:1.4}
+
+.container{max-width:var(--max);margin:0 auto;padding:0 40px}
+
+/* 顶部栏 */
+.topbar{background:#0f2b3d;color:#fff;padding:8px 0;font-size:12px}
+.topbar-inner{max-width:var(--max);margin:0 auto;padding:0 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.topbar-left,.topbar-right{display:flex;gap:20px;flex-wrap:wrap}
+.topbar-item{display:flex;align-items:center;gap:6px}
+.topbar-item svg{width:14px;height:14px;stroke:#fff;fill:none}
+.topbar-item a{color:#fff;text-decoration:none}
+
+/* 导航栏 - 简化版 */
+.nav{background:#fff;padding:16px 0;border-bottom:1px solid var(--gray-bd);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:var(--max);margin:0 auto;padding:0 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-mark{width:40px;height:40px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.logo-mark span{color:#fff;font-weight:800;font-size:18px}
+.logo-info strong{display:block;font-size:14px;color:var(--text)}
+.logo-info em{font-size:10px;color:var(--mid);font-style:normal}
+.nav-menu{display:flex;gap:28px}
+.nav-item a{text-decoration:none;color:var(--text);font-size:14px;font-weight:500}
+.nav-actions{display:flex;gap:12px}
+.btn-blue{background:var(--yellow);color:#0f172a;padding:10px 24px;border-radius:40px;text-decoration:none;font-weight:600;font-size:13px}
+.btn-outline{border:1px solid var(--yellow);color:var(--yellow);padding:10px 24px;border-radius:40px;text-decoration:none;font-weight:600;font-size:13px;background:transparent}
 
 /* HERO */
-.hero{background:linear-gradient(135deg,#0f2b3d 0%,#1a4a6f 100%);padding:80px 0;min-height:85vh;display:flex;align-items:center}
-.hero .hero-container{display:flex;justify-content:space-between;align-items:center;gap:60px;flex-wrap:wrap}
-.hero-left{flex:1}
-.hero-right{flex:1}
-.hero-badge{font-size:13px;font-weight:700;color:#00bfff;letter-spacing:1px;margin-bottom:16px}
-.hero-left h1{font-size:48px;font-weight:800;color:#fff;margin-bottom:16px}
-.hero-left h1 span{color:#00bfff}
-.hero-desc{font-size:16px;color:#cbd5e1;margin-bottom:32px}
-.hero-tags{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:32px}
-.hero-tag{background:rgba(255,255,255,0.1);padding:6px 16px;border-radius:30px;font-size:13px;font-weight:500;color:#fff}
-.btn-group{display:flex;gap:16px}
-.btn{padding:12px 32px;border-radius:40px;font-weight:700;font-size:14px;cursor:pointer;border:none}
-.btn-primary{background:#00bfff;color:#0f172a}
-.btn-outline{background:transparent;border:1px solid #00bfff;color:#fff}
+.hero{position:relative;background:var(--blue);overflow:hidden;min-height:85vh;display:flex;align-items:center}
+.hero-bg-photo{position:absolute;right:0;top:0;bottom:0;width:55%;background:url('https://placehold.co/800x800/1e4a6f/white?text=Factory+Photo') center/cover no-repeat}
+.hero-bg-photo::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,var(--blue) 0%,rgba(0,33,160,.5) 45%,transparent 100%)}
+.hero-grid{position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.05) 1px,transparent 0);background-size:36px 36px}
+.hero-content{position:relative;z-index:2;width:100%}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);padding:7px 14px;border-radius:4px;margin-bottom:24px}
+.hero-eyebrow-icon{color:var(--yellow);font-size:17px}
+.hero-eyebrow-text{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--yellow)}
+.hero-h1{font-size:clamp(42px,5.5vw,72px);font-weight:900;line-height:.98;color:#fff;text-transform:uppercase;letter-spacing:-1.5px;margin-bottom:20px}
+.hero-h1 span{color:var(--yellow)}
+.hero-desc{font-size:clamp(14px,1.2vw,16.5px);color:rgba(255,255,255,.72);max-width:480px;line-height:1.75;margin-bottom:32px}
+.hero-desc strong{color:#fff;font-weight:600}
+.hero-feats{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:38px}
+.feat-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:8px 14px;border-radius:6px}
+.feat-chip svg{width:18px;height:18px;stroke:#fff;fill:none}
+.feat-chip-label{display:flex;flex-direction:column}
+.feat-chip-name{font-size:11.5px;font-weight:700;color:#fff}
+.feat-chip-sub{font-size:10px;color:rgba(255,255,255,.5)}
+.hero-cta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.hero-badge{position:absolute;bottom:36px;right:40px;background:rgba(255,255,255,.95);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.2);z-index:2;cursor:pointer}
+.hero-badge-play{width:36px;height:36px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center}
+.hero-badge-play svg{width:16px;height:16px;fill:#fff}
+.hero-badge-text strong{display:block;font-size:12px;font-weight:700;color:var(--text)}
+.hero-badge-text span{font-size:10px;color:var(--muted)}
 
-/* 工厂照片卡片 */
-.factory-card{background:#1e4a6f;border-radius:20px;overflow:hidden;box-shadow:0 20px 35px -10px rgba(0,0,0,0.3)}
-.factory-img{width:100%;height:320px;object-fit:cover;background:#2a5a7a;display:flex;align-items:center;justify-content:center;color:#fff}
-.video-btn{display:flex;align-items:center;justify-content:center;gap:12px;padding:16px;background:#00bfff;color:#0f172a;text-decoration:none;font-weight:700;transition:all 0.3s}
-.video-btn:hover{background:#0099cc}
-.video-btn i{font-size:20px}
-
-/* 统计数据 */
-.stats-bar{background:#fff;padding:30px 0;border-bottom:1px solid #eef2ff}
-.stats-grid{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;text-align:center}
-.stat-number{font-size:28px;font-weight:800;color:#00bfff}
-.stat-label{font-size:13px;color:#475569;margin-top:5px}
-
-/* 认证栏 */
-.cert-bar{background:#f8fafc;padding:20px 0;border-bottom:1px solid #eef2ff}
-.cert-grid{display:flex;justify-content:center;gap:40px;flex-wrap:wrap}
-.cert-item{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:#334155}
-.cert-item i{color:#00bfff}
-
-/* 产品轮播 */
-.carousel-section{padding:0 0 70px 0}
-.carousel-wrapper{position:relative;max-width:100%;margin:0 auto;background:#0f172a}
-.carousel-container{overflow-x:auto;scroll-snap-type:x mandatory;display:flex;gap:0;scroll-behavior:smooth}
-.carousel-container::-webkit-scrollbar{display:none}
-.carousel-slide{flex:0 0 100%;scroll-snap-align:start;position:relative}
-.carousel-slide img{width:100%;height:500px;object-fit:cover}
-.carousel-prev,.carousel-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:white;border:none;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:18px;transition:all 0.3s;z-index:10}
-.carousel-prev{left:20px}
-.carousel-next{right:20px}
-.carousel-prev:hover,.carousel-next:hover{background:#00bfff;color:#0f172a}
-.carousel-dots{position:absolute;bottom:15px;right:20px;display:flex;gap:8px;z-index:10}
-.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.5);cursor:pointer}
-.dot.active{background:#00bfff;width:20px;border-radius:10px}
+/* STATS BAR */
+.stats-bar{background:#fff;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.stats-inner{max-width:var(--max);margin:0 auto;padding:0 40px;display:flex;align-items:stretch;flex-wrap:wrap}
+.stat-col{flex:1;display:flex;align-items:center;gap:14px;padding:24px 20px;border-right:1px solid var(--gray-bd)}
+.stat-col:last-child{border-right:none}
+.stat-icon{width:44px;height:44px;border-radius:10px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center}
+.stat-icon svg{width:22px;height:22px;stroke:var(--blue);fill:none}
+.stat-num{font-size:clamp(22px,2.5vw,30px);font-weight:900;color:var(--blue);line-height:1}
+.stat-lbl{font-size:11.5px;color:var(--muted)}
+.cert-cols{display:flex;gap:0;border-left:1px solid var(--gray-bd)}
+.cert-col{padding:18px 22px;border-right:1px solid var(--gray-bd);display:flex;flex-direction:column;align-items:center;gap:3px}
+.cert-logo-iso{font-size:20px;font-weight:900;color:#0055A4}
+.cert-logo-oeko{font-size:9.5px;font-weight:700;color:#3a7d44;text-align:center}
+.cert-logo-sgs{font-size:20px;font-weight:900;color:#CC0000}
+.cert-sub{font-size:9.5px;color:var(--muted)}
 
 /* 通用 */
-.section{padding:70px 0}
-.section-title{font-size:32px;font-weight:800;text-align:center;color:#0f172a;margin-bottom:12px}
-.section-subtitle{text-align:center;color:#64748b;font-size:15px;max-width:700px;margin:0 auto 50px}
+.section-tag{font-size:12px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
+.section-title{font-size:32px;font-weight:800;color:var(--blue);margin-bottom:16px}
+.section-sub{font-size:15px;color:var(--mid);line-height:1.5}
 
-/* WHAT WE DO */
-.what-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:30px}
-.what-card{background:#ffffff;border-radius:20px;border:1px solid #eef2ff;overflow:hidden;transition:all 0.3s}
-.what-card:hover{transform:translateY(-4px);border-color:#00bfff}
-.what-img{width:100%;height:200px;object-fit:cover;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#64748b}
-.what-content{padding:28px}
-.what-card h3{font-size:20px;font-weight:700;margin-bottom:12px;color:#0f172a}
-.what-card p{font-size:14px;color:#64748b;line-height:1.5}
-
-/* MAIN PRODUCTS */
-.products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-.product-card{background:#ffffff;border-radius:20px;border:1px solid #eef2ff;overflow:hidden;transition:all 0.3s}
-.product-card:hover{transform:translateY(-4px);border-color:#00bfff}
-.product-card img{width:100%;height:180px;object-fit:cover;background:#f1f5f9}
-.product-info{padding:20px;text-align:center}
-.product-info h4{font-size:18px;font-weight:700;margin-bottom:8px;color:#0f172a}
-.product-info p{font-size:13px;color:#64748b}
+/* WHY + WHAT */
+.why-what{background:#fff}
+.why-what-grid{display:grid;grid-template-columns:1fr 1px 1fr;gap:0;max-width:var(--max);margin:0 auto;padding:80px 40px}
+.divider-col{background:var(--gray-bd);align-self:stretch}
+.why-col{padding-right:48px}
+.what-col{padding-left:48px}
+.why-items{display:flex;flex-direction:column;gap:22px;margin-bottom:28px}
+.why-item{display:flex;gap:14px;align-items:flex-start}
+.why-item-icon{width:40px;height:40px;border-radius:9px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center}
+.why-item-icon svg{width:20px;height:20px;stroke:var(--blue);fill:none}
+.why-item-title{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:2px}
+.why-item-desc{font-size:12.5px;color:var(--mid)}
+.why-photo{border-radius:10px;overflow:hidden;height:220px;background:var(--gray-lt)}
+.why-photo img{width:100%;height:100%;object-fit:cover}
+.what-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.what-card{border-radius:9px;overflow:hidden;border:1px solid var(--gray-bd);cursor:pointer}
+.what-card-img{height:105px;background:var(--gray-lt);overflow:hidden}
+.what-card-img img{width:100%;height:100%;object-fit:cover}
+.what-card-body{padding:12px}
+.what-card-title{font-size:13px;font-weight:700;color:var(--text)}
+.what-card-desc{font-size:11.5px;color:var(--mid)}
 
 /* APPLICATIONS */
-.apps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
-.app-card{background:#ffffff;border-radius:16px;border:1px solid #eef2ff;overflow:hidden;text-align:center;transition:all 0.3s}
-.app-card:hover{transform:translateY(-4px);border-color:#00bfff}
-.app-card img{width:100%;height:120px;object-fit:cover;background:#f1f5f9}
-.app-card h4{font-size:14px;font-weight:600;padding:12px;color:#0f172a}
+.apps{background:var(--gray-lt);padding:60px 0}
+.apps-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:4px}
+.apps-row::-webkit-scrollbar{display:none}
+.app-tile{flex:0 0 155px;height:140px;border-radius:10px;overflow:hidden;position:relative;cursor:pointer}
+.app-tile img{width:100%;height:100%;object-fit:cover}
+.app-tile-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.7) 0%,rgba(0,0,0,.1) 55%,transparent 100%)}
+.app-tile-name{position:absolute;bottom:10px;left:10px;font-size:12px;font-weight:700;color:#fff}
+.app-tile-more{flex:0 0 155px;height:140px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--blue-lt));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;text-decoration:none}
+.app-tile-more-arrow{font-size:24px;color:rgba(255,255,255,.7)}
+.app-tile-more-label{font-size:12px;font-weight:700;color:#fff;text-align:center}
 
-/* 生产流程 */
-.process-steps{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.process-step{flex:1;text-align:center;min-width:100px;background:#ffffff;padding:20px 12px;border-radius:16px;border:1px solid #eef2ff}
-.step-number{width:48px;height:48px;background:#0f2b3d;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;margin:0 auto 12px}
-.process-step:hover .step-number{background:#00bfff}
-.process-step h4{font-size:14px;font-weight:700;color:#0f172a;margin-bottom:4px}
-.process-step p{font-size:11px;color:#94a3b8}
+/* PROCESS */
+.process{background:#fff;padding:70px 0}
+.process-header{text-align:center;margin-bottom:52px}
+.process-flow{display:flex;align-items:flex-start;justify-content:center;gap:0;overflow-x:auto}
+.proc-step{display:flex;flex-direction:column;align-items:center;text-align:center;flex:1;min-width:110px}
+.proc-dot-num{font-size:10px;font-weight:700;color:var(--blue);margin-bottom:8px}
+.proc-circle{width:70px;height:70px;border-radius:50%;overflow:hidden;border:3px solid var(--gray-bd);background:var(--gray-lt);margin:0 auto 14px}
+.proc-circle img{width:100%;height:100%;object-fit:cover}
+.proc-circle.highlight{border-color:var(--yellow)}
+.proc-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px}
+.proc-note{font-size:11px;color:var(--yellow);font-weight:600}
+.proc-arrow{padding-top:25px;color:var(--yellow);font-size:20px}
 
-/* Why Choose Us */
-.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
-.why-card{background:#ffffff;border-radius:20px;border:1px solid #eef2ff;padding:28px 20px;text-align:center;transition:all 0.3s}
-.why-card:hover{transform:translateY(-4px);border-color:#00bfff}
-.why-icon{width:56px;height:56px;background:#e0f2fe;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
-.why-icon i{font-size:26px;color:#00bfff}
-.why-card h3{font-size:17px;font-weight:700;margin-bottom:8px}
-.why-card p{font-size:13px;color:#64748b}
+/* PRODUCTS */
+.products{background:var(--gray-lt);padding:60px 0}
+.products-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:16px}
+.products-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.prod-card{background:#fff;border:1px solid var(--gray-bd);border-radius:10px;overflow:hidden;cursor:pointer;text-decoration:none}
+.prod-img{height:118px;background:var(--gray-lt);overflow:hidden}
+.prod-img img{width:100%;height:100%;object-fit:cover}
+.prod-body{padding:12px}
+.prod-name{font-size:12.5px;font-weight:700;color:var(--text)}
+.prod-spec{font-size:11px;color:var(--muted)}
+
+/* TRUST */
+.trust{background:#fff;padding:70px 0}
+.trust-grid{display:grid;grid-template-columns:1fr 1px 1fr;gap:0;max-width:var(--max);margin:0 auto;padding:0 40px}
+.trust-div{background:var(--gray-bd);align-self:stretch}
+.brands-col{padding-right:56px}
+.certs-col{padding-left:56px}
+.brand-logos{display:flex;align-items:center;gap:28px;flex-wrap:wrap;margin-top:24px}
+.brand-name{font-weight:900;opacity:.55;cursor:pointer;font-size:clamp(14px,1.5vw,20px)}
+.brand-name.oneill{color:#cc0000;font-size:22px}
+.brand-name.mares{color:#0044cc;font-size:22px}
+.cert-badges{display:flex;gap:14px;margin-top:24px;flex-wrap:wrap}
+.cert-badge{padding:14px 18px;border:2px solid var(--gray-bd);border-radius:9px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.cert-big{font-size:20px;font-weight:900}
+.cert-small{font-size:9.5px;color:var(--muted);text-align:center}
 
 /* CTA */
-.cta-box{background:#0f2b3d;color:white;padding:56px 48px;text-align:center;border-radius:24px;margin:40px auto}
-.cta-box h2{font-size:28px;font-weight:700;margin-bottom:12px}
-.cta-box p{color:#cbd5e1;font-size:15px;margin-bottom:28px}
-.cta-features{display:flex;justify-content:center;gap:48px;flex-wrap:wrap;margin-top:40px}
-.cta-feature{text-align:center}
-.cta-feature i{font-size:22px;color:#00bfff;margin-bottom:8px;display:block}
-.cta-feature span{font-size:13px;color:#cbd5e1}
+.cta-band{background:linear-gradient(135deg,var(--blue) 0%,var(--blue-lt) 100%);padding:60px 0}
+.cta-band-inner{max-width:var(--max);margin:0 auto;padding:0 40px;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap}
+.cta-band h2{font-size:clamp(22px,2.8vw,34px);font-weight:900;color:#fff;margin-bottom:8px}
+.cta-band p{font-size:15px;color:rgba(255,255,255,.72)}
+.cta-band-right{display:flex;flex-direction:column;gap:12px;align-items:flex-end}
+.cta-band-btns{display:flex;gap:10px;flex-wrap:wrap}
+.btn-white{background:#fff;color:var(--blue);padding:10px 24px;border-radius:40px;text-decoration:none;font-weight:600}
+.btn-ghost{border:1px solid rgba(255,255,255,.3);color:#fff;padding:10px 24px;border-radius:40px;text-decoration:none;font-weight:600;background:transparent}
+.cta-contact-item{display:flex;align-items:center;gap:7px;font-size:13px;color:rgba(255,255,255,.85)}
+.cta-contact-item svg{width:14px;height:14px;stroke:rgba(255,255,255,.65);fill:none}
+.cta-contact-item a{color:#fff;text-decoration:none}
 
-/* Footer */
-.footer{background:#0a0f1a;color:#94a3b8;padding:50px 0 30px;margin-top:40px}
-.footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:40px}
-.footer-col h4{color:white;font-size:14px;font-weight:700;margin-bottom:18px}
-.footer-col p,.footer-col a{display:block;color:#94a3b8;text-decoration:none;font-size:12px;margin-bottom:10px}
-.footer-col a:hover{color:#00bfff}
-.footer-info{margin-top:12px;padding-top:12px;border-top:1px solid #1e293b}
-.footer-info div{margin-top:8px}
-.footer-info i{color:#00bfff;width:20px}
-.footer-bottom{text-align:center;padding-top:40px;margin-top:40px;border-top:1px solid #1e293b;font-size:11px}
+/* FOOTER */
+.site-footer{background:#0a0f1a;color:var(--muted);padding:50px 0 30px}
+.footer-grid{max-width:var(--max);margin:0 auto;padding:0 40px;display:grid;grid-template-columns:repeat(4,1fr);gap:40px}
+.footer-logo{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.footer-about-text{font-size:12px;margin-bottom:16px}
+.footer-col-title{color:#fff;font-size:14px;font-weight:700;margin-bottom:18px}
+.footer-links{list-style:none}
+.footer-links li{margin-bottom:8px}
+.footer-links a{color:var(--muted);text-decoration:none;font-size:12px}
+.footer-links a:hover{color:var(--yellow)}
+.footer-contact-item{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:12px}
+.footer-contact-item svg{width:14px;height:14px;stroke:var(--muted);fill:none}
+.footer-contact-item a{color:var(--muted);text-decoration:none}
+.footer-bar{max-width:var(--max);margin:0 auto;padding:30px 40px 0;border-top:1px solid #1e293b;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-size:11px}
+.footer-bar-links{display:flex;gap:20px}
+.footer-bar-links a{color:var(--muted);text-decoration:none}
 
+/* WhatsApp Float */
+.wa-float{position:fixed;bottom:30px;right:30px;background:#25D366;width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.2);z-index:100}
+.wa-float svg{width:28px;height:28px;fill:#fff}
+
+/* 响应式 */
 @media(max-width:1024px){
-.hero .hero-container{flex-direction:column;text-align:center}
-.hero-left{text-align:center}
-.hero-tags{justify-content:center}
-.btn-group{justify-content:center}
-.what-grid{grid-template-columns:1fr}
-.products-grid,.apps-grid,.why-grid{grid-template-columns:repeat(2,1fr)}
-.carousel-slide img{height:350px}
+.why-what-grid{grid-template-columns:1fr;gap:40px}
+.divider-col{display:none}
+.why-col,.what-col{padding:0}
+.products-grid{grid-template-columns:repeat(3,1fr)}
+.trust-grid{grid-template-columns:1fr;gap:40px}
+.trust-div{display:none}
+.brands-col,.certs-col{padding:0}
+.footer-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:768px){
-.nav .container{flex-direction:column;gap:12px}
-.nav-links{flex-wrap:wrap;justify-content:center;gap:20px}
-.hero-left h1{font-size:32px}
-.products-grid,.apps-grid,.why-grid{grid-template-columns:1fr}
-.stats-grid{flex-direction:column;align-items:center;gap:20px}
-.hero-tags{flex-direction:column;align-items:center}
-.btn-group{flex-direction:column;align-items:center}
-.process-steps{flex-direction:column;align-items:center}
-.carousel-slide img{height:250px}
-.cta-box{padding:35px 20px}
-.cta-box h2{font-size:24px}
-.footer-grid{grid-template-columns:1fr;text-align:center}
+.container{padding:0 20px}
+.hero-bg-photo{width:100%;opacity:0.3}
+.hero-h1{font-size:32px}
+.products-grid{grid-template-columns:repeat(2,1fr)}
+.stats-inner{flex-direction:column}
+.stat-col{border-right:none;border-bottom:1px solid var(--gray-bd)}
+.cert-cols{justify-content:center}
+.process-flow{flex-direction:column;align-items:center;gap:20px}
+.proc-arrow{transform:rotate(90deg);padding:0}
+.footer-grid{grid-template-columns:1fr}
+.nav-menu{display:none}
 }
 </style>
 </head>
 <body>
 
-<!-- 导航栏 -->
-<div class="nav"><div class="container">
-    <div class="logo">SIYIN<span>.</span></div>
-    <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="products.html">Products</a>
-        <a href="factory.html">Factory</a>
-        <a href="contact.html">Contact</a>
+<!-- Topbar -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-left">
+      <div class="topbar-item"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 10.5a19.79 19.79 0 01-3-8.59A2 2 0 012.68 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.69a16 16 0 006.4 6.4l1.06-1.06a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg><a href="tel:+8607698281508">+86 0769-8281-5056</a></div>
+      <div class="topbar-item"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:sales@siyin.com">sales@siyin.com</a></div>
     </div>
-    <div class="nav-buttons">
-        <a href="contact.html" class="nav-quote">Get a Quote</a>
-        <a href="contact.html" class="nav-sample">Request Sample</a>
+    <div class="topbar-right">
+      <div class="topbar-item"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Dongguan, Guangdong, China</div>
     </div>
-</div></div>
+  </div>
+</div>
+
+<!-- Nav - 简化版 -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark"><span>SY</span></div>
+      <div class="logo-info"><strong>Dongguan Siyin</strong><em>Sports Goods Co., Ltd.</em></div>
+    </a>
+    <div class="nav-menu">
+      <div class="nav-item"><a href="index.html">Home</a></div>
+      <div class="nav-item"><a href="products.html">Products</a></div>
+      <div class="nav-item"><a href="factory.html">Factory</a></div>
+      <div class="nav-item"><a href="contact.html">Contact</a></div>
+    </div>
+    <div class="nav-actions">
+      <a href="contact.html" class="btn-blue">Get a Quote</a>
+      <a href="contact.html" class="btn-outline">Request Sample</a>
+    </div>
+  </div>
+</nav>
 
 <!-- HERO -->
-<div class="hero"><div class="container hero-container">
-    <div class="hero-left">
-        <div class="hero-badge">⚡ YOUR TRUSTED</div>
-        <h1>NEOPRENE <span>PARTNER</span></h1>
-        <p class="hero-desc">We are a neoprene & laminated fabric manufacturer providing OEM/ODM solutions for global buyers.</p>
-        <div class="hero-tags">
-            <span class="hero-tag">OEM / ODM</span>
-            <span class="hero-tag">Custom Service</span>
-            <span class="hero-tag">3-7 Days Sample</span>
-            <span class="hero-tag">Low MOQ</span>
-            <span class="hero-tag">Global Supply</span>
-            <span class="hero-tag">Stable Production</span>
-        </div>
-        <div class="btn-group">
-            <button class="btn btn-primary" onclick="location.href='contact.html'">Get a Quote Now →</button>
-            <button class="btn btn-outline" onclick="location.href='contact.html'">Request Free Sample →</button>
-        </div>
+<section class="hero">
+  <div class="hero-bg-photo"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="container">
+      <div class="hero-eyebrow">
+        <span class="hero-eyebrow-icon">⚡</span>
+        <span class="hero-eyebrow-text">YOUR TRUSTED</span>
+      </div>
+      <h1 class="hero-h1">NEOPRENE <span>PARTNER</span></h1>
+      <p class="hero-desc">We are a neoprene & laminated fabric manufacturer providing <strong>OEM/ODM</strong> solutions for global buyers.</p>
+      <div class="hero-feats">
+        <div class="feat-chip"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="2" y1="9" x2="22" y2="9"/><line x1="2" y1="15" x2="22" y2="15"/></svg><div class="feat-chip-label"><span class="feat-chip-name">CUSTOM LAMINATION</span><span class="feat-chip-sub">Thickness, structure, fabric combinations</span></div></div>
+        <div class="feat-chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="feat-chip-label"><span class="feat-chip-name">FAST SAMPLING</span><span class="feat-chip-sub">3-7 Days Sample Lead Time</span></div></div>
+        <div class="feat-chip"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><div class="feat-chip-label"><span class="feat-chip-name">LOW MOQ</span><span class="feat-chip-sub">Support Startups & Small Orders</span></div></div>
+        <div class="feat-chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg><div class="feat-chip-label"><span class="feat-chip-name">STABLE SUPPLY</span><span class="feat-chip-sub">Mass Production & On-time Delivery</span></div></div>
+      </div>
+      <div class="hero-cta">
+        <a href="contact.html" class="btn-blue">Get a Quote Now →</a>
+        <a href="contact.html" class="btn-ghost" style="background:transparent;border:1px solid var(--yellow);color:#fff;padding:10px 24px;border-radius:40px;text-decoration:none">Request Free Sample →</a>
+      </div>
     </div>
-    <div class="hero-right">
-        <div class="factory-card">
-            <div class="factory-img" style="display:flex;align-items:center;justify-content:center;">🏭 工厂照片</div>
-            <a href="#" class="video-btn" onclick="alert('播放工厂视频 - 请替换为您的视频链接'); return false;">
-                <i class="fas fa-play-circle"></i> Watch Factory Video
-            </a>
-        </div>
+  </div>
+  <div class="hero-badge">
+    <div class="hero-badge-play"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+    <div class="hero-badge-text"><strong>Factory Tour</strong><span>Watch Video</span></div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-col"><div class="stat-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div><div><div class="stat-num">10+</div><div class="stat-lbl">Years Experience</div></div></div>
+    <div class="stat-col"><div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div><div class="stat-num">8,000+ m²</div><div class="stat-lbl">Factory Area</div></div></div>
+    <div class="stat-col"><div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="stat-num">100+</div><div class="stat-lbl">Skilled Workers</div></div></div>
+    <div class="stat-col"><div class="stat-icon"><svg viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg></div><div><div class="stat-num">10,000+</div><div class="stat-lbl">Monthly Rolls</div></div></div>
+    <div class="cert-cols">
+      <div class="cert-col"><div class="cert-logo-iso">ISO</div><div class="cert-sub">9001:2015</div></div>
+      <div class="cert-col"><div class="cert-logo-oeko">OEKO-TEX®<br>STANDARD<br>100</div></div>
+      <div class="cert-col"><div class="cert-logo-sgs">SGS</div><div class="cert-sub">Verified</div></div>
     </div>
-</div></div>
-
-<!-- 统计数据 -->
-<div class="stats-bar"><div class="container stats-grid">
-    <div><div class="stat-number">10+</div><div class="stat-label">Years Experience</div></div>
-    <div><div class="stat-number">8000+ m²</div><div class="stat-label">Factory Area</div></div>
-    <div><div class="stat-number">100+</div><div class="stat-label">Skilled Workers</div></div>
-    <div><div class="stat-number">10,000+</div><div class="stat-label">Monthly Rolls</div></div>
-</div></div>
-
-<!-- 认证栏 -->
-<div class="cert-bar"><div class="container cert-grid">
-    <div class="cert-item"><i class="fas fa-check-circle"></i> ISO 9001:2015</div>
-    <div class="cert-item"><i class="fas fa-check-circle"></i> OEKO-TEX® Standard 100</div>
-    <div class="cert-item"><i class="fas fa-check-circle"></i> REACH</div>
-    <div class="cert-item"><i class="fas fa-check-circle"></i> SGS Verified</div>
-</div></div>
-
-<!-- 产品轮播 -->
-<div class="carousel-section">
-    <div class="carousel-wrapper">
-        <button class="carousel-prev" id="carouselPrev">❮</button>
-        <div class="carousel-container" id="carouselContainer">
-            <div class="carousel-slide"><img src="https://placehold.co/1600x500/1e4a6f/white?text=CR+Neoprene+Sheet" alt="CR Neoprene"></div>
-            <div class="carousel-slide"><img src="https://placehold.co/1600x500/2a5a7a/white?text=Laminated+Fabric" alt="Laminated Fabric"></div>
-            <div class="carousel-slide"><img src="https://placehold.co/1600x500/1e4a6f/white?text=Embossed+Neoprene" alt="Embossed Neoprene"></div>
-            <div class="carousel-slide"><img src="https://placehold.co/1600x500/2a5a7a/white?text=Printed+Neoprene" alt="Printed Neoprene"></div>
-        </div>
-        <button class="carousel-next" id="carouselNext">❯</button>
-        <div class="carousel-dots" id="carouselDots"></div>
-    </div>
+  </div>
 </div>
-
-<!-- WHAT WE DO -->
-<div class="section"><div class="container">
-    <h2 class="section-title">WHAT WE DO</h2>
-    <p class="section-subtitle">From material development to production, we provide one-stop neoprene & laminated fabric solutions for your business.</p>
-    <div class="what-grid">
-        <div class="what-card"><div class="what-img" style="display:flex;align-items:center;justify-content:center;">📸 图片占位</div><div class="what-content"><h3>Custom Neoprene Lamination</h3><p>Thickness, structure, fabric combinations</p></div></div>
-        <div class="what-card"><div class="what-img" style="display:flex;align-items:center;justify-content:center;">📸 图片占位</div><div class="what-content"><h3>OEM / ODM Fabric Development</h3><p>Customized designs for brands & factories</p></div></div>
-        <div class="what-card"><div class="what-img" style="display:flex;align-items:center;justify-content:center;">📸 图片占位</div><div class="what-content"><h3>Sample Development</h3><p>Fast 3-7 days sample lead time</p></div></div>
-        <div class="what-card"><div class="what-img" style="display:flex;align-items:center;justify-content:center;">📸 图片占位</div><div class="what-content"><h3>Mass Production</h3><p>Stable bulk production for industrial & sports</p></div></div>
-    </div>
-</div></div>
-
-<!-- MAIN PRODUCTS -->
-<div class="section" style="background:#fafcff"><div class="container">
-    <h2 class="section-title">MAIN PRODUCTS</h2>
-    <p class="section-subtitle">High performance neoprene & laminated fabrics for various applications.</p>
-    <div class="products-grid">
-        <div class="product-card"><img src="https://placehold.co/400x180/0f2b3d/white?text=Neoprene+Fabric"><div class="product-info"><h4>Neoprene Fabric</h4><p>SBR / SCR / CR / NBR</p></div></div>
-        <div class="product-card"><img src="https://placehold.co/400x180/0f2b3d/white?text=Laminated+Fabric"><div class="product-info"><h4>Laminated Fabric</h4><p>Multi-fabric lamination</p></div></div>
-        <div class="product-card"><img src="https://placehold.co/400x180/0f2b3d/white?text=Printed+Neoprene"><div class="product-info"><h4>Printed Neoprene</h4><p>Custom printing</p></div></div>
-        <div class="product-card"><img src="https://placehold.co/400x180/0f2b3d/white?text=Embossed+Neoprene"><div class="product-info"><h4>Embossed Neoprene</h4><p>Various textures</p></div></div>
-        <div class="product-card"><img src="https://placehold.co/400x180/0f2b3d/white?text=Jersey+Fabric"><div class="product-info"><h4>Jersey Fabric</h4><p>Polyester / Nylon / Spandex</p></div></div>
-        <div class="product-card"><img src="https://placehold.co/400x180/0f2b3d/white?text=Perforated+Neoprene"><div class="product-info"><h4>Perforated Neoprene</h4><p>Breathable & lightweight</p></div></div>
-    </div>
-</div></div>
-
-<!-- APPLICATIONS -->
-<div class="section"><div class="container">
-    <h2 class="section-title">APPLICATIONS</h2>
-    <div class="apps-grid">
-        <div class="app-card"><img src="https://placehold.co/200x120/0f2b3d/white?text=Wetsuits"><h4>Wetsuits</h4></div>
-        <div class="app-card"><img src="https://placehold.co/200x120/0f2b3d/white?text=Sports+Gear"><h4>Sports Gear</h4></div>
-        <div class="app-card"><img src="https://placehold.co/200x120/0f2b3d/white?text=Bags"><h4>Bags & Luggage</h4></div>
-        <div class="app-card"><img src="https://placehold.co/200x120/0f2b3d/white?text=Fitness"><h4>Fitness & Support</h4></div>
-        <div class="app-card"><img src="https://placehold.co/200x120/0f2b3d/white?text=Industrial"><h4>Industrial Protection</h4></div>
-        <div class="app-card"><img src="https://placehold.co/200x120/0f2b3d/white?text=Medical"><h4>Medical Protection</h4></div>
-        <div class="app-card"><img src="https://placehold.co/200x120/0f2b3d/white?text=Outdoor"><h4>Outdoor Products</h4></div>
-        <div class="app-card"><img src="https://placehold.co/200x120/0f2b3d/white?text=More"><h4>More Applications</h4></div>
-    </div>
-</div></div>
-
-<!-- FROM DESIGN TO MASS PRODUCTION -->
-<div class="section" style="background:#fafcff"><div class="container">
-    <h2 class="section-title">FROM DESIGN TO MASS PRODUCTION</h2>
-    <p class="section-subtitle">One-stop service, worry-free and time-saving.</p>
-    <div class="process-steps">
-        <div class="process-step"><div class="step-number">1</div><h4>Requirement</h4><p>Discussion</p></div>
-        <div class="process-step"><div class="step-number">2</div><h4>Material</h4><p>Selection</p></div>
-        <div class="process-step"><div class="step-number">3</div><h4>Sample</h4><p>Development</p></div>
-        <div class="process-step"><div class="step-number">4</div><h4>Sample</h4><p>Confirmation</p></div>
-        <div class="process-step"><div class="step-number">5</div><h4>Mass</h4><p>Production</p></div>
-        <div class="process-step"><div class="step-number">6</div><h4>Quality</h4><p>Inspection</p></div>
-        <div class="process-step"><div class="step-number">7</div><h4>Packing &</h4><p>Shipment</p></div>
-    </div>
-</div></div>
 
 <!-- WHY CHOOSE US -->
-<div class="section"><div class="container">
-    <h2 class="section-title">WHY CHOOSE US</h2>
-    <p class="section-subtitle">We focus on quality, delivery and long-term partnership.</p>
-    <div class="why-grid">
-        <div class="why-card"><div class="why-icon"><i class="fas fa-industry"></i></div><h3>Stable Production Capacity</h3><p>Advanced machines & skilled team</p></div>
-        <div class="why-card"><div class="why-icon"><i class="fas fa-clipboard-check"></i></div><h3>100% Inspection Before Shipment</h3><p>Strict quality control you can trust</p></div>
-        <div class="why-card"><div class="why-icon"><i class="fas fa-clock"></i></div><h3>Fast Sampling & Response</h3><p>Quick reply, fast sample, on-time delivery</p></div>
-        <div class="why-card"><div class="why-icon"><i class="fas fa-users"></i></div><h3>Experienced Team</h3><p>10+ years in neoprene industry</p></div>
+<div class="why-what">
+  <div class="why-what-grid">
+    <div class="why-col">
+      <div class="section-tag">Why Choose Us</div>
+      <h2 class="section-title">Quality You Can Trust.<br>Every Batch.</h2>
+      <p class="section-sub" style="margin-bottom:28px">We focus on quality, reliability and long-term partnerships with buyers worldwide.</p>
+      <div class="why-items">
+        <div class="why-item"><div class="why-item-icon"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div><div><div class="why-item-title">Strict Quality Control</div><div class="why-item-desc">100% inspection before shipment</div></div></div>
+        <div class="why-item"><div class="why-item-icon"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></div><div><div class="why-item-title">Advanced Equipment</div><div class="why-item-desc">Ensuring stable quality</div></div></div>
+        <div class="why-item"><div class="why-item-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="why-item-title">Experienced Team</div><div class="why-item-desc">Professional & responsive service</div></div></div>
+        <div class="why-item"><div class="why-item-icon"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><div><div class="why-item-title">On-time Delivery</div><div class="why-item-desc">Reliable lead time guarantee</div></div></div>
+      </div>
+      <div class="why-photo"><img src="https://placehold.co/600x220/0f2b3d/white?text=Factory+Photo" alt="Siyin Factory"></div>
     </div>
-</div></div>
+    <div class="divider-col"></div>
+    <div class="what-col">
+      <div class="section-tag">What We Do</div>
+      <h2 class="section-title">One-Stop Neoprene<br>Solutions</h2>
+      <p class="section-sub" style="margin-bottom:24px">From material development and sampling to mass production — all under one roof.</p>
+      <div class="what-grid">
+        <div class="what-card"><div class="what-card-img"><img src="https://placehold.co/200x105/0f2b3d/white?text=Lamination" alt="Custom Lamination"></div><div class="what-card-body"><div class="what-card-title">Custom Neoprene Lamination</div><div class="what-card-desc">Thickness, structure, fabric combinations</div></div></div>
+        <div class="what-card"><div class="what-card-img"><img src="https://placehold.co/200x105/0f2b3d/white?text=OEM+ODM" alt="OEM ODM"></div><div class="what-card-body"><div class="what-card-title">OEM / ODM Development</div><div class="what-card-desc">Customized designs for brands & factories</div></div></div>
+        <div class="what-card"><div class="what-card-img"><img src="https://placehold.co/200x105/0f2b3d/white?text=Sample" alt="Sample Development"></div><div class="what-card-body"><div class="what-card-title">Sample Development</div><div class="what-card-desc">Fast 3-7 day turnaround on samples</div></div></div>
+        <div class="what-card"><div class="what-card-img"><img src="https://placehold.co/200x105/0f2b3d/white?text=Mass+Production" alt="Mass Production"></div><div class="what-card-body"><div class="what-card-title">Mass Production</div><div class="what-card-desc">Stable bulk production for industrial & sports</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-<!-- CTA -->
-<div class="container"><div class="cta-box">
-    <h2>LET'S START YOUR PROJECT</h2>
-    <p>Tell us your requirements and get a professional solution within 24 hours.</p>
-    <div class="btn-group">
-        <button class="btn btn-primary" onclick="location.href='contact.html'">Get a Quote Now →</button>
-        <button class="btn btn-outline" style="border-color:rgba(255,255,255,0.3);color:#fff" onclick="location.href='contact.html'">Request Free Sample →</button>
+<!-- APPLICATIONS -->
+<section class="apps">
+  <div class="container">
+    <div class="section-tag">Applications</div>
+    <h2 class="section-title">One Material, Endless Uses</h2>
+    <div class="apps-row">
+      <div class="app-tile"><img src="https://placehold.co/155x140/1e4a6f/white?text=Wetsuits"><div class="app-tile-overlay"></div><div class="app-tile-name">Wetsuits</div></div>
+      <div class="app-tile"><img src="https://placehold.co/155x140/1e4a6f/white?text=Sports+Gear"><div class="app-tile-overlay"></div><div class="app-tile-name">Sports Gear</div></div>
+      <div class="app-tile"><img src="https://placehold.co/155x140/1e4a6f/white?text=Bottle+Sleeves"><div class="app-tile-overlay"></div><div class="app-tile-name">Bottle Sleeves</div></div>
+      <div class="app-tile"><img src="https://placehold.co/155x140/1e4a6f/white?text=Bags"><div class="app-tile-overlay"></div><div class="app-tile-name">Bags & Luggage</div></div>
+      <div class="app-tile"><img src="https://placehold.co/155x140/1e4a6f/white?text=Fitness"><div class="app-tile-overlay"></div><div class="app-tile-name">Fitness & Support</div></div>
+      <div class="app-tile"><img src="https://placehold.co/155x140/1e4a6f/white?text=Footwear"><div class="app-tile-overlay"></div><div class="app-tile-name">Footwear</div></div>
+      <div class="app-tile"><img src="https://placehold.co/155x140/1e4a6f/white?text=Pet"><div class="app-tile-overlay"></div><div class="app-tile-name">Pet Life Jackets</div></div>
+      <a href="applications.html" class="app-tile-more"><div class="app-tile-more-arrow">→</div><div class="app-tile-more-label">More<br>Applications</div></a>
     </div>
-    <div class="cta-features">
-        <div class="cta-feature"><i class="fas fa-clock"></i><span>24H Response</span></div>
-        <div class="cta-feature"><i class="fas fa-flask"></i><span>Free Sample</span></div>
-        <div class="cta-feature"><i class="fas fa-shield-alt"></i><span>Quality Guaranteed</span></div>
-        <div class="cta-feature"><i class="fas fa-globe"></i><span>Global Shipping</span></div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process">
+  <div class="container">
+    <div class="process-header">
+      <div class="section-tag" style="justify-content:center;text-align:center">How We Work</div>
+      <h2 class="section-title" style="text-align:center">FROM DESIGN TO MASS PRODUCTION</h2>
+      <p class="section-sub" style="text-align:center">One-Stop Service — 7 seamless steps from your idea to your door</p>
     </div>
-</div></div>
+    <div class="process-flow">
+      <div class="proc-step"><div class="proc-dot-num">01</div><div class="proc-circle"><img src="https://placehold.co/70x70/0f2b3d/white?text=1"></div><div class="proc-title">Requirement<br>Discussion</div></div>
+      <div class="proc-arrow">›</div>
+      <div class="proc-step"><div class="proc-dot-num">02</div><div class="proc-circle"><img src="https://placehold.co/70x70/0f2b3d/white?text=2"></div><div class="proc-title">Material<br>Selection</div></div>
+      <div class="proc-arrow">›</div>
+      <div class="proc-step"><div class="proc-dot-num">03</div><div class="proc-circle highlight"><img src="https://placehold.co/70x70/0f2b3d/white?text=3"></div><div class="proc-title">Sample<br>Dev</div><div class="proc-note">3–7 Days</div></div>
+      <div class="proc-arrow">›</div>
+      <div class="proc-step"><div class="proc-dot-num">04</div><div class="proc-circle"><img src="https://placehold.co/70x70/0f2b3d/white?text=4"></div><div class="proc-title">Sample<br>Confirmation</div></div>
+      <div class="proc-arrow">›</div>
+      <div class="proc-step"><div class="proc-dot-num">05</div><div class="proc-circle"><img src="https://placehold.co/70x70/0f2b3d/white?text=5"></div><div class="proc-title">Mass<br>Production</div></div>
+      <div class="proc-arrow">›</div>
+      <div class="proc-step"><div class="proc-dot-num">06</div><div class="proc-circle"><img src="https://placehold.co/70x70/0f2b3d/white?text=6"></div><div class="proc-title">Quality<br>Inspection</div></div>
+      <div class="proc-arrow">›</div>
+      <div class="proc-step"><div class="proc-dot-num">07</div><div class="proc-circle"><img src="https://placehold.co/70x70/0f2b3d/white?text=7"></div><div class="proc-title">Packing &<br>Shipment</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED PRODUCTS -->
+<section class="products">
+  <div class="container">
+    <div class="products-header">
+      <div><div class="section-tag">Featured Products</div><h2 class="section-title">Our Product Range</h2></div>
+      <a href="products.html" class="btn-outline" style="border:1px solid var(--yellow);color:var(--yellow);padding:8px 20px;border-radius:40px;text-decoration:none">View All Products →</a>
+    </div>
+    <div class="products-grid">
+      <a href="products.html" class="prod-card"><div class="prod-img"><img src="https://placehold.co/180x118/0f2b3d/white?text=Neoprene"></div><div class="prod-body"><div class="prod-name">Neoprene Fabric</div><div class="prod-spec">SBR / SCR / CR / NBR</div></div></a>
+      <a href="products.html" class="prod-card"><div class="prod-img"><img src="https://placehold.co/180x118/0f2b3d/white?text=Laminated"></div><div class="prod-body"><div class="prod-name">Laminated Fabric</div><div class="prod-spec">Multi-fabric lamination</div></div></a>
+      <a href="products.html" class="prod-card"><div class="prod-img"><img src="https://placehold.co/180x118/0f2b3d/white?text=Printed"></div><div class="prod-body"><div class="prod-name">Printed Neoprene</div><div class="prod-spec">Custom printing</div></div></a>
+      <a href="products.html" class="prod-card"><div class="prod-img"><img src="https://placehold.co/180x118/0f2b3d/white?text=Embossed"></div><div class="prod-body"><div class="prod-name">Embossed Neoprene</div><div class="prod-spec">Various textures</div></div></a>
+      <a href="products.html" class="prod-card"><div class="prod-img"><img src="https://placehold.co/180x118/0f2b3d/white?text=Jersey"></div><div class="prod-body"><div class="prod-name">Jersey Fabric</div><div class="prod-spec">Polyester / Nylon / Spandex</div></div></a>
+      <a href="products.html" class="prod-card"><div class="prod-img"><img src="https://placehold.co/180x118/0f2b3d/white?text=Perforated"></div><div class="prod-body"><div class="prod-name">Perforated Neoprene</div><div class="prod-spec">Breathable & lightweight</div></div></a>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section class="trust">
+  <div class="container trust-grid">
+    <div class="brands-col">
+      <div class="section-tag">Trusted By</div>
+      <h2 class="section-title">Global Brands Choose Siyin</h2>
+      <p class="section-sub">Building long-term material partnerships with leading brands worldwide.</p>
+      <div class="brand-logos">
+        <div class="brand-name oneill">O'NEILL</div>
+        <div class="brand-name mares">mares</div>
+        <div class="brand-name bodyglove">BODY GLOVE</div>
+      </div>
+    </div>
+    <div class="trust-div"></div>
+    <div class="certs-col">
+      <div class="section-tag">Certifications</div>
+      <h2 class="section-title">Internationally Certified</h2>
+      <p class="section-sub">Our materials meet EU, US, and international safety and quality standards.</p>
+      <div class="cert-badges">
+        <div class="cert-badge"><div class="cert-big" style="color:#0055A4">ISO</div><div class="cert-small">9001:2015</div></div>
+        <div class="cert-badge"><div class="cert-big" style="color:#3a7d44;font-size:12px">OEKO-TEX®</div><div class="cert-small">STANDARD 100</div></div>
+        <div class="cert-badge"><div class="cert-big" style="color:#CC0000">SGS</div><div class="cert-small">Verified</div></div>
+        <div class="cert-badge"><div class="cert-big" style="font-size:14px">REACH</div><div class="cert-small">EU Compliant</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<section class="cta-band">
+  <div class="cta-band-inner">
+    <div>
+      <h2>Let's Start Your Next Project</h2>
+      <p>Tell us your requirements. Get a professional quote within 24 hours.</p>
+    </div>
+    <div class="cta-band-right">
+      <div class="cta-band-btns">
+        <a href="contact.html" class="btn-white">Get a Quote Now →</a>
+        <a href="contact.html" class="btn-ghost">Free Sample Kit</a>
+      </div>
+      <div class="cta-contact-item"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 10.5a19.79 19.79 0 01-3-8.59A2 2 0 012.68 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.69a16 16 0 006.4 6.4l1.06-1.06a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg><a href="tel:+8607698281508">+86 0769-8281-5056</a></div>
+      <div class="cta-contact-item"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:sales@siyin.com">sales@siyin.com</a></div>
+      <div class="cta-contact-item"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Dongguan, Guangdong, China</div>
+    </div>
+  </div>
+</section>
 
 <!-- FOOTER -->
-<footer class="footer"><div class="container footer-grid">
-    <div class="footer-col"><h4>SIYIN</h4><p>Dongguan Siyin Sports Goods Co., Ltd.</p><div class="footer-info"><div><i class="fas fa-map-marker-alt"></i> Hebei, China</div><div><i class="fas fa-calendar-alt"></i> Established 2013</div></div></div>
-    <div class="footer-col"><h4>Quick Links</h4><a href="index.html">Home</a><a href="products.html">Products</a><a href="factory.html">Factory</a><a href="contact.html">Contact</a></div>
-    <div class="footer-col"><h4>Contact</h4><a href="mailto:sales@siyin.com">sales@siyin.com</a><a href="tel:+8613800000000">+86 138 0000 0000</a><a href="#">WhatsApp</a></div>
-    <div class="footer-col"><h4>Follow Us</h4><a href="#">LinkedIn</a><a href="#">Facebook</a><a href="#">YouTube</a></div>
-</div>
-<div class="footer-bottom"><div class="container"><p>© 2025 Dongguan Siyin Sports Goods Co., Ltd. All rights reserved.</p></div></div>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo"><div class="logo-mark"><span>SY</span></div><div class="logo-info"><strong>Dongguan Siyin</strong><em>Sports Goods Co., Ltd.</em></div></div>
+        <p class="footer-about-text">Professional neoprene & laminated fabric manufacturer. 10+ years supplying premium materials to global brands.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Products</div>
+        <ul class="footer-links"><li><a href="products.html">Neoprene Fabric</a></li><li><a href="products.html">Laminated Fabric</a></li><li><a href="products.html">Printed Neoprene</a></li><li><a href="products.html">Embossed Neoprene</a></li></ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links"><li><a href="index.html">Home</a></li><li><a href="products.html">Products</a></li><li><a href="factory.html">Factory</a></li><li><a href="contact.html">Contact</a></li></ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact Us</div>
+        <div class="footer-contact-item"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Dongguan, Guangdong, China</span></div>
+        <div class="footer-contact-item"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 10.5a19.79 19.79 0 01-3-8.59A2 2 0 012.68 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.69a16 16 0 006.4 6.4l1.06-1.06a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg><a href="tel:+8607698281508">+86 0769-8281-5056</a></div>
+        <div class="footer-contact-item"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:sales@siyin.com">sales@siyin.com</a></div>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <p>© 2025 Dongguan Siyin Sports Goods Co., Ltd. All Rights Reserved.</p>
+      <div class="footer-bar-links"><a href="#">Privacy Policy</a><a href="#">Terms of Use</a></div>
+    </div>
+  </div>
 </footer>
 
-<script>
-// 轮播功能
-let currentSlide = 0;
-const container = document.getElementById("carouselContainer");
-const slides = container ? container.children : [];
-const totalSlides = slides.length;
-const dotsContainer = document.getElementById("carouselDots");
+<!-- WhatsApp Float -->
+<a class="wa-float" href="https://wa.me/8613900000000" target="_blank">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+</a>
 
-function updateDots() {
-    if (!dotsContainer) return;
-    dotsContainer.innerHTML = '';
-    for (let i = 0; i < totalSlides; i++) {
-        const dot = document.createElement('div');
-        dot.className = 'dot' + (i === currentSlide ? ' active' : '');
-        dot.onclick = () => {
-            currentSlide = i;
-            updateCarousel();
-        };
-        dotsContainer.appendChild(dot);
-    }
-}
-
-function updateCarousel() {
-    if (!container) return;
-    container.scrollTo({ left: currentSlide * container.clientWidth, behavior: 'smooth' });
-    document.querySelectorAll('.dot').forEach((dot, idx) => {
-        dot.classList.toggle('active', idx === currentSlide);
-    });
-}
-
-if (container) {
-    container.addEventListener('scroll', () => {
-        const newIndex = Math.round(container.scrollLeft / container.clientWidth);
-        if (newIndex !== currentSlide && !isNaN(newIndex)) {
-            currentSlide = newIndex;
-            document.querySelectorAll('.dot').forEach((dot, idx) => {
-                dot.classList.toggle('active', idx === currentSlide);
-            });
-        }
-    });
-    updateDots();
-}
-
-document.getElementById("carouselPrev")?.addEventListener('click', () => {
-    if (currentSlide > 0) { currentSlide--; updateCarousel(); }
-});
-document.getElementById("carouselNext")?.addEventListener('click', () => {
-    if (currentSlide < totalSlides - 1) { currentSlide++; updateCarousel(); }
-});
-</script>
 </body>
 </html>
